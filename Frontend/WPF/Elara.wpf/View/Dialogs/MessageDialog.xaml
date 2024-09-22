@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Elara.wpf.View.Dialogs.MessageDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Elara.wpf.View.Dialogs"
+             xmlns:r="clr-namespace:Resources;assembly=Resources"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Name="textBlock"
+                   Margin="0 8 0 8"
+                   FontStretch="ExtraCondensed" />
+
+        <Button Grid.Row="1"
+                Margin="0 20 0 0"
+                Width="80"
+                Content="{I18N {x:Static r:LangKeys.Ok}}"
+                Command="{x:Static md:DialogHost.CloseDialogCommand}" />
+    </Grid>
+</UserControl>

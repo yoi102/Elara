@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antelcat.I18N.WPF" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Elara.ViewModel\Elara.ViewModel.csproj" />
+    <ProjectReference Include="..\..\ApiClients\ApiClients.csproj" />
+    <ProjectReference Include="..\..\DataProviders\DataProviders.csproj" />
+    <ProjectReference Include="..\..\InteractionServices.Abstractions\InteractionServices.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Frontend.Shared\Frontend.Shared.csproj" />
+    <ProjectReference Include="..\..\Resources\Resources.csproj" />
+    <ProjectReference Include="..\..\Services\Services.csproj" />
+    <ProjectReference Include="..\Elara.wpf.Controls\Elara.wpf.Controls.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commons\Commons.csproj" />
+    <ProjectReference Include="..\ApiClients.Abstractions\ApiClients.Abstractions.csproj" />
+    <ProjectReference Include="..\DataProviders.Abstractions\DataProviders.Abstractions.csproj" />
+    <ProjectReference Include="..\Frontend.Shared\Frontend.Shared.csproj" />
+    <ProjectReference Include="..\Services.Abstractions\Services.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

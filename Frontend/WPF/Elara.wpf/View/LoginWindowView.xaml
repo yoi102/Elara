@@ -1,0 +1,266 @@
+﻿<Window x:Class="Elara.wpf.View.LoginWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:identifiers="clr-namespace:Frontend.Shared.Identifiers;assembly=Frontend.Shared"
+        xmlns:local="clr-namespace:Elara.wpf.View"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:r="clr-namespace:Resources;assembly=Resources"
+        xmlns:yr="https://github.com/yoi102/xaml/controls"
+        xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel;assembly=Elara.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
+        Title="LoginWindowView"
+        Width="500"
+        Height="300"
+        AllowsTransparency="True"
+        RenderTransformOrigin="0.5,0.5"
+        ResizeMode="NoResize"
+        Style="{StaticResource MaterialDesignWindow}"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <Storyboard x:Key="HideWindow">
+            <DoubleAnimation FillBehavior="Stop"
+                             Storyboard.TargetProperty="Opacity"
+                             From="1"
+                             To="0"
+                             Duration="0:0:0.5" />
+            <DoubleAnimation FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleX)"
+                             From="1"
+                             To="0.8"
+                             Duration="0:0:0.5" />
+            <DoubleAnimation FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleY)"
+                             From="1"
+                             To="0.8"
+                             Duration="0:0:0.5" />
+        </Storyboard>
+        <Storyboard x:Key="ShowWindow">
+            <DoubleAnimation FillBehavior="Stop"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0"
+                             To="1"
+                             Duration="0:0:0.5" />
+            <DoubleAnimation FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleX)"
+                             From="0.8"
+                             To="1"
+                             Duration="0:0:0.5" />
+            <DoubleAnimation FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleY)"
+                             From="0.8"
+                             To="1"
+                             Duration="0:0:0.5" />
+        </Storyboard>
+    </Window.Resources>
+    <Window.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform ScaleX="1"
+                            ScaleY="1" />
+            <SkewTransform />
+            <RotateTransform />
+            <TranslateTransform />
+        </TransformGroup>
+    </Window.RenderTransform>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource ShowWindow}" />
+        </EventTrigger>
+    </Window.Triggers>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      CornerRadius="16.01"
+                      GlassFrameThickness="0"
+                      NonClientFrameEdges="None"
+                      ResizeBorderThickness="5"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+    <Grid>
+
+        <Border BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}"
+                BorderThickness="2.5"
+                CornerRadius="8">
+
+            <md:DialogHost Margin="10"
+                           Identifier="{x:Static identifiers:DialogHostIdentifiers.LoginRootDialog}">
+                <md:DrawerHost Name="LoginNavDrawer"
+                               IsLeftDrawerOpen="{Binding IsLeftDrawerOpen}"
+                               OpenMode="Modal">
+                    <md:DrawerHost.LeftDrawerContent>
+
+                        <Grid Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Button Grid.Row="0"
+                                    IsCancel="True"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
+                                    Command="{Binding BackCommand}"
+                                    Content="{md:PackIcon Kind=ChevronDoubleLeft,
+                                                          Size=24}"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                            <ContentControl Grid.Row="1"
+                                            Content="{Binding CreateOrReset}">
+                                <ContentControl.Resources>
+                                    <DataTemplate DataType="{x:Type viewmodel:CreateAccountViewModel}">
+                                        <local:CreateAccountView />
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type viewmodel:ResetPasswordViewModel}">
+                                        <local:ResetPasswordView />
+                                    </DataTemplate>
+                                </ContentControl.Resources>
+                            </ContentControl>
+                        </Grid>
+                    </md:DrawerHost.LeftDrawerContent>
+                    <Grid>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel HorizontalAlignment="Right"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Button md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
+                                        Content="{md:PackIcon Kind=ThemeLightDark,Size=24}"
+                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                        Style="{StaticResource MaterialDesignToolButton}"
+                                        Command="{Binding ChangeThemeLightDarkCommand}" />
+
+                                <Menu HorizontalAlignment="Right"
+                                      Margin="0 0 10 0"
+                                      VerticalAlignment="Top">
+                                    <MenuItem Header="{Binding CurrentCultureLCID, Converter={x:Static local:LoginWindowView.LCIDToStringConverter}}">
+                                        <MenuItem Header="EN"
+                                                  Command="{Binding ChangeCultureCommand}"
+                                                  CommandParameter="1033" />
+                                        <MenuItem Header="JP"
+                                                  Command="{Binding ChangeCultureCommand}"
+                                                  CommandParameter="1041" />
+                                        <MenuItem Header="CN"
+                                                  Command="{Binding ChangeCultureCommand}"
+                                                  CommandParameter="2052" />
+                                    </MenuItem>
+                                </Menu>
+
+                                <Button md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
+                                        Click="CloseButton_Click"
+                                        Content="{md:PackIcon Kind=Close,Size=24}"
+                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                        Style="{StaticResource MaterialDesignToolButton}"
+                                        ToolTip="{I18N {x:Static r:LangKeys.Close}}" />
+                            </StackPanel>
+
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid HorizontalAlignment="Center"
+                                      VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
+                                               Text="Elara:" />
+                                    <Grid Grid.Row="1"
+                                          Margin="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <md:PackIcon Grid.Column="0"
+                                                     Margin="5"
+                                                     Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}"
+                                                     Kind="Account" />
+                                        <TextBox Name="NameTextBox"
+                                                 Grid.Column="1"
+                                                 Width="200"
+                                                 md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.NameOrEmail}}"
+                                                 md:HintAssist.Hint="{I18N {x:Static r:LangKeys.NameOrEmail}}"
+                                                 md:TextFieldAssist.HasClearButton="True"
+                                                 yr:TextFieldAssist.IsSpaceInputBlocked="True"
+                                                 InputMethod.IsInputMethodEnabled="False"
+                                                 InputMethod.InputScope="AlphanumericHalfWidth"
+                                                 Text="{Binding NameEmail, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+                                    <Grid Grid.Row="2"
+                                          Margin="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <md:PackIcon Grid.Column="0"
+                                                     Margin="5"
+                                                     Foreground="{Binding ElementName=PasswordTextBox, Path=BorderBrush}"
+                                                     Kind="Key" />
+                                        <PasswordBox Name="PasswordTextBox"
+                                                     Grid.Column="1"
+                                                     Width="200"
+                                                     InputMethod.IsInputMethodEnabled="False"
+                                                     InputMethod.InputScope="AlphanumericHalfWidth"
+                                                     md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.Password}}"
+                                                     md:HintAssist.Hint="{I18N {x:Static r:LangKeys.Password}}"
+                                                     md:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay}"
+                                                     yr:TextFieldAssist.IsSpaceInputBlocked="True"
+                                                     Style="{StaticResource MaterialDesignRevealPasswordBox}" />
+                                    </Grid>
+                                </Grid>
+
+                                <StackPanel Grid.Row="1"
+                                            Margin="0,10,0,0"
+                                            HorizontalAlignment="Center">
+
+                                    <Grid Margin="0,3,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Command="{Binding CreateCommand}"
+                                                Content="{I18N {x:Static r:LangKeys.SignUp}}"
+                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
+                                        <Button Grid.Column="1"
+                                                Margin="20,0,0,0"
+                                                Command="{Binding ResetCommand}"
+                                                Content="{I18N {x:Static r:LangKeys.Reset}}"
+                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
+                                    </Grid>
+
+                                    <Button Width="130"
+                                            HorizontalAlignment="Center"
+                                            IsDefault="True"
+                                            Command="{Binding LoginCommand}"
+                                            Content="{I18N {x:Static r:LangKeys.Login}}" />
+                                </StackPanel>
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+
+                </md:DrawerHost>
+            </md:DialogHost>
+
+        </Border>
+        <md:Snackbar Margin="10"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+                     yr:SnackbarIdentifierAssist.SnackbarIdentifier="{x:Static identifiers:SnackBarHostIdentifiers.LoginWindow}"
+                     MessageQueue="{md:MessageQueue}" />
+    </Grid>
+</Window>
