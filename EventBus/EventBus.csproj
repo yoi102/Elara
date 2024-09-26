@@ -8,9 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Dynamic.Json" Version="1.4.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0-preview.7.24405.7" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
   </ItemGroup>
 
   <ItemGroup>

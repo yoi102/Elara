@@ -20,19 +20,31 @@ namespace Initializer
 {
     public static class WebApplicationBuilderExtensions
     {
-        public static void ReadHostBuilderConfiguration(this WebApplicationBuilder builder)
+        public static void ReadAndSetHostBuilderConfiguration(this WebApplicationBuilder builder)
         {
-            var dir = builder.Configuration["DefaultDirectory"];
-            ArgumentException.ThrowIfNullOrEmpty(dir, "DefaultDirectory");
+            //var dir = builder.Configuration["DefaultDirectory"];
+            //ArgumentException.ThrowIfNullOrEmpty(dir, "DefaultDirectory");
 
-            string fullPath = Path.Combine(dir, "appsettings.json");
+            string fullPath = Path.Combine("C:\\Users\\yoiri\\source\\repos\\Elara", "appsettings.json");
             builder.Configuration.AddJsonFile(fullPath);
+
+            var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");
+            ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
+
+            string programFilesFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            var dbFileFolder = Path.Combine(programFilesFolder, "Elara\\db");
+            Directory.CreateDirectory(dbFileFolder);
+
+            builder.Configuration["DefaultDB:ConnectionStrings"] = Path.Combine(dbFileFolder, dbFileName);
+            builder.Configuration["LogFolder"] = Path.Combine(programFilesFolder, "Elara\\logs");
         }
 
         public static void ConfigureCommonServices(this WebApplicationBuilder builder, InitializerOptions initOptions)
         {
             IServiceCollection services = builder.Services;
             IConfiguration configuration = builder.Configuration;
+
+            #region Serilog
             //Serilog
             builder.Host.UseSerilog((context, services, configuration) => configuration
                        .ReadFrom.Configuration(context.Configuration)
@@ -41,8 +53,12 @@ namespace Initializer
                        .Enrich.FromLogContext()
                        .WriteTo.Console());
 
+            #endregion
+
             var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
             services.RunModuleInitializers(assemblies);
+
+            #region DbContexts
 
             // DbContexts
             services.AddAllDbContexts(options =>
@@ -53,6 +69,11 @@ namespace Initializer
 
                 options.UseSqlServer(connectionStrings);
             }, assemblies);
+
+            #endregion
+
+            #region Authentication
+
 
             services.AddAuthorization(options =>
             {
@@ -70,6 +91,8 @@ namespace Initializer
                 c.AddAuthenticationHeader();
             });
 
+            #endregion
+
             services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
             //不用手动 AddMVC了，因此把文档中的 services.AddMvc(c =>{})改写成Configure<MvcOptions>(c=> {})这个问题很多都类似
             services.Configure<MvcOptions>(options =>
@@ -86,6 +109,8 @@ namespace Initializer
             //    options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter("yyyy-MM-dd HH:mm:ss"));
             //});
 
+            #region Cors
+
             services.AddCors(options =>
             {
                 var corsOpt = configuration.GetSection("Cors").Get<CorsSettings>();
@@ -95,6 +120,10 @@ namespace Initializer
                         .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             });
 
+            #endregion
+
+
+
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblies(assemblies);
@@ -102,6 +131,8 @@ namespace Initializer
             services.Configure<JWTOptions>(configuration.GetSection("JWT"));
             services.Configure<IntegrationEventRabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.AddEventBus(initOptions.EventBusQueueName, assemblies);
+
+            #region Redis
 
             //Redis的配置
             var redisConfiguration = configuration.GetValue<string>("Redis:ConnectionStrings");
@@ -113,6 +144,9 @@ namespace Initializer
             {
                 options.ForwardedHeaders = ForwardedHeaders.All;
             });
+
+            #endregion
+
         }
     }
 }

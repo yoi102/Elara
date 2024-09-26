@@ -2,14 +2,20 @@ using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using Initializer;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ReadHostBuilderConfiguration();
+builder.ReadAndSetHostBuilderConfiguration();
+var logFolder = builder.Configuration["LogFolder"];
+ArgumentException.ThrowIfNullOrEmpty(logFolder);
+
+var logFilePath = Path.Combine(logFolder, "IdentityService/log-.txt");
+var eventBusQueueName = "IdentityService.WebAPI";
 builder.ConfigureCommonServices(new InitializerOptions
 {
-    EventBusQueueName = "IdentityService.WebAPI",
-    LogFilePath = "h:/Elara/logs/IdentityService/log-.txt"
+    EventBusQueueName = eventBusQueueName,
+    LogFilePath = logFilePath
 });
 
 builder.Services.AddSwaggerGen(c =>
