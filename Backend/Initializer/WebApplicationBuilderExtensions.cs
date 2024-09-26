@@ -35,7 +35,8 @@ namespace Initializer
             var dbFileFolder = Path.Combine(programFilesFolder, "Elara\\db");
             Directory.CreateDirectory(dbFileFolder);
 
-            builder.Configuration["DefaultDB:ConnectionStrings"] = Path.Combine(dbFileFolder, dbFileName);
+            var dbFullPath = Path.Combine(dbFileFolder, dbFileName);
+            builder.Configuration["DefaultDB:ConnectionStrings"] = "Data Source=" + dbFullPath;
             builder.Configuration["LogFolder"] = Path.Combine(programFilesFolder, "Elara\\logs");
         }
 
@@ -67,7 +68,7 @@ namespace Initializer
                 var connectionStrings = configuration.GetValue<string>("DefaultDB:ConnectionStrings");
                 ArgumentException.ThrowIfNullOrEmpty(connectionStrings, "DefaultDB:ConnectionStrings");
 
-                options.UseSqlServer(connectionStrings);
+                options.UseSqlite(connectionStrings);
             }, assemblies);
 
             #endregion
