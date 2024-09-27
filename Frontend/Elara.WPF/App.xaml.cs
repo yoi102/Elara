@@ -2,13 +2,12 @@
 using System.Data;
 using System.Windows;
 
-namespace Elara.WPF
-{
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-    }
+namespace Elara.wpf;
 
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
+{
 }
+

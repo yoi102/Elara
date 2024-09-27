@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 
 namespace Initializer
@@ -22,11 +23,9 @@ namespace Initializer
     {
         public static void ReadAndSetHostBuilderConfiguration(this WebApplicationBuilder builder)
         {
-            //var dir = builder.Configuration["DefaultDirectory"];
-            //ArgumentException.ThrowIfNullOrEmpty(dir, "DefaultDirectory");
 
-            string fullPath = Path.Combine("C:\\Users\\yoiri\\source\\repos\\Elara", "appsettings.json");
-            builder.Configuration.AddJsonFile(fullPath);
+            string settingsFullPath = Path.Combine("C:\\Users\\yoiri\\source\\repos\\Elara", "appsettings.json");
+            builder.Configuration.AddJsonFile(settingsFullPath);
 
             var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");
             ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
@@ -45,54 +44,16 @@ namespace Initializer
             IServiceCollection services = builder.Services;
             IConfiguration configuration = builder.Configuration;
 
-            #region Serilog
-            //Serilog
-            builder.Host.UseSerilog((context, services, configuration) => configuration
-                       .ReadFrom.Configuration(context.Configuration)
-                       .WriteTo.File(initOptions.LogFilePath)
-                       .ReadFrom.Services(services)
-                       .Enrich.FromLogContext()
-                       .WriteTo.Console());
-
-            #endregion
+            ConfigureSerilog(builder, initOptions);
 
             var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
             services.RunModuleInitializers(assemblies);
 
-            #region DbContexts
 
-            // DbContexts
-            services.AddAllDbContexts(options =>
-            {
-                //options.UseStronglyTypeConverters();
-                var connectionStrings = configuration.GetValue<string>("DefaultDB:ConnectionStrings");
-                ArgumentException.ThrowIfNullOrEmpty(connectionStrings, "DefaultDB:ConnectionStrings");
+            ConfigureDbContexts(services, configuration, assemblies);
 
-                options.UseSqlite(connectionStrings);
-            }, assemblies);
+            ConfigureAuthentication(builder, services, configuration);
 
-            #endregion
-
-            #region Authentication
-
-
-            services.AddAuthorization(options =>
-            {
-                // AddPolicy
-                options.AddPolicy(UserRoles.Administrator, policy => policy.RequireRole(UserRoles.Administrator));
-            });
-
-            services.AddAuthentication();
-            var jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();
-            ArgumentNullException.ThrowIfNull(jwtOpt, "JWT");
-            services.AddJWTAuthentication(jwtOpt);
-            // 启用 Swagger中的【Authorize】按钮。
-            builder.Services.Configure<SwaggerGenOptions>(c =>
-            {
-                c.AddAuthenticationHeader();
-            });
-
-            #endregion
 
             services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
             //不用手动 AddMVC了，因此把文档中的 services.AddMvc(c =>{})改写成Configure<MvcOptions>(c=> {})这个问题很多都类似
@@ -110,19 +71,7 @@ namespace Initializer
             //    options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter("yyyy-MM-dd HH:mm:ss"));
             //});
 
-            #region Cors
-
-            services.AddCors(options =>
-            {
-                var corsOpt = configuration.GetSection("Cors").Get<CorsSettings>();
-                ArgumentNullException.ThrowIfNull(corsOpt, "Cors");
-
-                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOpt.Origins)
-                        .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            });
-
-            #endregion
-
+            ConfigureCors(services, configuration);
 
 
             services.AddFluentValidationAutoValidation();
@@ -133,8 +82,12 @@ namespace Initializer
             services.Configure<IntegrationEventRabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.AddEventBus(initOptions.EventBusQueueName, assemblies);
 
-            #region Redis
+            ConfigureRedis(services, configuration);
 
+        }
+
+        private static void ConfigureRedis(IServiceCollection services, IConfiguration configuration)
+        {
             //Redis的配置
             var redisConfiguration = configuration.GetValue<string>("Redis:ConnectionStrings");
             ArgumentException.ThrowIfNullOrEmpty(redisConfiguration, "Redis:ConnectionStrings");
@@ -145,9 +98,66 @@ namespace Initializer
             {
                 options.ForwardedHeaders = ForwardedHeaders.All;
             });
+        }
 
-            #endregion
+        private static void ConfigureCors(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                var corsOpt = configuration.GetSection("Cors").Get<CorsSettings>();
+                ArgumentNullException.ThrowIfNull(corsOpt, "Cors");
 
+                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOpt.Origins)
+                        .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            });
+        }
+
+        private static void ConfigureAuthentication(WebApplicationBuilder builder, IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthorization(options =>
+            {
+                // AddPolicy
+                options.AddPolicy(UserRoles.Administrator, policy => policy.RequireRole(UserRoles.Administrator));
+            });
+
+            services.AddAuthentication();
+            var jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();
+            ArgumentNullException.ThrowIfNull(jwtOpt, "JWT");
+            services.AddJWTAuthentication(jwtOpt);
+            // 启用 Swagger中的【Authorize】按钮。
+            builder.Services.Configure<SwaggerGenOptions>(c =>
+            {
+                c.AddAuthenticationHeader();
+            });
+        }
+
+        private static void ConfigureDbContexts(IServiceCollection services, IConfiguration configuration, IEnumerable<Assembly> assemblies)
+        {
+            // DbContexts
+            services.AddAllDbContexts(options =>
+            {
+                //options.UseStronglyTypeConverters();
+                var connectionStrings = configuration.GetValue<string>("DefaultDB:ConnectionStrings");
+                ArgumentException.ThrowIfNullOrEmpty(connectionStrings, "DefaultDB:ConnectionStrings");
+
+                options.UseSqlite(connectionStrings);
+            }, assemblies);
+        }
+
+        private static void ConfigureSerilog(WebApplicationBuilder builder, InitializerOptions initOptions)
+        {
+            //Serilog
+            var logFolder = builder.Configuration["LogFolder"];
+            if (logFolder == null)
+                ArgumentException.ThrowIfNullOrEmpty(logFolder);
+
+            var logFilePath = Path.Combine(logFolder, initOptions.LogFileRelativePath);
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                       .ReadFrom.Configuration(context.Configuration)
+                       .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)
+                       .ReadFrom.Services(services)
+                       .Enrich.FromLogContext()
+                       .WriteTo.Console());
         }
     }
 }
