@@ -1,11 +1,9 @@
 ﻿using Commons;
+using JWT;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SocialLink.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SocialLink.Domain.DomainService;
 
 namespace SocialLink.infrastructure
 {
@@ -14,7 +12,7 @@ namespace SocialLink.infrastructure
         public void Initialize(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<UserDomainService>();
+            services.AddScoped<IUserDomainService, UserDomainService>();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace SocialLink.Domain
 
         Task<User?> FindByNameAsync(string name);
 
-        Task<User?> FindByPhoneEmailAsync(string email);
+        Task<User?> FindByEmailAsync(string email);
 
         Task<User?> FindByPhoneNumberAsync(string phoneNumber);
         Task<IdentityResult> RemoveUserAsync(UserId id);

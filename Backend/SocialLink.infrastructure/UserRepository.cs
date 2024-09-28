@@ -15,13 +15,12 @@ namespace SocialLink.infrastructure
     public class UserRepository : IUserRepository
     {
         private readonly IdUserManager userManager;
-        private readonly ILogger<UserRepository> logger;
 
-        public UserRepository(IdUserManager userManager, ILogger<UserRepository> logger)
+        public UserRepository(IdUserManager userManager)
         {
             this.userManager = userManager;
-            this.logger = logger;
         }
+
         public Task<IdentityResult> AccessFailedAsync(User user)
         {
             return userManager.AccessFailedAsync(user);
@@ -55,7 +54,7 @@ namespace SocialLink.infrastructure
             {
                 return SignInResult.LockedOut;
             }
-            
+
             var success = await userManager.CheckPasswordAsync(user, password);
             if (success)
             {
@@ -75,11 +74,9 @@ namespace SocialLink.infrastructure
             }
         }
 
-        public async Task<(IdentityResult, User)> RegisterAsync(string name, string password)
+        public Task<User?> FindByEmailAsync(string email)
         {
-            var user = new User(name);
-
-            return (await this.userManager.CreateAsync(user, password), user);
+            return userManager.FindByEmailAsync(email);
         }
 
         public Task<User?> FindByIdAsync(UserId userId)
@@ -92,21 +89,20 @@ namespace SocialLink.infrastructure
             return userManager.FindByNameAsync(name);
         }
 
-        public Task<User?> FindByPhoneEmailAsync(string email)
-        {
-            return userManager.FindByEmailAsync(email);
-        }
-
         public Task<User?> FindByPhoneNumberAsync(string phoneNumber)
         {
             return userManager.Users.FirstOrDefaultAsync(user => user.PhoneNumber == phoneNumber);
-
         }
 
+        public async Task<(IdentityResult, User)> RegisterAsync(string name, string password)
+        {
+            var user = new User(name);
+
+            return (await this.userManager.CreateAsync(user, password), user);
+        }
         public async Task<IdentityResult> RemoveUserAsync(UserId id)
         {
             var user = await FindByIdAsync(id);
-            var userLoginStore = userManager.UserLoginStore;
             //一定要删除 aspnetuserlogins 表中的数据，否则再次用这个外部登录登录的话
             //就会报错：The instance of entity type 'IdentityUserLogin<Guid>' cannot be tracked because another instance with the same key value for {'LoginProvider', 'ProviderKey'} is already being tracked.
             //而且要先删除 aspnetuserlogins 数据，再软删除User
@@ -114,6 +110,7 @@ namespace SocialLink.infrastructure
             {
                 return IdentityResult.Success;
             }
+            var userLoginStore = userManager.UserLoginStore;
             var logins = await userLoginStore.GetLoginsAsync(user, default);
             foreach (var login in logins)
             {
@@ -123,5 +120,6 @@ namespace SocialLink.infrastructure
             var result = await userManager.UpdateAsync(user);
             return result;
         }
+
     }
 }
