@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Elara.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Elara.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -56,7 +56,7 @@ namespace Initializer
 
 
             services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
-            //不用手动 AddMVC了，因此把文档中的 services.AddMvc(c =>{})改写成Configure<MvcOptions>(c=> {})这个问题很多都类似
+
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add<UnitOfWorkFilter>();
@@ -114,11 +114,11 @@ namespace Initializer
 
         private static void ConfigureAuthentication(WebApplicationBuilder builder, IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthorization(options =>
-            {
-                // AddPolicy
-                options.AddPolicy(UserRoles.Administrator, policy => policy.RequireRole(UserRoles.Administrator));
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    // AddPolicy
+            //    options.AddPolicy(UserRoles.Administrator, policy => policy.RequireRole(UserRoles.Administrator));
+            //});
 
             services.AddAuthentication();
             var jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();

@@ -61,19 +61,19 @@ namespace EventBus
             }
         }
 
-        private void OnCallbackException(object sender, CallbackExceptionEventArgs e)
+        private void OnCallbackException(object? sender, CallbackExceptionEventArgs e)
         {
             if (_disposed) return;
             TryConnect();
         }
 
-        private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
+        private void OnConnectionBlocked(object? sender, ConnectionBlockedEventArgs e)
         {
             if (_disposed) return;
             TryConnect();
         }
 
-        private void OnConnectionShutdown(object sender, ShutdownEventArgs reason)
+        private void OnConnectionShutdown(object? sender, ShutdownEventArgs reason)
         {
             if (_disposed) return;
             TryConnect();

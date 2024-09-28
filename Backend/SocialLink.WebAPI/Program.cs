@@ -1,4 +1,10 @@
 using Initializer;
+using Microsoft.AspNetCore.Identity;
+using SocialLink.Domain.Entities;
+using SocialLink.infrastructure;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +21,24 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddDataProtection();
+
+
+IdentityBuilder idBuilder = builder.Services.AddIdentityCore<User>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 6;
+    options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+    options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+});
+idBuilder.AddEntityFrameworkStores<SocialLinkDbContext>()
+    .AddDefaultTokenProviders()
+    .AddUserManager<IdUserManager>();
+
+
+
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
