@@ -4,7 +4,10 @@ using Strongly;
 
 namespace SocialLink.Domain.Entities
 {
-    [Strongly(converters: StronglyConverter.EfValueConverter | StronglyConverter.SwaggerSchemaFilter | StronglyConverter.SystemTextJson)]
+    [Strongly(converters: StronglyConverter.EfValueConverter |
+                          StronglyConverter.SwaggerSchemaFilter |
+                          StronglyConverter.SystemTextJson| 
+                          StronglyConverter.TypeConverter)]
     public partial struct UserId
     { }
 
