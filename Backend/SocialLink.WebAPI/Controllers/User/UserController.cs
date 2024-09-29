@@ -10,6 +10,8 @@ using SocialLink.Domain.Results;
 using SocialLink.WebAPI.Controllers.User.Request;
 using SocialLink.WebAPI.Controllers.User.Response;
 using SocialLink.WebAPI.Events;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Claims;
 
@@ -97,7 +99,7 @@ namespace SocialLink.WebAPI.Controllers.User
         [Authorize]
         [HttpPost]
         [Route("reset-password")]
-        public async Task<ActionResult> ResetPassword(string newPassword)
+        public async Task<ActionResult> ResetPassword([Required] string newPassword)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId.IsNullOrEmpty())
@@ -116,6 +118,20 @@ namespace SocialLink.WebAPI.Controllers.User
             }
             return Ok(new { Message = "Password reset successful." });
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-email-reset-code")]
+        public async Task<ActionResult> GetEmailResetCode([EmailAddress][Required] string email)
+        {
+            var result = await userDomainService.GetEmailResetCode(email);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.SumErrors());
+            }
+            return Ok("Email reset code has been sent.");
+        }
+
 
         [AllowAnonymous]
         [HttpPost]

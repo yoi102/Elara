@@ -30,8 +30,13 @@ namespace SocialLink.infrastructure.Services
                 return false;
             }
 
+            if (ResetCode != value.ResetCode)
+            {
+                return false;
+            }
 
-            return ResetCode == value.ResetCode;
+            stash.TryRemove(email,out _);
+            return true;
 
 
         }

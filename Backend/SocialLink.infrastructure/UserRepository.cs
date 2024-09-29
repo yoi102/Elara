@@ -125,6 +125,10 @@ namespace SocialLink.infrastructure
             {
                 return ErrorResult("User not found");
             }
+            if (await userManager.CheckPasswordAsync(user, newPassword))
+            {
+                return ErrorResult("New password cannot be the same as the old password.");
+            }
             string token = await userManager.GeneratePasswordResetTokenAsync(user);
 
             return await userManager.ResetPasswordAsync(user, token, newPassword);

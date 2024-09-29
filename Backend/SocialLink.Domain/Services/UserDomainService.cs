@@ -31,7 +31,7 @@ namespace SocialLink.Domain.Services
             this.emailResetCodeValidator = emailResetCodeValidator;
         }
 
-        public async Task<IdentityResult> ForgetPasswordResetByEmailAsync(string email)
+        public async Task<IdentityResult> GetEmailResetCode(string email)
         {
             var user = await userRepository.FindByEmailAsync(email);
             if (user is null)

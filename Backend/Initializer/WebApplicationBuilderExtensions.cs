@@ -61,10 +61,10 @@ namespace Initializer
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add<UnitOfWorkFilter>();
-                // Add XML Input Formatter
-                options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
-                // Add XML Output Formatter
-                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                //// Add XML Input Formatter
+                //options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
+                //// Add XML Output Formatter
+                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
             });
             builder.Services.AddControllers().AddXmlDataContractSerializerFormatters();
 

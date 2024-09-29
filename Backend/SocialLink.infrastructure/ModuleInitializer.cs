@@ -16,7 +16,7 @@ namespace SocialLink.infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserDomainService, UserDomainService>();
             services.AddScoped<IEmailSender, EmailSenderServiceMock>();
-            services.AddScoped<IEmailResetCodeValidator, EmailResetCodeValidatorService>();
+            services.AddSingleton<IEmailResetCodeValidator, EmailResetCodeValidatorService>();
         }
     }
 }
