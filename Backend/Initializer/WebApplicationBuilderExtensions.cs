@@ -32,12 +32,12 @@ namespace Initializer
             ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
 
             string programFilesFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            var dbFileFolder = Path.Combine(programFilesFolder, "Elara\\db");
+            var dbFileFolder = Path.Combine(programFilesFolder, "Elara\\db");//C:\Program Files\Elara\db
             Directory.CreateDirectory(dbFileFolder);
 
             var dbFullPath = Path.Combine(dbFileFolder, dbFileName);
             builder.Configuration["DefaultDB:ConnectionStrings"] = "Data Source=" + dbFullPath;
-            builder.Configuration["LogFolder"] = Path.Combine(programFilesFolder, "Elara\\logs");
+            builder.Configuration["LogFolder"] = Path.Combine(programFilesFolder, "Elara\\logs");//C:\Program Files\Elara\logs
         }
 
         public static void ConfigureCommonServices(this WebApplicationBuilder builder, InitializerOptions initOptions)
@@ -137,6 +137,7 @@ namespace Initializer
                 ArgumentException.ThrowIfNullOrEmpty(connectionStrings, "DefaultDB:ConnectionStrings");
 
                 options.UseSqlite(connectionStrings);
+                options.UseStronglyTypeConverters();
             }, assemblies);
         }
 

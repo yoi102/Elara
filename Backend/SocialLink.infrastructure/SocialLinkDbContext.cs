@@ -26,14 +26,6 @@ namespace SocialLink.infrastructure
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-
-
-            modelBuilder.Entity<User>()
-                            .Property(u => u.Id)
-                            .HasConversion(
-           id => id.Value,  // 将 UserId 转换为 int 存储到数据库
-           value => new UserId(value)  // 从数据库读取 int 并转换为 UserId
-       );
         }
     }
 }
