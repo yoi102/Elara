@@ -1,11 +1,11 @@
 ﻿using EventBus;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SocialLink.Domain;
-using SocialLink.Domain.DomainService;
 using SocialLink.Domain.Entities;
+using SocialLink.Domain.Interfaces;
 using SocialLink.Domain.Results;
 using SocialLink.WebAPI.Controllers.User.Request;
 using SocialLink.WebAPI.Controllers.User.Response;
@@ -22,10 +22,11 @@ namespace SocialLink.WebAPI.Controllers.User
         private readonly IEventBus eventBus;
         private readonly IUserDomainService userDomainService;
         private readonly IUserRepository userRepository;
-        public UserController(IUserDomainService userDomainService, IUserRepository repository, IEventBus eventBus)
+
+        public UserController(IUserDomainService userDomainService, IUserRepository userRepository, IEventBus eventBus)
         {
             this.userDomainService = userDomainService;
-            this.userRepository = repository;
+            this.userRepository = userRepository;
             this.eventBus = eventBus;
         }
 
@@ -48,7 +49,7 @@ namespace SocialLink.WebAPI.Controllers.User
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<UserResponse>> GetUserInfo()
+        public async Task<ActionResult<GetUserInfoResponse>> GetUserInfo()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId.IsNullOrEmpty())
@@ -72,7 +73,7 @@ namespace SocialLink.WebAPI.Controllers.User
             {
                 throw new ArgumentNullException(nameof(user.UserName), "UserName cannot be null");
             }
-            return new UserResponse(user.Id, user.UserName, user.CreationTime);
+            return new GetUserInfoResponse(user.Id, user.UserName, user.Email, user.PhoneNumber, user.CreationTime);
         }
 
         [AllowAnonymous]
@@ -87,25 +88,52 @@ namespace SocialLink.WebAPI.Controllers.User
         [AllowAnonymous]
         [HttpPost]
         [Route("login-by-name-and-password")]
-        public async Task<ActionResult<string?>> LoginByNameAndPassword(NameAndPasswordRequest request)
+        public async Task<ActionResult<string?>> LoginByNameAndPassword(LoginByNameAndPasswordRequest request)
         {
             var loginResult = await userDomainService.LoginByNameAndPasswordAsync(request.Name, request.Password);
             return HandleLoginResult(loginResult);
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost]
-        [Route("login-by-phone-number-and-password")]
-        public async Task<ActionResult<string?>> LoginByPhoneNumberAndPassword(NameAndPasswordRequest request)
+        [Route("reset-password")]
+        public async Task<ActionResult> ResetPassword(string newPassword)
         {
-            var loginResult = await userDomainService.LoginByPhoneNumberAndPasswordAsync(request.Name, request.Password);
-            return HandleLoginResult(loginResult);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId.IsNullOrEmpty())
+            {
+                return NotFound(new
+                {
+                    error = "Unauthorized",
+                    message = "You must be logged in to perform this action."
+                });
+            }
+
+            var result = await userRepository.ResetPasswordIdAsync(UserId.Parse(userId!), newPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.SumErrors());
+            }
+            return Ok(new { Message = "Password reset successful." });
         }
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("register-user")]
-        public async Task<ActionResult> RegisterUser(NameAndPasswordRequest request)
+        [Route("reset-password-with-email-code")]
+        public async Task<ActionResult> ResetPasswordWithEmailCode(ResetPasswordRequest resetPasswordRequest)
+        {
+            var result = await userDomainService.ResetPasswordByEmailResetCodeAsync(resetPasswordRequest);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.SumErrors());
+            }
+            return Ok(new { Message = "Password reset successful." });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("sign-up")]
+        public async Task<ActionResult> SignUp(SignUpRequest request)
         {
             var user = await userRepository.FindByNameAsync(request.Name);
 
@@ -118,7 +146,7 @@ namespace SocialLink.WebAPI.Controllers.User
                 });
             }
 
-            (var result, var resultUser) = await userRepository.RegisterAsync(request.Name, request.Password);
+            (var result, var resultUser) = await userRepository.SignUpAsync(request.Name, request.Email, request.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors.SumErrors());
@@ -126,18 +154,17 @@ namespace SocialLink.WebAPI.Controllers.User
             var userCreatedEvent = new UserCreatedEvent(resultUser.Id, request.Name, request.Password);
             eventBus.Publish("UserService.User.Created", userCreatedEvent);
 
-            return Created();
+            return CreatedAtAction(nameof(SignUp), new { id = resultUser.Id }, new { message = "User created successfully." });
         }
-
         private ActionResult<string?> HandleLoginResult(LoginResult loginResult)
         {
             if (loginResult.IsSuccess) return loginResult.Token;
-            else if (loginResult.SignInResult.IsLockedOut)//尝试登录次数太多
-                return StatusCode((int)HttpStatusCode.Locked, "用户已经被锁定");
+            else if (loginResult.SignInResult.IsLockedOut)
+                return StatusCode((int)HttpStatusCode.Locked, "User account is locked due to too many failed login attempts.");
             else
             {
                 string msg = loginResult.SignInResult.ToString();
-                return BadRequest("登录失败" + msg);
+                return BadRequest("Login failed \n" + msg);
             }
         }
     }

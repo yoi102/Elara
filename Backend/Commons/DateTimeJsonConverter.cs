@@ -32,7 +32,6 @@ public class DateTimeJsonConverter : JsonConverter<DateTime>
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
     {
-        //固定用服务器所在的时区，前端如果想适应用户的时区，自己调整
         writer.WriteStringValue(value.ToString(_dateFormatString));
     }
 }

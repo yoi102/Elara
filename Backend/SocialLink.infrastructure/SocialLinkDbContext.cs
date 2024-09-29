@@ -17,6 +17,17 @@ namespace SocialLink.infrastructure
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
             modelBuilder.EnableSoftDeletionGlobalFilter();
+
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserName)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+
             modelBuilder.Entity<User>()
                             .Property(u => u.Id)
                             .HasConversion(

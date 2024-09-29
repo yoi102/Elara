@@ -2,11 +2,9 @@
 
 namespace SocialLink.WebAPI.Controllers.User.Request
 {
-    public record class NameAndPasswordRequest(string Name, string Password);
+    public record class LoginByNameAndPasswordRequest(string Name, string Password);
 
-
-
-    public class LoginByNameAndPasswordRequestValidator : AbstractValidator<NameAndPasswordRequest>
+    public class LoginByNameAndPasswordRequestValidator : AbstractValidator<LoginByNameAndPasswordRequest>
     {
         public LoginByNameAndPasswordRequestValidator()
         {
@@ -14,5 +12,4 @@ namespace SocialLink.WebAPI.Controllers.User.Request
             RuleFor(e => e.Password).NotNull().NotEmpty();
         }
     }
-
 }

@@ -32,6 +32,7 @@ IdentityBuilder idBuilder = builder.Services.AddIdentityCore<User>(options =>
     options.Password.RequiredLength = 6;
     options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
     options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+    options.User.RequireUniqueEmail = true;
 });
 idBuilder.AddEntityFrameworkStores<SocialLinkDbContext>()
     .AddDefaultTokenProviders()

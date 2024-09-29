@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SocialLink.Domain;
 using SocialLink.Domain.Entities;
+using SocialLink.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -28,21 +28,24 @@ namespace SocialLink.infrastructure
 
         public async Task<IdentityResult> ChangePasswordAsync(UserId userId, string newPassword)
         {
-            if (newPassword.Length < 6)
-            {
-                IdentityError error = new IdentityError();
-                error.Code = "Password Invalid";
-                error.Description = "密码长度不能少于6";
-                return IdentityResult.Failed(error);
-            }
             var user = await userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 IdentityError error = new IdentityError();
                 error.Code = "Not Found";
-                error.Description = "没有找到用户";
+                error.Description = "User not found";
                 return IdentityResult.Failed(error);
             }
+            var passwordValidators = userManager.PasswordValidators;
+            foreach (var validator in passwordValidators)
+            {
+                var result = await validator.ValidateAsync(userManager, user, newPassword);
+                if (!result.Succeeded)
+                {
+                    return IdentityResult.Failed(result.Errors.ToArray());
+                }
+            }
+
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             var resetPasswordResult = await userManager.ResetPasswordAsync(user, token, newPassword);
             return resetPasswordResult;
@@ -89,23 +92,16 @@ namespace SocialLink.infrastructure
             return userManager.FindByNameAsync(name);
         }
 
-        public Task<User?> FindByPhoneNumberAsync(string phoneNumber)
+        public async Task<(IdentityResult, User)> SignUpAsync(string name, string email, string password)
         {
-            return userManager.Users.FirstOrDefaultAsync(user => user.PhoneNumber == phoneNumber);
-        }
-
-        public async Task<(IdentityResult, User)> RegisterAsync(string name, string password)
-        {
-            var user = new User(name);
+            var user = new User(name, email);
 
             return (await this.userManager.CreateAsync(user, password), user);
         }
+
         public async Task<IdentityResult> RemoveUserAsync(UserId id)
         {
             var user = await FindByIdAsync(id);
-            //一定要删除 aspnetuserlogins 表中的数据，否则再次用这个外部登录登录的话
-            //就会报错：The instance of entity type 'IdentityUserLogin<Guid>' cannot be tracked because another instance with the same key value for {'LoginProvider', 'ProviderKey'} is already being tracked.
-            //而且要先删除 aspnetuserlogins 数据，再软删除User
             if (user == null)
             {
                 return IdentityResult.Success;
@@ -121,5 +117,36 @@ namespace SocialLink.infrastructure
             return result;
         }
 
+        public async Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword)
+        {
+            var user = await FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return ErrorResult("User not found");
+            }
+            string token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            return await userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        public async Task<IdentityResult> ResetPasswordIdAsync(UserId id, string newPassword)
+        {
+            var user = await FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return ErrorResult("User not found");
+            }
+            string token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            return await userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        private static IdentityResult ErrorResult(string msg)
+        {
+            IdentityError idError = new IdentityError { Description = msg };
+            return IdentityResult.Failed(idError);
+        }
     }
 }

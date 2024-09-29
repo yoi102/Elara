@@ -10,9 +10,10 @@ namespace SocialLink.Domain.Entities
 
     public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDeletionTime
     {
-        public User(string name)
+        public User(string name, string email)
         {
             Id = UserId.New();
+            Email = email;
             UserName = name;
             DisplayName = name;
             CreationTime = DateTimeOffset.Now;

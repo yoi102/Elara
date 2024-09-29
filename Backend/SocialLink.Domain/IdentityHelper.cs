@@ -1,4 +1,6 @@
-﻿namespace Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace SocialLink.Domain;
 public static class IdentityHelper
 {
     public static string SumErrors(this IEnumerable<IdentityError> errors)

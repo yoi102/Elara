@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventBus
 {
@@ -6,9 +7,9 @@ namespace EventBus
     {
         public static IApplicationBuilder UseEventBus(this IApplicationBuilder appBuilder)
         {
-            if (appBuilder.ApplicationServices.GetService(typeof(IEventBus)) == null)
+            if (appBuilder.ApplicationServices.GetService<IEventBus>() == null)
             {
-                throw new ApplicationException("找不到IEventBus实例");
+                throw new ApplicationException("IEventBus instance not found");
             }
 
             return appBuilder;

@@ -6,7 +6,7 @@ namespace DomainCommons
     public record BaseEntity : IEntity, IDomainEvents
     {
         [NotMapped]
-        private readonly List<INotification> domainEvents = new();
+        private readonly List<INotification> domainEvents = [];
 
         public void AddDomainEvent(INotification eventItem)
         {

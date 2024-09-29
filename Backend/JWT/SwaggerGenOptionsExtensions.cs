@@ -14,7 +14,7 @@ namespace JWT
         {
             c.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
-                Description = "Authorization header. \r\nExample: 'Bearer 12345abcdef'",
+                Description = "Authorization header. \r\nExample: 'Bearer Token'",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,

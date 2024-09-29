@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SocialLink.Domain
+namespace SocialLink.Domain.Interfaces
 {
     public interface IUserRepository
     {
@@ -16,15 +16,17 @@ namespace SocialLink.Domain
 
         Task<SignInResult> CheckForSignInAsync(User user, string password, bool lockoutOnFailure);
 
-        Task<(IdentityResult,User)> RegisterAsync(string name, string password);
+        Task<User?> FindByEmailAsync(string email);
 
         Task<User?> FindByIdAsync(UserId userId);
 
         Task<User?> FindByNameAsync(string name);
 
-        Task<User?> FindByEmailAsync(string email);
+        Task<(IdentityResult, User)> SignUpAsync(string name,string email, string password);
 
-        Task<User?> FindByPhoneNumberAsync(string phoneNumber);
         Task<IdentityResult> RemoveUserAsync(UserId id);
+
+        Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword);
+        Task<IdentityResult> ResetPasswordIdAsync(UserId id, string newPassword);
     }
 }

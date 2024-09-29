@@ -27,10 +27,10 @@ namespace Infrastructure.EFCore
             var softDeletedEntities = this.ChangeTracker.Entries<ISoftDelete>()
                  .Where(e => e.State == EntityState.Modified && e.Entity.IsDeleted)
                  .Select(e => e.Entity)
-                 .ToList();//防止延迟加载
+                 .ToList();// Prevent Lazy Loading
 
             var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-            //把被软删除的对象从 Cache 删除
+            // Remove soft-deleted objects from the cache
             softDeletedEntities.ForEach(e => this.Entry(e).State = EntityState.Detached);
 
             return result;

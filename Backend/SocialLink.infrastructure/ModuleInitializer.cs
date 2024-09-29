@@ -1,9 +1,11 @@
 ﻿using Commons;
 using JWT;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using SocialLink.Domain;
-using SocialLink.Domain.DomainService;
+using SocialLink.Domain.Interfaces;
+using SocialLink.Domain.Services;
+using SocialLink.infrastructure.Services;
 
 namespace SocialLink.infrastructure
 {
@@ -13,6 +15,8 @@ namespace SocialLink.infrastructure
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserDomainService, UserDomainService>();
+            services.AddScoped<IEmailSender, EmailSenderServiceMock>();
+            services.AddScoped<IEmailResetCodeValidator, EmailResetCodeValidatorService>();
         }
     }
 }

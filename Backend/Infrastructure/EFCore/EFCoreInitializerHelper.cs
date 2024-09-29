@@ -20,7 +20,7 @@ namespace Infrastructure.EFCore
                 {
                     //similar to serviceCollection.AddDbContextPool<ECDictDbContext>(opt=>new DbContextOptionsBuilder(dbCtxOpt));
                     var methodGenericAddDbContext = methodAddDbContext.MakeGenericMethod(dbCtxType);
-                    methodGenericAddDbContext.Invoke(null, new object[] { services, optionsAction, ServiceLifetime.Scoped, ServiceLifetime.Scoped });
+                    methodGenericAddDbContext.Invoke(null, [services, optionsAction, ServiceLifetime.Scoped, ServiceLifetime.Scoped]);
                 }
             }
             return services;

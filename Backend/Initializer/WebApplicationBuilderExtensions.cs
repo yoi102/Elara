@@ -8,6 +8,7 @@ using JWT;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,19 +61,14 @@ namespace Initializer
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add<UnitOfWorkFilter>();
-                //options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
-                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                // Add XML Input Formatter
+                options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
+                // Add XML Output Formatter
+                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
             });
             builder.Services.AddControllers().AddXmlDataContractSerializerFormatters();
 
-            //services.Configure<JsonOptions>(options =>
-            //{
-            //    //设置时间格式。而非“2008-08-08T08:08:08”这样的格式
-            //    options.JsonSerializerOptions.Converters.Add(new DateTimeJsonConverter("yyyy-MM-dd HH:mm:ss"));
-            //});
-
             ConfigureCors(services, configuration);
-
 
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
@@ -124,7 +120,7 @@ namespace Initializer
             var jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();
             ArgumentNullException.ThrowIfNull(jwtOpt, "JWT");
             services.AddJWTAuthentication(jwtOpt);
-            // 启用 Swagger中的【Authorize】按钮。
+            // 【Authorize】Button。
             builder.Services.Configure<SwaggerGenOptions>(c =>
             {
                 c.AddAuthenticationHeader();

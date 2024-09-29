@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialLink.Domain.Results
 {
@@ -13,7 +8,7 @@ namespace SocialLink.Domain.Results
 
         public required SignInResult SignInResult { get; init; }
 
-        public required string? Token { get; init; }
+        public string? Token { get; init; }
 
         [MemberNotNullWhen(true, nameof(Token))]
         public bool IsSuccess => SignInResult.Succeeded;

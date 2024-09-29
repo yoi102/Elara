@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using SocialLink.Domain.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SocialLink.Domain.DomainService
+namespace SocialLink.Domain.Interfaces
 {
     public interface IUserDomainService
     {
+        Task<IdentityResult> ForgetPasswordResetByEmailAsync(string email);
         Task<LoginResult> LoginByEmailAndPasswordAsync(string email, string password);
         Task<LoginResult> LoginByNameAndPasswordAsync(string name, string password);
-        Task<LoginResult> LoginByPhoneNumberAndPasswordAsync(string phoneNumber, string password);
+        Task<IdentityResult> ResetPasswordByEmailResetCodeAsync(ResetPasswordRequest resetPasswordRequest);
     }
 }

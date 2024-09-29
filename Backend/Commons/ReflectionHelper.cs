@@ -185,10 +185,6 @@ public static class ReflectionHelper
         {
             Debug.WriteLine(ex);
         }
-        //catch (FileNotFoundException ex)
-        //{
-        //    Debug.WriteLine(ex);
-        //}
 
         if (assembly == null)
         {
@@ -204,10 +200,7 @@ public static class ReflectionHelper
             {
                 Debug.WriteLine(ex);
             }
-            //catch (FileNotFoundException ex)
-            //{
-            //    Debug.WriteLine(ex);
-            //}
+      
         }
 
         return assembly != null;
