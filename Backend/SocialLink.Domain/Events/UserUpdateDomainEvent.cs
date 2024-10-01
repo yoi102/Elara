@@ -3,7 +3,6 @@ using SocialLink.Domain.Entities;
 
 namespace SocialLink.Domain.Events
 {
-    public record class UserUpdateEvent(User User) : INotification
-    {
-    }
+    public record class UserUpdateDomainEvent(User User) : INotification;
+
 }

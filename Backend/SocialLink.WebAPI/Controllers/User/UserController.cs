@@ -49,6 +49,23 @@ namespace SocialLink.WebAPI.Controllers.User
             return Ok();
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-email-reset-code")]
+        public async Task<ActionResult> GetEmailResetCode([EmailAddress][Required] string email)
+        {
+            var result = await userDomainService.GetEmailResetCode(email);
+            if (!result.IdentityResult.Succeeded)
+            {
+                return BadRequest(result.IdentityResult.Errors.SumErrors());
+            }
+            var resetPasswordByEmailResetCodeEvent =
+                new ResetPasswordByEmailResetCodeEvent(result.Email, result.Subject, result.HtmlMessage);
+
+            eventBus.Publish("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent);
+            return Ok("Email reset code has been sent.");
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<GetUserInfoResponse>> GetUserInfo()
@@ -118,21 +135,6 @@ namespace SocialLink.WebAPI.Controllers.User
             }
             return Ok(new { Message = "Password reset successful." });
         }
-
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("get-email-reset-code")]
-        public async Task<ActionResult> GetEmailResetCode([EmailAddress][Required] string email)
-        {
-            var result = await userDomainService.GetEmailResetCode(email);
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors.SumErrors());
-            }
-            return Ok("Email reset code has been sent.");
-        }
-
-
         [AllowAnonymous]
         [HttpPost]
         [Route("reset-password-with-email-code")]
@@ -172,6 +174,7 @@ namespace SocialLink.WebAPI.Controllers.User
 
             return CreatedAtAction(nameof(SignUp), new { id = resultUser.Id }, new { message = "User created successfully." });
         }
+
         private ActionResult<string?> HandleLoginResult(LoginResult loginResult)
         {
             if (loginResult.IsSuccess) return loginResult.Token;

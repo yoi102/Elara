@@ -1,7 +1,6 @@
 ﻿using JWT;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using SocialLink.Domain.Entities;
 using SocialLink.Domain.Interfaces;
@@ -13,7 +12,6 @@ namespace SocialLink.Domain.Services
     public class UserDomainService : IUserDomainService
     {
         private readonly IEmailResetCodeValidator emailResetCodeValidator;
-        private readonly IEmailSender emailSender;
         private readonly IOptions<JWTOptions> optJWT;
         private readonly ITokenService tokenService;
         private readonly IUserRepository userRepository;
@@ -21,29 +19,28 @@ namespace SocialLink.Domain.Services
         public UserDomainService(IUserRepository userRepository,
             ITokenService tokenService,
             IOptions<JWTOptions> optJWT,
-            IEmailSender emailSender,
             IEmailResetCodeValidator emailResetCodeValidator)
         {
             this.userRepository = userRepository;
             this.tokenService = tokenService;
             this.optJWT = optJWT;
-            this.emailSender = emailSender;
             this.emailResetCodeValidator = emailResetCodeValidator;
         }
 
-        public async Task<IdentityResult> GetEmailResetCode(string email)
+        public async Task<GetEmailResetCodeResult> GetEmailResetCode(string email)
         {
             var user = await userRepository.FindByEmailAsync(email);
             if (user is null)
             {
                 IdentityError error = new IdentityError { Description = "User not found" };
-                return IdentityResult.Failed(error);
+                var identityResult = IdentityResult.Failed(error);
+
+                return new GetEmailResetCodeResult(identityResult, email, "Reset Code", string.Empty);
             }
 
             var resetCode = GenerateResetCode();
-            await emailSender.SendEmailAsync(email, "Reset Code", resetCode);
             emailResetCodeValidator.StashEmailResetCode(email, resetCode);
-            return IdentityResult.Success;
+            return new GetEmailResetCodeResult(IdentityResult.Success, email, "Reset Code", resetCode);
         }
 
         public async Task<LoginResult> LoginByEmailAndPasswordAsync(string email, string password)

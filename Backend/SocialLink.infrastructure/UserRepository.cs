@@ -1,14 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SocialLink.Domain.Entities;
 using SocialLink.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialLink.infrastructure
 {
@@ -92,13 +84,6 @@ namespace SocialLink.infrastructure
             return userManager.FindByNameAsync(name);
         }
 
-        public async Task<(IdentityResult, User)> SignUpAsync(string name, string email, string password)
-        {
-            var user = new User(name, email);
-
-            return (await this.userManager.CreateAsync(user, password), user);
-        }
-
         public async Task<IdentityResult> RemoveUserAsync(UserId id)
         {
             var user = await FindByIdAsync(id);
@@ -147,6 +132,12 @@ namespace SocialLink.infrastructure
             return await userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
+        public async Task<(IdentityResult, User)> SignUpAsync(string name, string email, string password)
+        {
+            var user = new User(name, email);
+
+            return (await this.userManager.CreateAsync(user, password), user);
+        }
         private static IdentityResult ErrorResult(string msg)
         {
             IdentityError idError = new IdentityError { Description = msg };

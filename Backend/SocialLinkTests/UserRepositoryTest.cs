@@ -23,31 +23,65 @@ namespace SocialLinkTests
             var userStoreMock = new Mock<IUserStore<User>>();
 
             _mockUserManager = new Mock<IdUserManager>
-                (userStoreMock.Object, null, null, null, null, null, null, null, null);
+                (userStoreMock.Object, null!, null!, null!, null!, null!, null!, null!, null!);
 
         }
         [Fact]
-        public async Task AccessFailedAsyncTest()
+        public async Task AccessFailedAsync_Should_Call_UserManager_AccessFailedAsync()
         {
-            //这种直接调用userManager 的，测试似乎没意义
+            //意味ある？
             var userRepository = new UserRepository(_mockUserManager.Object);
             var context = await GetDataBaseContext();
-            var user = context.Users.FirstOrDefault();
+            var user = context.Users.First();
             user.Should().NotBeNull();
 
             _mockUserManager.Setup(i => i.AccessFailedAsync(user))
-                              .Callback(() => user!.AccessFailedCount++);
-
+                              .Callback(() => user.AccessFailedCount++);
+            var before = user.AccessFailedCount;
             await userRepository.AccessFailedAsync(user!);
+            var after = user.AccessFailedCount;
+            Assert.Equal(after, before + 1);
+            _mockUserManager.Verify(um => um.AccessFailedAsync(user), Times.Once);
 
-            Assert.Equal(1, user!.AccessFailedCount);
+        }
+
+        [Fact]
+        public async Task ChangePasswordAsync_Should_Return_SucceededResult()
+        {
+            // Arrange
+
+            var userRepository = new UserRepository(_mockUserManager.Object);
+            var context = await GetDataBaseContext();
+            var user = context.Users.First();
+
+            _mockUserManager.Setup(um => um.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+
+
+            var token = "reset-token";
+            var password = "123123";
+
+            _mockUserManager.Setup(um => um.GeneratePasswordResetTokenAsync(user))
+                           .ReturnsAsync(token);
+
+            _mockUserManager.Setup(um => um.ResetPasswordAsync(user, token, password))
+                           .ReturnsAsync(IdentityResult.Success);
+
+            // Act
+            var result = await userRepository.ChangePasswordAsync(user.Id, password);
+
+            // Assert
+            _mockUserManager.Verify(um => um.FindByIdAsync(user.Id.ToString()));
+            _mockUserManager.Verify(um => um.GeneratePasswordResetTokenAsync(user));
+            _mockUserManager.Verify(um => um.ResetPasswordAsync(user, token, password));
+            result.Succeeded.Should().BeTrue();
+
+
         }
 
 
 
-
         [Fact]
-        public async Task MockDataBaseContextTest()
+        public async Task GetDataBaseContext_Should_Contain_10_Users()
         {
             var context = await GetDataBaseContext();
 
