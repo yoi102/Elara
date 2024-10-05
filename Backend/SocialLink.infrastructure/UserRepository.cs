@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SocialLink.Domain.Entities;
 using SocialLink.Domain.Interfaces;
+using SocialLink.Domain.Results;
 
 namespace SocialLink.infrastructure
 {
@@ -119,7 +120,7 @@ namespace SocialLink.infrastructure
             return await userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
-        public async Task<IdentityResult> ResetPasswordIdAsync(UserId id, string newPassword)
+        public async Task<IdentityResult> ResetPasswordByIdAsync(UserId id, string newPassword)
         {
             var user = await FindByIdAsync(id);
 
@@ -127,17 +128,37 @@ namespace SocialLink.infrastructure
             {
                 return ErrorResult("User not found");
             }
+            if (await userManager.CheckPasswordAsync(user, newPassword))
+            {
+                return ErrorResult("New password cannot be the same as the old password.");
+            }
             string token = await userManager.GeneratePasswordResetTokenAsync(user);
 
             return await userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
-        public async Task<(IdentityResult, User)> SignUpAsync(string name, string email, string password)
+        public async Task<SignUpResult> SignUpAsync(string name, string email, string password)
         {
             var user = new User(name, email);
 
-            return (await this.userManager.CreateAsync(user, password), user);
+            var identityResult = await this.userManager.CreateAsync(user, password);
+
+            var result = new SignUpResult() { IdentityResult = identityResult };
+
+            if (!result.Succeeded)
+                return result;
+
+            var createdUser = await this.userManager.FindByNameAsync(name);
+            if (createdUser == null)
+            {
+                result.IdentityResult = IdentityResult.Failed();
+                return result;
+            }
+
+            result.User = createdUser;
+            return result;
         }
+
         private static IdentityResult ErrorResult(string msg)
         {
             IdentityError idError = new IdentityError { Description = msg };

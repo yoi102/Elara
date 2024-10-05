@@ -128,7 +128,7 @@ namespace SocialLink.WebAPI.Controllers.User
                 });
             }
 
-            var result = await userRepository.ResetPasswordIdAsync(UserId.Parse(userId!), newPassword);
+            var result = await userRepository.ResetPasswordByIdAsync(UserId.Parse(userId!), newPassword);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors.SumErrors());
@@ -164,15 +164,15 @@ namespace SocialLink.WebAPI.Controllers.User
                 });
             }
 
-            (var result, var resultUser) = await userRepository.SignUpAsync(request.Name, request.Email, request.Password);
-            if (!result.Succeeded)
+            var signUpResult = await userRepository.SignUpAsync(request.Name, request.Email, request.Password);
+            if (!signUpResult.Succeeded)
             {
-                return BadRequest(result.Errors.SumErrors());
+                return BadRequest(signUpResult.IdentityResult.Errors.SumErrors());
             }
-            var userCreatedEvent = new UserCreatedEvent(resultUser.Id, request.Name, request.Password);
+            var userCreatedEvent = new UserCreatedEvent(signUpResult.User.Id, request.Name, request.Password);
             eventBus.Publish("UserService.User.Created", userCreatedEvent);
 
-            return CreatedAtAction(nameof(SignUp), new { id = resultUser.Id }, new { message = "User created successfully." });
+            return CreatedAtAction(nameof(SignUp), new { id = signUpResult.User.Id }, new { message = "User created successfully." });
         }
 
         private ActionResult<string?> HandleLoginResult(LoginResult loginResult)

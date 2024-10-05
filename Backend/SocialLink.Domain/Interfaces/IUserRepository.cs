@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SocialLink.Domain.Entities;
+using SocialLink.Domain.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +23,11 @@ namespace SocialLink.Domain.Interfaces
 
         Task<User?> FindByNameAsync(string name);
 
-        Task<(IdentityResult, User)> SignUpAsync(string name,string email, string password);
+        Task<SignUpResult> SignUpAsync(string name,string email, string password);
 
         Task<IdentityResult> RemoveUserAsync(UserId id);
 
         Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword);
-        Task<IdentityResult> ResetPasswordIdAsync(UserId id, string newPassword);
+        Task<IdentityResult> ResetPasswordByIdAsync(UserId id, string newPassword);
     }
 }
