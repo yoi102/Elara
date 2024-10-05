@@ -29,7 +29,6 @@ namespace SocialLinkTests
         [Fact]
         public async Task AccessFailedAsync_Should_Call_UserManager_AccessFailedAsync()
         {
-            //意味ある？
             var user = _context.Users.First();
             user.Should().NotBeNull();
 
