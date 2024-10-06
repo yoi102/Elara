@@ -1,4 +1,4 @@
-﻿using Commons;
+﻿using Commons.Interfaces;
 using JWT;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using SocialLink.infrastructure.Services;
 
 namespace SocialLink.infrastructure
 {
-    internal class ModuleInitializer : IModuleInitializer
+    internal class BackendModuleInitializer : IBackendModuleInitializer
     {
         public void Initialize(IServiceCollection services)
         {
