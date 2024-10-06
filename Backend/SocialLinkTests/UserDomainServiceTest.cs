@@ -6,9 +6,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using SocialLink.Domain.Entities;
 using SocialLink.Domain.Interfaces;
-using SocialLink.Domain.Results;
 using SocialLink.Domain.Services;
-using SocialLink.infrastructure;
 using System.Security.Claims;
 
 namespace SocialLinkTests
