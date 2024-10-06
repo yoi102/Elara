@@ -83,8 +83,10 @@ namespace SocialLink.Domain.Services
             return tokenService.BuildToken(claims, optJWT.Value);
         }
 
-        private async Task<(SignInResult, User?)> CheckCredentialsAsync(string password, User? user)
+      
+        private async Task<(SignInResult, User?)> CheckEmailAndPasswordAsync(string email, string password)
         {
+            var user = await userRepository.FindByEmailAsync(email);
             if (user == null)
             {
                 return (SignInResult.Failed, user);
@@ -93,16 +95,15 @@ namespace SocialLink.Domain.Services
             return (result, user);
         }
 
-        private async Task<(SignInResult, User?)> CheckEmailAndPasswordAsync(string email, string password)
-        {
-            var user = await userRepository.FindByEmailAsync(email);
-            return await CheckCredentialsAsync(password, user);
-        }
-
         private async Task<(SignInResult, User?)> CheckNameAndPasswordAsync(string name, string password)
         {
             var user = await userRepository.FindByNameAsync(name);
-            return await CheckCredentialsAsync(password, user);
+            if (user == null)
+            {
+                return (SignInResult.Failed, user);
+            }
+            var result = await userRepository.CheckForSignInAsync(user, password, true);
+            return (result, user);
         }
 
         private string GenerateResetCode()
