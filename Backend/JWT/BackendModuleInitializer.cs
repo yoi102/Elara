@@ -1,9 +1,9 @@
-﻿using Commons;
+﻿using Commons.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JWT
 {
-    internal class ModuleInitializer : IModuleInitializer
+    internal class BackendModuleInitializer : IBackendModuleInitializer
     {
         public void Initialize(IServiceCollection services)
         {

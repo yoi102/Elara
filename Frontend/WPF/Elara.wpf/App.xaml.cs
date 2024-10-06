@@ -1,4 +1,6 @@
-﻿using HttpServices;
+﻿using Commons;
+using Commons.Extensions;
+using HttpServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -43,8 +45,8 @@ public partial class App : Application
         var services = new ServiceCollection();
 
 
-        services.InitializeHttpServices();
-
+        var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
+        services.RunBackendModuleInitializers(assemblies);
 
 
         return services.BuildServiceProvider();

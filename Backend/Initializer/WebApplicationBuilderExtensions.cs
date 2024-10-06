@@ -1,5 +1,6 @@
 ﻿using ASPNETCore;
 using Commons;
+using Commons.Extensions;
 using EventBus;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -48,7 +49,7 @@ namespace Initializer
             ConfigureSerilog(builder, initOptions);
 
             var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
-            services.RunModuleInitializers(assemblies);
+            services.RunBackendModuleInitializers(assemblies);
 
 
             ConfigureDbContexts(services, configuration, assemblies);
