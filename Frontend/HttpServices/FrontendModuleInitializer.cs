@@ -1,5 +1,8 @@
 ﻿using Commons.Interfaces;
+using HttpServices.Services;
 using Microsoft.Extensions.DependencyInjection;
+using RestSharp;
+using Service.Abstractions;
 
 namespace HttpServices
 {
@@ -9,11 +12,12 @@ namespace HttpServices
 
         public void Initialize(IServiceCollection services)
         {
-            HttpClient httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("http://localhost:8080/Elara/")
-            };
-            services.AddSingleton(httpClient);
+
+            var client = new RestClient("http://localhost:8080/Elara");
+            client.AddDefaultHeader("Accept", "application/json");
+
+            services.AddSingleton(client);
+            services.AddTransient<IUserService, UserService>();
         }
     }
 }

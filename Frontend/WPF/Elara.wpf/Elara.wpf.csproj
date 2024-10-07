@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModel\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\HttpServices\HttpServices.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,7 @@
 ﻿using Commons;
 using Commons.Extensions;
+using Elara.wpf.View;
+using Elara.wpf.ViewModel;
 using HttpServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -19,16 +21,28 @@ public partial class App : Application
     public App()
     {
         Services = ConfigureServices();
-
-
-
         this.InitializeComponent();
+
+        ShowWindow();
+    }
+
+    private void ShowWindow()
+    {
+        var mainWindow = Services.GetService<MainWindowView>();
+        if (mainWindow == null)
+        {
+            throw new ApplicationException();
+        }
+        mainWindow.Show();
     }
 
     public IServiceProvider Services { get; }
 
 
-
+    /// <summary>
+    /// Gets the current <see cref="App"/> instance in use
+    /// </summary>
+    public new static App Current => (App)Application.Current;
 
 
 
@@ -44,10 +58,11 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
 
+        services.AddSingleton<MainWindowView>();
+        services.AddTransient<MainWindowViewModel>();
 
         var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
-        services.RunBackendModuleInitializers(assemblies);
-
+        services.RunFrontendModuleInitializers(assemblies);
 
         return services.BuildServiceProvider();
     }

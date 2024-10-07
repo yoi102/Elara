@@ -8,5 +8,8 @@ namespace Service.Abstractions
 {
     public interface IUserService
     {
+        Task<bool> DeleteAsync(CancellationToken cancellationToken = default);
+        Task<bool> GetEmailResetCodeAsync(string email, CancellationToken cancellationToken = default);
+
     }
 }

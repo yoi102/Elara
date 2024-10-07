@@ -5,6 +5,8 @@
         xmlns:local="clr-namespace:Elara.wpf"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
         Title="Elara"
         Width="1100"
         Height="800"
@@ -60,8 +62,12 @@
                                     Style="{StaticResource MaterialDesignToolButton}"
                                     ToolTip="Next Item" />
                         </StackPanel>
-                    </Grid>
 
+                        <Button  Grid.Row="2"
+                                 Content="Test"
+                                 Command="{Binding TestCommand}"/>
+
+                    </Grid>
                 </md:ColorZone>
             </md:DrawerHost>
         </md:DialogHost>
