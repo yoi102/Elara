@@ -45,7 +45,9 @@ namespace SocialLink.WebAPI.Controllers.User
                     message = "The user with the specified ID does not exist."
                 });
             }
-            await userRepository.RemoveUserAsync(UserId.Parse(userId!));
+            var result = await userRepository.RemoveUserAsync(UserId.Parse(userId!));
+            if (!result.Succeeded)
+                return BadRequest();
             return Ok();
         }
 
@@ -54,10 +56,11 @@ namespace SocialLink.WebAPI.Controllers.User
         [Route("get-email-reset-code")]
         public async Task<ActionResult> GetEmailResetCode([EmailAddress][Required] string email)
         {
+
             var result = await userDomainService.GetEmailResetCode(email);
             if (!result.IdentityResult.Succeeded)
             {
-                return BadRequest(result.IdentityResult.Errors.SumErrors());
+                return NotFound(result.IdentityResult.Errors.SumErrors());
             }
             var resetPasswordByEmailResetCodeEvent =
                 new ResetPasswordByEmailResetCodeEvent(result.Email, result.Subject, result.HtmlMessage);
@@ -140,6 +143,15 @@ namespace SocialLink.WebAPI.Controllers.User
         [Route("reset-password-with-email-code")]
         public async Task<ActionResult> ResetPasswordWithEmailCode(ResetPasswordRequest resetPasswordRequest)
         {
+            var user = await userRepository.FindByEmailAsync(resetPasswordRequest.Email);
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    error = "UserNotFound",
+                    message = "The user with the specified email does not exist."
+                });
+            }
             var result = await userDomainService.ResetPasswordByEmailResetCodeAsync(resetPasswordRequest);
             if (!result.Succeeded)
             {
@@ -156,6 +168,15 @@ namespace SocialLink.WebAPI.Controllers.User
             var user = await userRepository.FindByNameAsync(request.Name);
 
             if (user != null)
+            {
+                return Conflict(new
+                {
+                    error = "UsernameAlreadyExists",
+                    message = "The username is already taken. Please choose a different one."
+                });
+            }
+            var _user = await userRepository.FindByEmailAsync(request.Email);
+            if (_user != null)
             {
                 return Conflict(new
                 {
@@ -183,7 +204,7 @@ namespace SocialLink.WebAPI.Controllers.User
             else
             {
                 string msg = loginResult.SignInResult.ToString();
-                return BadRequest("Login failed \n" + msg);
+                return Unauthorized("Login failed \n" + msg);
             }
         }
     }
