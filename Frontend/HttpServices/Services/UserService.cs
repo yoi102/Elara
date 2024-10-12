@@ -7,13 +7,11 @@ namespace HttpServices.Services
     {
         private readonly RestClient client;
         private const string serviceUri = "SocialLink/api/user";
+
         public UserService(RestClient restClient)
         {
-
             this.client = restClient;
-
         }
-
 
         public async Task<bool> DeleteAsync(CancellationToken cancellationToken = default)
         {
@@ -25,7 +23,6 @@ namespace HttpServices.Services
             }
             return false;
         }
-
 
         public async Task<bool> GetEmailResetCodeAsync(string email, CancellationToken cancellationToken = default)
         {
@@ -42,11 +39,17 @@ namespace HttpServices.Services
                 return true;
             }
 
-
-
             return false;
-
         }
+
+
+
+
+
+
+
+
+
 
 
 

@@ -531,13 +531,11 @@ namespace SocialLinkTests
             // Arrange
             var request = new SignUpRequest("testName", "2test@example.com", "Password123");
 
-            // 模拟用户名和邮箱都不存在
             userRepositoryMock.Setup(repo => repo.FindByNameAsync(It.IsAny<string>()))
                 .ReturnsAsync((User)null!);
             userRepositoryMock.Setup(repo => repo.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync((User)null!);
 
-            // 模拟注册失败
             userRepositoryMock.Setup(repo => repo.SignUpAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new SignUpResult
                 {
@@ -604,14 +602,12 @@ namespace SocialLinkTests
             // Arrange
             var request = new SignUpRequest("testName", "2test@example.com", "Password123");
 
-            // 模拟用户名和邮箱都不存在
             userRepositoryMock.Setup(repo => repo.FindByNameAsync(It.IsAny<string>()))
                 .ReturnsAsync((User)null!);
             userRepositoryMock.Setup(repo => repo.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync((User)null!);
             eventBusMock.Setup(eb => eb.Publish(It.IsAny<string>(), It.IsAny<UserCreatedEvent>()));
 
-            // 模拟注册成功
             var userId = Guid.NewGuid();
             userRepositoryMock.Setup(repo => repo.SignUpAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new SignUpResult
@@ -628,8 +624,6 @@ namespace SocialLinkTests
             userRepositoryMock.Verify(repo => repo.FindByEmailAsync(request.Email));
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
             createdResult.StatusCode.Should().Be(201);
-
-            // 验证事件发布
             eventBusMock.Verify(bus => bus.Publish("UserService.User.Created", It.IsAny<UserCreatedEvent>()), Times.Once);
         }
     }

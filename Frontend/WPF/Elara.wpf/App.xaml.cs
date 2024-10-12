@@ -3,6 +3,7 @@ using Commons.Extensions;
 using Elara.wpf.View;
 using Elara.wpf.ViewModel;
 using HttpServices;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -28,12 +29,27 @@ public partial class App : Application
 
     private void ShowWindow()
     {
-        var mainWindow = Services.GetService<MainWindowView>();
-        if (mainWindow == null)
+        var loginWindow = Services.GetService<LoginWindowView>();
+        if (loginWindow == null)
         {
             throw new ApplicationException();
         }
-        mainWindow.Show();
+        var result = loginWindow.ShowDialog();
+
+        if (result == true)
+        {
+            var mainWindow = Services.GetService<MainWindowView>();
+            if (mainWindow == null)
+            {
+                throw new ApplicationException();
+            }
+            mainWindow.Show();
+        }
+        else
+        {
+            Environment.Exit(0);
+        }
+
     }
 
     public IServiceProvider Services { get; }
@@ -57,9 +73,6 @@ public partial class App : Application
     private static IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
-
-        services.AddSingleton<MainWindowView>();
-        services.AddTransient<MainWindowViewModel>();
 
         var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
         services.RunFrontendModuleInitializers(assemblies);

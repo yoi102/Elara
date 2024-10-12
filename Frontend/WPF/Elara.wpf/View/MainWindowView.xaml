@@ -10,6 +10,7 @@
         Title="Elara"
         Width="1100"
         Height="800"
+        Name="window"
         Style="{StaticResource MaterialDesignWindow}"
         mc:Ignorable="d">
     <Grid>
@@ -22,7 +23,7 @@
                            LeftDrawerCornerRadius="0 10 10 0"
                            OpenMode="Modal">
                 <md:DrawerHost.LeftDrawerContent>
-                    <DockPanel>
+                    <DockPanel >
                         <TextBlock Text="Test__123" />
                     </DockPanel>
                 </md:DrawerHost.LeftDrawerContent>
