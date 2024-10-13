@@ -5,6 +5,8 @@
         xmlns:local="clr-namespace:Elara.wpf.View"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
+        d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
         Title="LoginWindowView"
         Name="LoginWindow"
         Width="500"
@@ -14,7 +16,6 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         WindowStyle="None"
-        MouseMove="window_MouseMove"
         RenderTransformOrigin="0.5,0.5"
         mc:Ignorable="d">
     <Window.RenderTransform>
@@ -89,15 +90,40 @@
             BorderThickness="2">
 
         <md:DialogHost x:Name="DialogHost"
+                       Margin="10"
                        Identifier="LoginRootDialog">
             <md:DrawerHost Name="LoginNavDrawer"
+                           IsLeftDrawerOpen="{Binding IsLeftDrawerOpen}"
                            OpenMode="Modal">
                 <md:DrawerHost.LeftDrawerContent>
-                    <md:ColorZone Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
-                        <!--  SinUpView  -->
-                    </md:ColorZone>
+
+                    <Grid Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Button   Grid.Row="0"
+                                  VerticalAlignment="Top"
+                                  HorizontalAlignment="Left"
+                                  Command="{Binding BackCommand}"
+                                  md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                  Style="{StaticResource MaterialDesignToolButton}"
+                                  Content="{md:PackIcon Kind=ChevronDoubleLeft,
+                                   Size=24}" />
+                        <ContentControl Grid.Row="1"
+                                        Content="{Binding CreateOrReset}">
+                            <ContentControl.Resources>
+                                <DataTemplate DataType="{x:Type viewmodel:CreateAccountViewModel}">
+                                    <local:CreateAccountView />
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type viewmodel:ResetPasswordViewModel}">
+                                    <local:ResetPasswordView />
+                                </DataTemplate>
+                            </ContentControl.Resources>
+                        </ContentControl>
+                    </Grid>
                 </md:DrawerHost.LeftDrawerContent>
-                <Grid Margin="10">
+                <Grid>
 
                     <Grid>
                         <Grid.RowDefinitions>
@@ -141,10 +167,11 @@
                                                  Kind="Account" />
                                     <TextBox  Name="NameTextBox"
                                               Grid.Column="1"
+                                              Text="{Binding NameEmail,UpdateSourceTrigger=PropertyChanged}"
                                               Width="200"
                                               md:TextFieldAssist.HasClearButton="True"
                                               md:HintAssist.HelperText="Name or email"
-                                              md:HintAssist.Hint="Name">
+                                              md:HintAssist.Hint="Name/Email">
 
                                     </TextBox>
                                 </Grid>
@@ -159,13 +186,13 @@
                                                  Foreground="{Binding ElementName=PasswordTextBox, Path=BorderBrush}"
                                                  Kind="Key" />
                                     <PasswordBox Name="PasswordTextBox"
+                                                 md:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay}"
                                                  md:TextFieldAssist.HasClearButton="True"
                                                  Grid.Column="1"
                                                  Width="200"
                                                  Style="{StaticResource MaterialDesignRevealPasswordBox}"
                                                  md:HintAssist.HelperText="Password"
                                                  md:HintAssist.Hint="Password">
-                                        <!--materialDesign:PasswordBoxAssist.Password="{Binding Password2, Mode=TwoWay}"-->
                                     </PasswordBox>
                                 </Grid>
                             </Grid>
@@ -180,8 +207,10 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
                                     <Button Content="Create"
+                                            Command="{Binding CreateCommand}"
                                             Style="{StaticResource MaterialDesignFlatLightButton}" />
                                     <Button Margin="20 0 0 0"
+                                            Command="{Binding ResetCommand}"
                                             Style="{StaticResource MaterialDesignFlatLightButton}"
                                             Grid.Column="1"
                                             Content="Reset" />
@@ -189,6 +218,7 @@
 
                                 <Button  HorizontalAlignment="Center"
                                          Width="130"
+                                         Command="{Binding LoginCommand}"
                                          Content="Login" />
                             </StackPanel>
                         </Grid>

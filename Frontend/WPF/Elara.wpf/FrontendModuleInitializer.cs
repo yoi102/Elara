@@ -19,7 +19,6 @@ namespace Elara.wpf
 
         public void Initialize(IServiceCollection services)
         {
-            services.AddTransient<LoginWindowView>();
             services.AddTransient<LoginWindowViewModel>();
             services.AddSingleton<MainWindowView>();
             services.AddTransient<MainWindowViewModel>();

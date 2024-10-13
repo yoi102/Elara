@@ -29,7 +29,7 @@ public partial class App : Application
 
     private void ShowWindow()
     {
-        var loginWindow = Services.GetService<LoginWindowView>();
+        var loginWindow = new LoginWindowView();
         if (loginWindow == null)
         {
             throw new ApplicationException();

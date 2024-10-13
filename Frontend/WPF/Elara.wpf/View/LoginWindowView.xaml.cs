@@ -28,21 +28,27 @@ namespace Elara.wpf.View
             InitializeComponent();
             this.DataContext = App.Current.Services.GetService<LoginWindowViewModel>();
 
+
+            EventManager.RegisterClassHandler(typeof(TextBox),
+                UIElement.MouseMoveEvent, new MouseEventHandler(PreventMouseMoveEventBubbling));
+            EventManager.RegisterClassHandler(typeof(PasswordBox),
+                UIElement.MouseMoveEvent, new MouseEventHandler(PreventMouseMoveEventBubbling));
+
+        }
+        private void PreventMouseMoveEventBubbling(object sender, MouseEventArgs e)
+        {
+            e.Handled = true;
         }
 
-        private void window_MouseMove(object sender, MouseEventArgs e)
+    
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.DragMove();
             }
+            base.OnMouseMove(e);
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             PlayHideAnimationThenInvoke(() => { DialogResult = false; });
