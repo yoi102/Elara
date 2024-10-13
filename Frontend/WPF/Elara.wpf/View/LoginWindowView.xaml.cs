@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -29,7 +30,7 @@ namespace Elara.wpf.View
             this.DataContext = App.Current.Services.GetService<LoginWindowViewModel>();
 
 
-            EventManager.RegisterClassHandler(typeof(TextBox),
+            EventManager.RegisterClassHandler(typeof(TextBoxBase),
                 UIElement.MouseMoveEvent, new MouseEventHandler(PreventMouseMoveEventBubbling));
             EventManager.RegisterClassHandler(typeof(PasswordBox),
                 UIElement.MouseMoveEvent, new MouseEventHandler(PreventMouseMoveEventBubbling));

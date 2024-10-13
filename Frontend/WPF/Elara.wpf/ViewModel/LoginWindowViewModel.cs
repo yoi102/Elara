@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Service.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -11,25 +12,36 @@ using System.Threading.Tasks;
 
 namespace Elara.wpf.ViewModel
 {
-    internal partial class LoginWindowViewModel : ObservableObject
+    internal partial class LoginWindowViewModel : ObservableValidator
     {
         private readonly IUserService userService;
+
+        [ObservableProperty]
+        private ObservableObject? createOrReset;
+
+        [ObservableProperty]
+        private bool isLeftDrawerOpen = false;
+
+        [Required]
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        private string nameEmail = string.Empty;
+
+        [Required]
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        private string password = string.Empty;
 
         public LoginWindowViewModel(IUserService userService)
         {
             this.userService = userService;
         }
-
-
-        [ObservableProperty]
-        private string nameEmail = string.Empty;
-        [ObservableProperty]
-        private string password = string.Empty;
-        [ObservableProperty]
-        private bool isLeftDrawerOpen = false;
-        [ObservableProperty]
-        private ObservableObject? createOrReset;
-
+        [RelayCommand]
+        private void Back()
+        {
+            CreateOrReset = null;
+            IsLeftDrawerOpen = false;
+        }
 
         [RelayCommand]
         private void Create()
@@ -37,18 +49,6 @@ namespace Elara.wpf.ViewModel
             CreateOrReset = new CreateAccountViewModel(userService);
 
             IsLeftDrawerOpen = true;
-
-        }
-
-        [RelayCommand]
-        private void Reset()
-        {
-            CreateOrReset = new ResetPasswordViewModel(userService);
-
-            IsLeftDrawerOpen = true;
-
-
-
         }
 
         [RelayCommand]
@@ -67,36 +67,20 @@ namespace Elara.wpf.ViewModel
                 if (!login)
                 {
                     //do something.
-
-
                 }
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
-
         }
-
-
 
         [RelayCommand]
-        private void Back()
+        private void Reset()
         {
-            CreateOrReset = null;
-            IsLeftDrawerOpen = false;
+            CreateOrReset = new ResetPasswordViewModel(userService);
 
-
+            IsLeftDrawerOpen = true;
         }
-
-
-
-
-
-
-
-
-
     }
 }

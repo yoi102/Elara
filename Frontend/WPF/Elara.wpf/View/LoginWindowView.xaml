@@ -7,6 +7,7 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
+        xmlns:assist="clr-namespace:Elara.wpf.Assists"
         Title="LoginWindowView"
         Name="LoginWindow"
         Width="500"
@@ -137,8 +138,7 @@
                                   Click="CloseButton_Click"
                                   md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
                                   Style="{StaticResource MaterialDesignToolButton}"
-                                  Content="{md:PackIcon Kind=Close,
-                                                        Size=24}" />
+                                  Content="{md:PackIcon Kind=Close,Size=24}" />
 
                         <Grid Grid.Row="1">
                             <Grid.RowDefinitions>
@@ -169,6 +169,8 @@
                                               Grid.Column="1"
                                               Text="{Binding NameEmail,UpdateSourceTrigger=PropertyChanged}"
                                               Width="200"
+                                              InputMethod.IsInputMethodEnabled="False"
+                                              assist:TextFieldAssist.IsSpaceInputBlocked="True"
                                               md:TextFieldAssist.HasClearButton="True"
                                               md:HintAssist.HelperText="Name or email"
                                               md:HintAssist.Hint="Name/Email">
@@ -191,6 +193,7 @@
                                                  Grid.Column="1"
                                                  Width="200"
                                                  Style="{StaticResource MaterialDesignRevealPasswordBox}"
+                                                 assist:TextFieldAssist.IsSpaceInputBlocked="True"
                                                  md:HintAssist.HelperText="Password"
                                                  md:HintAssist.Hint="Password">
                                     </PasswordBox>
