@@ -29,7 +29,7 @@ namespace Elara.wpf.Assists
         {
             if (d is TextBoxBase textBox)
             {
-                if ((bool)e.NewValue) // 如果值为 true，则附加阻止空格的行为
+                if ((bool)e.NewValue)
                 {
                     textBox.PreviewKeyDown += TextField_PreviewKeyDown;
                 }
@@ -38,9 +38,9 @@ namespace Elara.wpf.Assists
                     textBox.PreviewKeyDown -= TextField_PreviewKeyDown;
                 }
             }
-            if (d is PasswordBox passwordBox)
+            else if (d is PasswordBox passwordBox)
             {
-                if ((bool)e.NewValue) // 如果值为 true，则附加阻止空格的行为
+                if ((bool)e.NewValue)
                 {
                     passwordBox.PreviewKeyDown += TextField_PreviewKeyDown;
                 }

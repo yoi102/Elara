@@ -1,21 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Elara.wpf.Assists;
 using Service.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Elara.wpf.ViewModel
 {
     internal partial class LoginWindowViewModel : ObservableValidator
     {
+        private readonly IDialogService dialogService;
         private readonly IUserService userService;
-
         [ObservableProperty]
         private ObservableObject? createOrReset;
 
@@ -32,10 +27,12 @@ namespace Elara.wpf.ViewModel
         [ObservableProperty]
         private string password = string.Empty;
 
-        public LoginWindowViewModel(IUserService userService)
+        public LoginWindowViewModel(IUserService userService, IDialogService dialogService)
         {
             this.userService = userService;
+            this.dialogService = dialogService;
         }
+
         [RelayCommand]
         private void Back()
         {
@@ -54,24 +51,27 @@ namespace Elara.wpf.ViewModel
         [RelayCommand]
         private async Task LoginAsync()
         {
-            try
+            if (HasErrors)
+                return;
+            //using var _ = new ShowProgressBarDisposable(dialogService, DialogHostIdentifiers.LoginRootDialog);
+            dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
+
+            //stringasdas@adawdaw.com
+            //strqweasfewrqwing
+            var login = await userService.LoginByNameAndPasswordAsync(NameEmail, Password);
+            if (!login)
             {
-                //stringasdas@adawdaw.com
-                //    strqweasfewrqwing
-                var login = await userService.LoginByNameAndPasswordAsync(nameEmail, password);
-                if (!login)
-                {
-                    login = await userService.LoginByEmailAndPasswordAsync(nameEmail, password);
-                    var userInfo = await userService.GetUserInfoAsync();
-                }
-                if (!login)
-                {
-                    //do something.
-                }
+                login = await userService.LoginByEmailAndPasswordAsync(NameEmail, Password);
             }
-            catch (Exception ex)
+            if (!login)
             {
-                Console.WriteLine(ex);
+                await dialogService.TryShowMessageDialogAsync("密码或账号错误！！", DialogHostIdentifiers.LoginRootDialog);
+            }
+            else
+            {
+                var userInfo = await userService.GetUserInfoAsync();
+                dialogService.TryCloseDialog(DialogHostIdentifiers.LoginRootDialog);
+                WeakReferenceMessenger.Default.Send(this);
             }
         }
 

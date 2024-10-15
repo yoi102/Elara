@@ -8,6 +8,7 @@
         xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
         xmlns:assist="clr-namespace:Elara.wpf.Assists"
+        xmlns:ass="clr-namespace:Elara.wpf.Assists"
         Title="LoginWindowView"
         Name="LoginWindow"
         Width="500"
@@ -92,7 +93,7 @@
 
         <md:DialogHost x:Name="DialogHost"
                        Margin="10"
-                       Identifier="LoginRootDialog">
+                       Identifier="{x:Static ass:DialogHostIdentifiers.LoginRootDialog}">
             <md:DrawerHost Name="LoginNavDrawer"
                            IsLeftDrawerOpen="{Binding IsLeftDrawerOpen}"
                            OpenMode="Modal">

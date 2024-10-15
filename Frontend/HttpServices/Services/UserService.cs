@@ -89,7 +89,10 @@ namespace HttpServices.Services
                 {
                     return false;
                 }
-
+                if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    return false;
+                }
                 throw;
             }
 
@@ -135,7 +138,10 @@ namespace HttpServices.Services
                 {
                     return false;
                 }
-
+                if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    return false;
+                }
                 throw;
             }
 

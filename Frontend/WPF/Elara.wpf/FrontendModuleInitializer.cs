@@ -1,15 +1,9 @@
 ﻿using Commons.Interfaces;
+using Elara.wpf.Services;
 using Elara.wpf.View;
 using Elara.wpf.ViewModel;
-using HttpServices.Services;
 using Microsoft.Extensions.DependencyInjection;
-using RestSharp;
 using Service.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Elara.wpf
 {
@@ -22,6 +16,7 @@ namespace Elara.wpf
             services.AddTransient<LoginWindowViewModel>();
             services.AddSingleton<MainWindowView>();
             services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<IDialogService, DialogService>();
 
 
         }

@@ -1,4 +1,5 @@
-﻿using Elara.wpf.ViewModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Elara.wpf.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,17 @@ namespace Elara.wpf.View
                 UIElement.MouseMoveEvent, new MouseEventHandler(PreventMouseMoveEventBubbling));
             EventManager.RegisterClassHandler(typeof(PasswordBox),
                 UIElement.MouseMoveEvent, new MouseEventHandler(PreventMouseMoveEventBubbling));
+
+
+            WeakReferenceMessenger.Default.Register<LoginWindowViewModel>(this, (r, m) =>
+            {
+
+                PlayHideAnimationThenInvoke(() =>
+                {
+                    WeakReferenceMessenger.Default.Unregister<LoginWindowViewModel>(this);
+                    DialogResult = true;
+                });
+            });
 
         }
         private void PreventMouseMoveEventBubbling(object sender, MouseEventArgs e)
