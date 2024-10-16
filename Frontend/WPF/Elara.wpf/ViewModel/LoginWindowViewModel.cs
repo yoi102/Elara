@@ -55,6 +55,7 @@ namespace Elara.wpf.ViewModel
                 return;
             //using var _ = new ShowProgressBarDisposable(dialogService, DialogHostIdentifiers.LoginRootDialog);
             dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
+            await Task.Delay(1000);
 
             //stringasdas@adawdaw.com
             //strqweasfewrqwing

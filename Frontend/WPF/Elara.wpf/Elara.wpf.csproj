@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\HttpServices\HttpServices.csproj" />
+    <ProjectReference Include="..\Elara.wpf.Controls\Elara.wpf.Controls.csproj" />
   </ItemGroup>
 
 </Project>

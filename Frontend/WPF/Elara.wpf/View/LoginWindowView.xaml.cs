@@ -1,22 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Elara.wpf.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Elara.wpf.View
 {
@@ -53,7 +42,7 @@ namespace Elara.wpf.View
             e.Handled = true;
         }
 
-    
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -69,9 +58,12 @@ namespace Elara.wpf.View
 
         private void PlayHideAnimationThenInvoke(Action action)
         {
-            var story = (Storyboard)this.Resources["HideWindow"];
+            var story = (Storyboard)FindResource("HideWindow");
+            //var story = (Storyboard)Application.Current.Resources["HideWindow"];
             if (story == null)
                 throw new ApplicationException();
+            if (story.IsFrozen)
+                story = story.Clone();
             story.Completed += delegate
             {
                 action.Invoke();
