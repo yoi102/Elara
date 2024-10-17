@@ -33,6 +33,7 @@ namespace Elara.wpf.View
                 {
                     WeakReferenceMessenger.Default.Unregister<LoginWindowViewModel>(this);
                     DialogResult = true;
+
                 });
             });
 
@@ -53,7 +54,10 @@ namespace Elara.wpf.View
         }
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayHideAnimationThenInvoke(() => { DialogResult = false; });
+            PlayHideAnimationThenInvoke(() => 
+            { 
+                DialogResult = false;
+            });
         }
 
         private void PlayHideAnimationThenInvoke(Action action)

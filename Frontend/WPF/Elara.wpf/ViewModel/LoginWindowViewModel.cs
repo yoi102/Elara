@@ -51,6 +51,7 @@ namespace Elara.wpf.ViewModel
         [RelayCommand]
         private async Task LoginAsync()
         {
+            ValidateAllProperties();
             if (HasErrors)
                 return;
             //using var _ = new ShowProgressBarDisposable(dialogService, DialogHostIdentifiers.LoginRootDialog);

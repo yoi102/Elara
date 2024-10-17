@@ -8,9 +8,7 @@
         xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
         xmlns:assist="clr-namespace:Elara.wpf.Assists"
-        xmlns:ass="clr-namespace:Elara.wpf.Assists"
         Title="LoginWindowView"
-        Name="LoginWindow"
         Width="500"
         Height="300"
         AllowsTransparency="True"
@@ -29,29 +27,29 @@
             <TranslateTransform />
         </TransformGroup>
     </Window.RenderTransform>
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0"
-                      CornerRadius="35"
-                      GlassFrameThickness="0"
-                      NonClientFrameEdges="None"
-                      ResizeBorderThickness="5"
-                      UseAeroCaptionButtons="False" />
-    </WindowChrome.WindowChrome>
     <Window.Triggers>
         <EventTrigger RoutedEvent="Loaded">
             <BeginStoryboard Storyboard="{StaticResource ShowWindow}" />
         </EventTrigger>
     </Window.Triggers>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      CornerRadius="10"
+                      GlassFrameThickness="0"
+                      NonClientFrameEdges="None"
+                      ResizeBorderThickness="5"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
 
     <Border Background="{DynamicResource MaterialDesign.Brush.Primary.Background}"
             BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}"
-            CornerRadius="20"
+            CornerRadius="8"
             BorderThickness="2">
 
         <md:DialogHost x:Name="DialogHost"
                        Margin="10"
-                       Identifier="{x:Static ass:DialogHostIdentifiers.LoginRootDialog}">
+                       Identifier="{x:Static assist:DialogHostIdentifiers.LoginRootDialog}">
             <md:DrawerHost Name="LoginNavDrawer"
                            IsLeftDrawerOpen="{Binding IsLeftDrawerOpen}"
                            OpenMode="Modal">
@@ -67,6 +65,7 @@
                                   HorizontalAlignment="Left"
                                   Command="{Binding BackCommand}"
                                   md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                  Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                                   Style="{StaticResource MaterialDesignToolButton}"
                                   Content="{md:PackIcon Kind=ChevronDoubleLeft,
                                    Size=24}" />
@@ -96,6 +95,7 @@
                                   HorizontalAlignment="Right"
                                   Click="CloseButton_Click"
                                   md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                  Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                                   Style="{StaticResource MaterialDesignToolButton}"
                                   Content="{md:PackIcon Kind=Close,Size=24}" />
 

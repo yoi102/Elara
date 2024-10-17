@@ -7,38 +7,79 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        WindowStyle="None"
         Title="Elara"
         Width="1100"
         Height="800"
         Name="window"
+        RenderTransformOrigin="0.5,0.5"
         Style="{StaticResource MaterialDesignWindow}"
         mc:Ignorable="d">
-    <Grid>
+    <Window.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform ScaleX="1"
+                            ScaleY="1" />
+            <SkewTransform />
+            <RotateTransform />
+            <TranslateTransform />
+        </TransformGroup>
+    </Window.RenderTransform>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource ShowWindow}" />
+        </EventTrigger>
+    </Window.Triggers>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      CornerRadius="10"
+                      GlassFrameThickness="0"
+                      NonClientFrameEdges="None"
+                      ResizeBorderThickness="5"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
 
-        <md:DialogHost x:Name="DialogHost"
-                       Identifier="RootDialog"
-                       DialogTheme="Inherit">
-            <md:DrawerHost Name="NavDrawer"
-                           IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"
-                           LeftDrawerCornerRadius="0 10 10 0"
-                           OpenMode="Modal">
-                <md:DrawerHost.LeftDrawerContent>
-                    <DockPanel >
-                        <TextBlock Text="Test__123" />
-                    </DockPanel>
-                </md:DrawerHost.LeftDrawerContent>
-
+    <md:DialogHost x:Name="DialogHost"
+                   Identifier="RootDialog"
+                   DialogTheme="Inherit">
+        <md:DrawerHost Name="NavDrawer"
+                       IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"
+                       LeftDrawerCornerRadius="0 10 10 0"
+                       OpenMode="Modal">
+            <md:DrawerHost.LeftDrawerContent>
                 <md:ColorZone Padding="10"
+                              Width="200"
+                              md:ElevationAssist.Elevation="Dp3"
+                              DockPanel.Dock="Top"
+                              Mode="Standard">
+                    <Button Margin="0,0,0,0"
+                            md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                            Command="{Binding MovePrevCommand}"
+                            Content="{md:PackIcon Kind=ArrowLeft,Size=24}"
+                            Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                            Style="{StaticResource MaterialDesignToolButton}"
+                            ToolTip="Previous Item" />
+                </md:ColorZone>
+            </md:DrawerHost.LeftDrawerContent>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <md:ColorZone Padding="10"
+                              MouseMove="ColorZone_MouseMove"
                               md:ElevationAssist.Elevation="Dp3"
                               DockPanel.Dock="Top"
                               Mode="Standard">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>
-
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0"
                                     Orientation="Horizontal">
                             <ToggleButton x:Name="MenuToggleButton"
@@ -62,15 +103,43 @@
                                     Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                                     Style="{StaticResource MaterialDesignToolButton}"
                                     ToolTip="Next Item" />
+
                         </StackPanel>
+                        <StackPanel Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal">
 
-                        <Button  Grid.Row="2"
-                                 Content="Test"
-                                 Command="{Binding TestCommand}"/>
+                            <Button ToolTip="Minimize"
+                                    Click="MinimizeButton_Click"
+                                    Content="{md:PackIcon Kind=Minimize,Size=24}"
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                            <Button Margin="16,0,0,0"
+                                    Name="MaximizeButton"
+                                    Click="MaximizeButton_Click"
+                                    ToolTip="Maximize"
+                                    Content="{md:PackIcon Kind=Maximize,Size=24}"
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
 
+                            <Button   Margin="16,0,0,0"
+                                      Click="CloseButton_Click"
+                                      ToolTip="Close"
+                                      md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                      Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                      Style="{StaticResource MaterialDesignToolButton}"
+                                      Content="{md:PackIcon Kind=Close,Size=24}" />
+
+                        </StackPanel>
                     </Grid>
+
                 </md:ColorZone>
-            </md:DrawerHost>
-        </md:DialogHost>
-    </Grid>
+                <Button  Grid.Row="2"
+                         Content="Test"
+                         Command="{Binding TestCommand}" />
+            </Grid>
+        </md:DrawerHost>
+    </md:DialogHost>
 </Window>
