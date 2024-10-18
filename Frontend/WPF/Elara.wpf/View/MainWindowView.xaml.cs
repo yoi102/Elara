@@ -1,4 +1,5 @@
 ﻿using Elara.wpf.ViewModel;
+using MahApps.Metro.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using System.Windows;
@@ -17,7 +18,7 @@ namespace Elara.wpf.View;
 /// <summary>
 /// Interaction logic for MainWindowView.xaml
 /// </summary>
-public partial class MainWindowView : Window
+public partial class MainWindowView : MetroWindow
 {
     public MainWindowView()
     {
@@ -32,44 +33,5 @@ public partial class MainWindowView : Window
             this.DragMove();
         }
     }
-
-    private void CloseButton_Click(object sender, RoutedEventArgs e)
-    {
-        var story = (Storyboard)FindResource("HideWindow");
-        //var story = (Storyboard)Application.Current.Resources["HideWindow"];
-        if (story == null)
-            throw new ApplicationException();
-        if (story.IsFrozen)
-            story = story.Clone();
-        story.Completed += delegate
-        {
-            this.Close();
-        };
-        story.Begin(this);
-    }
-
-    private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-    {
-        WindowState = WindowState.Minimized;
-    }
-
-
-
-    private void MaximizeButton_Click(object sender, RoutedEventArgs e)
-    {
-
-        if (WindowState == WindowState.Maximized)
-        {
-            WindowState = WindowState.Normal;
-            MaximizeButton.ToolTip = "Restore down";
-        }
-        else
-        {
-            WindowState = WindowState.Maximized;
-            MaximizeButton.ToolTip = "Maximize";
-
-        }
-
-
-    }
+  
 }

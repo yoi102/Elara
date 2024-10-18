@@ -1,5 +1,8 @@
 ﻿using RestSharp;
 using Service.Abstractions;
+using Service.Abstractions.UserResponses;
+using System;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -9,37 +12,41 @@ namespace HttpServices.Services
     {
         private const string serviceUri = "SocialLink/api/user";
         private readonly RestClient client;
+
         public UserService(RestClient restClient)
         {
             this.client = restClient;
         }
 
-        public async Task<bool> DeleteAsync(CancellationToken cancellationToken = default)
+        public async Task<DeleteUserResponse> DeleteAsync(CancellationToken cancellationToken = default)
         {
             var restResponse = await client.DeleteAsync(serviceUri, cancellationToken);
 
             if (restResponse.IsSuccessful)
             {
-                return true;
+                return new DeleteUserResponse() { IsSuccessful = true };
             }
-            return false;
+            return new DeleteUserResponse { IsSuccessful = false, ErrorMessage = restResponse.ErrorMessage };
         }
-        public async Task<string?> GetUserInfoAsync(CancellationToken cancellationToken = default)
+
+        public async Task<GetUserInfoResponse> GetUserInfoAsync(CancellationToken cancellationToken = default)
         {
             var restRequest = new RestRequest
             {
-                Resource = serviceUri 
+                Resource = serviceUri
             };
             var restResponse = await client.GetAsync(restRequest, cancellationToken);
 
             if (restResponse.IsSuccessful)
             {
-                return restResponse.Content;
+                var userInfo = JsonSerializer.Deserialize<UserInfo>(restResponse.Content!);
+
+                return new GetUserInfoResponse() { IsSuccessful = true, UserInfo = userInfo };
             }
-            return string.Empty;
+            return new GetUserInfoResponse() { IsSuccessful = false };
         }
 
-        public async Task<bool> GetEmailResetCodeAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<GetEmailResetCodeResponse> GetEmailResetCodeAsync(string email, CancellationToken cancellationToken = default)
         {
             var restRequest = new RestRequest
             {
@@ -51,13 +58,13 @@ namespace HttpServices.Services
 
             if (restResponse.IsSuccessful)
             {
-                return true;
+                return new GetEmailResetCodeResponse() { IsSuccessful = true };
             }
 
-            return false;
+            return new GetEmailResetCodeResponse() { IsSuccessful = false, ErrorMessage = restResponse.ErrorMessage };
         }
 
-        public async Task<bool> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<LoginResponse> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default)
         {
             var restRequest = new RestRequest
             {
@@ -76,30 +83,29 @@ namespace HttpServices.Services
                         throw new Exception();
                     }
 
-                 
-                    string token = restResponse.Content.Replace("\"",string.Empty);
+                    string token = restResponse.Content.Replace("\"", string.Empty);
                     client.AddDefaultHeader("Authorization", "Bearer " + token);
-                
-                    return true;
+
+                    return new LoginResponse() { IsSuccessful = true };
                 }
             }
             catch (HttpRequestException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    return false;
+                    return new LoginResponse { IsSuccessful = false, ErrorMessage = ex.Message };
                 }
                 if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    return false;
+                    return new LoginResponse { IsSuccessful = false, ErrorMessage = ex.Message };
                 }
                 throw;
             }
 
-            return false;
+            return new LoginResponse { IsSuccessful = false, ErrorMessage = "Error" };
         }
 
-        public async Task<bool> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default)
+        public async Task<LoginResponse> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default)
         {
             var restRequest = new RestRequest
             {
@@ -110,7 +116,6 @@ namespace HttpServices.Services
 
             try
             {
-
                 var restResponse = await client.PostAsync(restRequest, cancellationToken);
 
                 if (restResponse.IsSuccessful)
@@ -127,28 +132,26 @@ namespace HttpServices.Services
                     }
                     string token = responseData.Token;
                     client.AddDefaultHeader("Authorization", "Bearer " + token);
-                    return true;
+                    return new LoginResponse() { IsSuccessful = true };
                 }
-
-
             }
             catch (HttpRequestException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    return false;
+                    return new LoginResponse { IsSuccessful = false, ErrorMessage = ex.Message };
                 }
                 if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    return false;
+                    return new LoginResponse { IsSuccessful = false, ErrorMessage = ex.Message };
                 }
                 throw;
             }
 
-            return false;
+            return new LoginResponse { IsSuccessful = false, ErrorMessage = "Error" };
         }
 
-        public async Task<bool> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default)
+        public async Task<ResetPasswordResponse> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default)
         {
             var restRequest = new RestRequest
             {
@@ -161,13 +164,13 @@ namespace HttpServices.Services
 
             if (restResponse.IsSuccessful)
             {
-                return true;
+                return new ResetPasswordResponse { IsSuccessful = true };
             }
 
-            return false;
+            return new ResetPasswordResponse { IsSuccessful = true, ErrorMessage = restResponse.ErrorMessage };
         }
 
-        public async Task<bool> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
+        public async Task<CreateResponse> CreateAsync(string name, string email, string password, CancellationToken cancellationToken = default)
         {
             var restRequest = new RestRequest
             {
@@ -180,10 +183,10 @@ namespace HttpServices.Services
 
             if (restResponse.IsSuccessful)
             {
-                return true;
+                return new CreateResponse { IsSuccessful = true };
             }
 
-            return false;
+            return new CreateResponse { IsSuccessful = false, ErrorMessage = restResponse.ErrorMessage };
         }
     }
 }

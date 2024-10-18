@@ -12,12 +12,52 @@
         Width="500"
         Height="300"
         AllowsTransparency="True"
+        WindowStyle="None"
         Style="{StaticResource MaterialDesignWindow}"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        WindowStyle="None"
         RenderTransformOrigin="0.5,0.5"
         mc:Ignorable="d">
+    <Window.Resources>
+        <Storyboard x:Key="HideWindow">
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="1"
+                             To="0"
+                             Storyboard.TargetProperty="Opacity"
+                             FillBehavior="Stop" />
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="1"
+                             To="0.8"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleX)"
+                             FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" />
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="1"
+                             To="0.8"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleY)"
+                             FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" />
+        </Storyboard>
+        <Storyboard x:Key="ShowWindow">
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="0"
+                             To="1"
+                             Storyboard.TargetProperty="Opacity"
+                             FillBehavior="Stop" />
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="0.8"
+                             To="1"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleX)"
+                             FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" />
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="0.8"
+                             To="1"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleY)"
+                             FillBehavior="Stop"
+                             Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window,Mode=FindAncestor}}" />
+        </Storyboard>
+    </Window.Resources>
     <Window.RenderTransform>
         <TransformGroup>
             <ScaleTransform ScaleX="1"

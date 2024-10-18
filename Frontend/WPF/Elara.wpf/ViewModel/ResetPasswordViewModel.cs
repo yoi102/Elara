@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Elara.wpf.Assists;
 using Service.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,12 @@ namespace Elara.wpf.ViewModel
     internal partial class ResetPasswordViewModel : ObservableValidator
     {
         private readonly IUserService userService;
+        private readonly IDialogService dialogService;
 
-        public ResetPasswordViewModel(IUserService userService)
+        public ResetPasswordViewModel(IUserService userService, IDialogService dialogService)
         {
             this.userService = userService;
+            this.dialogService = dialogService;
         }
 
 
@@ -34,16 +37,53 @@ namespace Elara.wpf.ViewModel
         [RelayCommand]
         private async Task ResetAsync()
         {
-            var result = await userService.ResetPasswordWithEmailCodeAsync(email, newPassword, resetCode);
+            dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
+
+            ValidateAllProperties();
+            if (HasErrors)
+            {
+                return;
+            }
+
+
+            var response = await userService.ResetPasswordWithEmailCodeAsync(Email, NewPassword, ResetCode);
+
+            if (response.IsSuccessful)
+            {
+                await dialogService.TryShowMessageDialogAsync("Reset success", DialogHostIdentifiers.LoginRootDialog);
+            }
+            else
+            {
+                await dialogService.TryShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
+
+            }
+
 
         }
         [RelayCommand]
         private async Task SendResetCodeAsync()
         {
-            var result = await userService.GetEmailResetCodeAsync(email);
-            if (result)
+            dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
+
+            ValidateAllProperties();
+            var errors = GetErrors(nameof(Email));
+            if (errors.Any())
             {
-                ResetCode = "123";
+                await dialogService.TryShowMessageDialogAsync("Email!!!!", DialogHostIdentifiers.LoginRootDialog);
+            }
+
+            var response = await userService.GetEmailResetCodeAsync(Email);
+            if (response.IsSuccessful)
+            {
+                //Do something
+
+
+            }
+            else
+            {
+                await dialogService.TryShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
+
+
             }
 
         }

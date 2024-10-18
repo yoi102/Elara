@@ -43,35 +43,38 @@ namespace Elara.wpf.ViewModel
         [RelayCommand]
         private void Create()
         {
-            CreateOrReset = new CreateAccountViewModel(userService);
+            CreateOrReset = new CreateAccountViewModel(userService, dialogService);
 
             IsLeftDrawerOpen = true;
+
         }
 
         [RelayCommand]
         private async Task LoginAsync()
         {
+#if DEBUG
+            WeakReferenceMessenger.Default.Send(this);
+#endif
+
+
             ValidateAllProperties();
             if (HasErrors)
                 return;
             //using var _ = new ShowProgressBarDisposable(dialogService, DialogHostIdentifiers.LoginRootDialog);
             dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
-            await Task.Delay(1000);
+            await Task.Delay(1000);//Simulate
 
-            //stringasdas@adawdaw.com
-            //strqweasfewrqwing
             var login = await userService.LoginByNameAndPasswordAsync(NameEmail, Password);
-            if (!login)
+            if (!login.IsSuccessful)
             {
                 login = await userService.LoginByEmailAndPasswordAsync(NameEmail, Password);
             }
-            if (!login)
+            if (!login.IsSuccessful)
             {
-                await dialogService.TryShowMessageDialogAsync("密码或账号错误！！", DialogHostIdentifiers.LoginRootDialog);
+                await dialogService.TryShowMessageDialogAsync(login.ErrorMessage!, DialogHostIdentifiers.LoginRootDialog);
             }
             else
             {
-                var userInfo = await userService.GetUserInfoAsync();
                 dialogService.TryCloseDialog(DialogHostIdentifiers.LoginRootDialog);
                 WeakReferenceMessenger.Default.Send(this);
             }
@@ -80,7 +83,7 @@ namespace Elara.wpf.ViewModel
         [RelayCommand]
         private void Reset()
         {
-            CreateOrReset = new ResetPasswordViewModel(userService);
+            CreateOrReset = new ResetPasswordViewModel(userService, dialogService);
 
             IsLeftDrawerOpen = true;
         }
