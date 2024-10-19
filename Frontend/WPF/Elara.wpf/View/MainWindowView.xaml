@@ -7,6 +7,7 @@
                   xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                   xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                   xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel"
+                  xmlns:assist="clr-namespace:Elara.wpf.Assists"
                   d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
                   WindowStartupLocation="CenterScreen"
                   TitleBarHeight="40"
@@ -35,8 +36,7 @@
             </md:PopupBox>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
-    <md:DialogHost x:Name="DialogHost"
-                   Identifier="RootDialog"
+    <md:DialogHost Identifier="{x:Static assist:DialogHostIdentifiers.MainWindow}"
                    DialogTheme="Inherit">
         <md:DrawerHost Name="NavDrawer"
                        IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"
@@ -77,7 +77,6 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0"
                                     Orientation="Horizontal">
-                    
 
                             <Button Margin="0,0,0,0"
                                     md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"

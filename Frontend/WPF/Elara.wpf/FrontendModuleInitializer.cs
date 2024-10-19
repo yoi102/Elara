@@ -1,6 +1,5 @@
 ﻿using Commons.Interfaces;
 using Elara.wpf.Services;
-using Elara.wpf.View;
 using Elara.wpf.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using Service.Abstractions;

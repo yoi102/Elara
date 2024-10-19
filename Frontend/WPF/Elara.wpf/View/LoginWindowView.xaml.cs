@@ -54,8 +54,8 @@ namespace Elara.wpf.View
         }
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayHideAnimationThenInvoke(() => 
-            { 
+            PlayHideAnimationThenInvoke(() =>
+            {
                 DialogResult = false;
             });
         }

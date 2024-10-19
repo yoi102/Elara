@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Elara.wpf.Assists;
+using Elara.wpf.interfaces;
 using Service.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,8 +12,8 @@ namespace Elara.wpf.ViewModel
     {
         private readonly IDialogService dialogService;
         private readonly IUserService userService;
-        [ObservableProperty]
-        private ObservableObject? createOrReset;
+
+        private IHasCompleted? createOrReset;
 
         [ObservableProperty]
         private bool isLeftDrawerOpen = false;
@@ -33,6 +34,23 @@ namespace Elara.wpf.ViewModel
             this.dialogService = dialogService;
         }
 
+        public IHasCompleted? CreateOrReset
+        {
+            get { return createOrReset; }
+            set
+            {
+                if (value == null && createOrReset != null)
+                {
+                    createOrReset.Completed -= OnCreateOrResetCompleted;
+                }
+                if (value != null)
+                {
+                    value.Completed += OnCreateOrResetCompleted;
+                }
+                SetProperty(ref createOrReset, value);
+            }
+        }
+
         [RelayCommand]
         private void Back()
         {
@@ -46,16 +64,14 @@ namespace Elara.wpf.ViewModel
             CreateOrReset = new CreateAccountViewModel(userService, dialogService);
 
             IsLeftDrawerOpen = true;
-
         }
 
         [RelayCommand]
         private async Task LoginAsync()
         {
 #if DEBUG
-            WeakReferenceMessenger.Default.Send(this);
+            //WeakReferenceMessenger.Default.Send(this);
 #endif
-
 
             ValidateAllProperties();
             if (HasErrors)
@@ -80,6 +96,13 @@ namespace Elara.wpf.ViewModel
             }
         }
 
+        private void OnCreateOrResetCompleted(object? sender ,AccountEventArgs accountEventArgs)
+        {
+            CreateOrReset = null;
+            IsLeftDrawerOpen = false;
+            NameEmail = accountEventArgs.NameOrEmail;
+            Password = accountEventArgs.Password;
+        }
         [RelayCommand]
         private void Reset()
         {

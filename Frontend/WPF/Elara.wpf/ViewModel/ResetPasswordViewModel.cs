@@ -1,17 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.wpf.Assists;
+using Elara.wpf.interfaces;
 using Service.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Elara.wpf.ViewModel
 {
-    internal partial class ResetPasswordViewModel : ObservableValidator
+    internal partial class ResetPasswordViewModel : ObservableValidator, IHasCompleted
     {
         private readonly IUserService userService;
         private readonly IDialogService dialogService;
@@ -33,7 +29,12 @@ namespace Elara.wpf.ViewModel
         [ObservableProperty]
         private string newPassword = string.Empty;
 
+        public event EventHandler<AccountEventArgs>? Completed;
 
+        protected virtual void OnCompleted(string nameOrEmail, string password)
+        {
+            Completed?.Invoke(this, new AccountEventArgs() { NameOrEmail = nameOrEmail, Password = password });
+        }
         [RelayCommand]
         private async Task ResetAsync()
         {
@@ -42,6 +43,7 @@ namespace Elara.wpf.ViewModel
             ValidateAllProperties();
             if (HasErrors)
             {
+                dialogService.TryCloseDialog(DialogHostIdentifiers.LoginRootDialog);
                 return;
             }
 
@@ -51,6 +53,7 @@ namespace Elara.wpf.ViewModel
             if (response.IsSuccessful)
             {
                 await dialogService.TryShowMessageDialogAsync("Reset success", DialogHostIdentifiers.LoginRootDialog);
+                OnCompleted(Email,NewPassword);
             }
             else
             {
@@ -58,18 +61,18 @@ namespace Elara.wpf.ViewModel
 
             }
 
-
         }
         [RelayCommand]
         private async Task SendResetCodeAsync()
         {
             dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
 
-            ValidateAllProperties();
+            ValidateProperty(Email, nameof(Email));
             var errors = GetErrors(nameof(Email));
             if (errors.Any())
             {
                 await dialogService.TryShowMessageDialogAsync("Email!!!!", DialogHostIdentifiers.LoginRootDialog);
+                return;
             }
 
             var response = await userService.GetEmailResetCodeAsync(Email);
@@ -85,7 +88,7 @@ namespace Elara.wpf.ViewModel
 
 
             }
-
+            dialogService.TryCloseDialog(DialogHostIdentifiers.LoginRootDialog);
         }
 
 

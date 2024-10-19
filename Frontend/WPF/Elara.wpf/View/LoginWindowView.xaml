@@ -9,6 +9,7 @@
         d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
         xmlns:assist="clr-namespace:Elara.wpf.Assists"
         Title="LoginWindowView"
+        Topmost="True"
         Width="500"
         Height="300"
         AllowsTransparency="True"
@@ -81,14 +82,12 @@
                       UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
 
-
     <Border Background="{DynamicResource MaterialDesign.Brush.Primary.Background}"
             BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}"
             CornerRadius="8"
             BorderThickness="2">
 
-        <md:DialogHost x:Name="DialogHost"
-                       Margin="10"
+        <md:DialogHost Margin="10"
                        Identifier="{x:Static assist:DialogHostIdentifiers.LoginRootDialog}">
             <md:DrawerHost Name="LoginNavDrawer"
                            IsLeftDrawerOpen="{Binding IsLeftDrawerOpen}"
@@ -97,7 +96,7 @@
 
                     <Grid Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="50" />
+                            <RowDefinition Height="35" />
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <Button   Grid.Row="0"
@@ -131,6 +130,7 @@
                         </Grid.RowDefinitions>
 
                         <Button   Grid.Row="0"
+                                  ToolTip="Close"
                                   VerticalAlignment="Top"
                                   HorizontalAlignment="Right"
                                   Click="CloseButton_Click"

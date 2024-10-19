@@ -1,37 +1,38 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.wpf.Assists;
+using Elara.wpf.interfaces;
 using Service.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Elara.wpf.ViewModel
 {
-    internal partial class CreateAccountViewModel : ObservableValidator
+    internal partial class CreateAccountViewModel : ObservableValidator, IHasCompleted
     {
-        private readonly IUserService userService;
         private readonly IDialogService dialogService;
+        private readonly IUserService userService;
+        [EmailAddress]
+        [ObservableProperty]
+        private string email = string.Empty;
+
+        [ObservableProperty]
+        private string name = string.Empty;
+
+        [MinLength(6)]
+        [ObservableProperty]
+        private string password = string.Empty;
 
         public CreateAccountViewModel(IUserService userService, IDialogService dialogService)
         {
             this.userService = userService;
             this.dialogService = dialogService;
         }
+        public event EventHandler<AccountEventArgs>? Completed;
 
-
-        [ObservableProperty]
-        private string name = string.Empty;
-        [EmailAddress]
-        [ObservableProperty]
-        private string email = string.Empty;
-        [MinLength(6)]
-        [ObservableProperty]
-        private string password = string.Empty;
-
+        protected virtual void OnCompleted(string nameOrEmail, string password)
+        {
+            Completed?.Invoke(this, new AccountEventArgs() { NameOrEmail = nameOrEmail, Password = password });
+        }
 
         [RelayCommand]
         private async Task CreateAsync()
@@ -49,16 +50,12 @@ namespace Elara.wpf.ViewModel
             if (response.IsSuccessful)
             {
                 await dialogService.TryShowMessageDialogAsync("Created", DialogHostIdentifiers.LoginRootDialog);
-
+                OnCompleted(Name,Password);
             }
-            else 
+            else
             {
                 await dialogService.TryShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
-
             }
-
-
         }
-
     }
 }
