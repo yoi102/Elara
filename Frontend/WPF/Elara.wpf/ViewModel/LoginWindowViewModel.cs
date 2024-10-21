@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Elara.wpf.Assists;
-using Elara.wpf.interfaces;
+using Elara.wpf.Interfaces;
 using Service.Abstractions;
 using System.ComponentModel.DataAnnotations;
 

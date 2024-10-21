@@ -1,6 +1,7 @@
 ﻿namespace DomainCommons
 {
-    public record AggregateRootEntity : BaseEntity, IAggregateRoot, ISoftDelete, IHasCreationTime, IHasDeletionTime, IHasModificationTime
+    public abstract class AggregateRootEntity<T> : Entity<T>, IAggregateRoot, ISoftDelete, IHasCreationTime, IHasDeletionTime, IHasModificationTime
+        where T : struct
     {
         public bool IsDeleted { get; private set; }
         public DateTimeOffset CreationTime { get; private set; } = DateTimeOffset.Now;

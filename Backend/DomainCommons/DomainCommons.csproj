@@ -10,7 +10,7 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Strongly" Version="1.5.1" />
     <PackageReference Include="Strongly.EFCore" Version="1.5.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.9.0" />
   </ItemGroup>
 
 </Project>

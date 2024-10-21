@@ -3,10 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DomainCommons
 {
-    public record BaseEntity : IEntity, IDomainEvents
+    public abstract class Entity<T> : IEntity<T>, IDomainEvents
+        where T : struct
     {
         [NotMapped]
         private readonly List<INotification> domainEvents = [];
+
+        public abstract T Id { get; }
 
         public void AddDomainEvent(INotification eventItem)
         {

@@ -1,6 +1,7 @@
 ﻿namespace DomainCommons
 {
-    public interface IEntity
+    public interface IEntity<T> where T : struct
     {
+        public T Id { get; }
     }
 }
