@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
-namespace Commons;
+namespace Commons.Helpers;
 
 public static class ReflectionHelper
 {
@@ -200,7 +200,7 @@ public static class ReflectionHelper
             {
                 Debug.WriteLine(ex);
             }
-      
+
         }
 
         return assembly != null;

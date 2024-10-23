@@ -1,12 +1,6 @@
 ﻿using DomainCommons;
 using SocialLink.Domain.Events.MessageEvents;
 using Strongly;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialLink.Domain.Entities
 {
@@ -15,7 +9,7 @@ namespace SocialLink.Domain.Entities
                           StronglyConverter.SystemTextJson |
                           StronglyConverter.TypeConverter)]
     public partial struct MessageId;
-    public class Message : Entity<MessageId>
+    public class Message : Entity<MessageId>,ISoftDelete
     {
         private Message()
         {
@@ -38,12 +32,19 @@ namespace SocialLink.Domain.Entities
         public ConversationId ConversationId { get; private set; }
         public bool IsRead { get; private set; }
 
-
+        public bool IsDeleted { get; private set; }
 
         public void MarkAsRead()
         {
             IsRead = true;
             AddDomainEvent(new MessageMarkAsRead(this));
+        }
+
+        public void SoftDelete()
+        {
+            IsDeleted = true;
+            AddDomainEvent(new MessageDeleted(this));
+
         }
     }
 }

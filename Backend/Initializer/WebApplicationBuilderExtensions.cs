@@ -1,6 +1,6 @@
 ﻿using ASPNETCore;
-using Commons;
 using Commons.Extensions;
+using Commons.Helpers;
 using EventBus;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
@@ -79,32 +78,17 @@ namespace Initializer
             services.Configure<IntegrationEventRabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.AddEventBus(initOptions.EventBusQueueName, assemblies);
 
-            ConfigureRedis(services, configuration);
 
-        }
-
-        private static void ConfigureRedis(IServiceCollection services, IConfiguration configuration)
-        {
-            //Redis的配置
-            var redisConfiguration = configuration.GetValue<string>("Redis:ConnectionStrings");
-            ArgumentException.ThrowIfNullOrEmpty(redisConfiguration, "Redis:ConnectionStrings");
-
-            IConnectionMultiplexer redisConnMultiplexer = ConnectionMultiplexer.Connect(redisConfiguration);
-            services.AddSingleton(typeof(IConnectionMultiplexer), redisConnMultiplexer);
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.All;
-            });
         }
 
         private static void ConfigureCors(IServiceCollection services, IConfiguration configuration)
         {
             services.AddCors(options =>
             {
-                var corsOpt = configuration.GetSection("Cors").Get<CorsSettings>();
-                ArgumentNullException.ThrowIfNull(corsOpt, "Cors");
+                var corsOption = configuration.GetSection("Cors").Get<CorsSettings>();
+                ArgumentNullException.ThrowIfNull(corsOption, "Cors");
 
-                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOpt.Origins)
+                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOption.Origins)
                         .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             });
         }
