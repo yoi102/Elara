@@ -9,7 +9,7 @@ namespace DomainCommons
         [NotMapped]
         private readonly List<INotification> domainEvents = [];
 
-        public abstract T Id { get; }
+        public abstract T Id { get; protected set; }
 
         public void AddDomainEvent(INotification eventItem)
         {

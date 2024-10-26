@@ -18,13 +18,13 @@ public class FileServiceDomainService
         this.remoteStorage = storageClients.First(c => c.StorageType == StorageType.Public);
     }
 
-    public async Task<UploadedItemResult> UploadAsync(Stream stream, string fileName, CancellationToken cancellationToken)
+    public async Task<UploadedItemResult> UploadAsync(Stream stream, string filename,string fileType, CancellationToken cancellationToken)
     {
         string hash = HashHelper.ComputeSha256Hash(stream);
         long fileSize = stream.Length;
         DateTime today = DateTime.Today;
 
-        string partialPath = $"{today.Year}/{today.Month}/{today.Day}/{hash}/{fileName}";
+        string partialPath = $"{today.Year}/{today.Month}/{today.Day}/{hash}/{filename}";
 
         var oldUploadItem = await repository.FindFileAsync(fileSize, hash);
         if (oldUploadItem is not null)
@@ -36,7 +36,7 @@ public class FileServiceDomainService
         stream.Position = 0;
         Uri remoteUrl = await remoteStorage.SaveAsync(partialPath, stream, cancellationToken);//保存到生产的存储系统
         stream.Position = 0;
-        return new UploadedItemResult(false, new UploadedItem(fileSize, fileName, hash, backupUrl, remoteUrl));
+        return new UploadedItemResult(false, new UploadedItem(fileSize, filename, fileType, hash, backupUrl, remoteUrl));
 
     }
 }

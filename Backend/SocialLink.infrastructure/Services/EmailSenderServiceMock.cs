@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SocialLink.Domain.Services
+namespace SocialLink.infrastructure.Services
 {
     public class EmailSenderServiceMock : IEmailSender
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DomainCommons.EntityStronglyIds;
+using Microsoft.AspNetCore.Identity;
 using SocialLink.Domain.Entities;
 using SocialLink.Domain.Interfaces;
 using SocialLink.Domain.Results;

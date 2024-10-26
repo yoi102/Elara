@@ -1,14 +1,10 @@
 ﻿using DomainCommons;
-using Strongly;
+using DomainCommons.EntityStronglyIds;
 
 namespace SocialLink.Domain.Entities
 {
 
-    [Strongly(converters: StronglyConverter.EfValueConverter |
-                      StronglyConverter.SwaggerSchemaFilter |
-                      StronglyConverter.SystemTextJson |
-                      StronglyConverter.TypeConverter)]
-    public partial struct ReactionId;
+
     public class Reaction : Entity<ReactionId>
     {
         private Reaction()
@@ -22,9 +18,9 @@ namespace SocialLink.Domain.Entities
             this.UserId = userId;
         }
 
-        public override ReactionId Id { get; }
-        public string Emoji { get; private set; }      // 表情符号
-        public MessageId MessageId { get; private set; }  // 所属的消息ID
-        public UserId UserId { get; private set; }     // 给出反应的用户ID
+        public override ReactionId Id { get; protected set; }
+        public string Emoji { get; private set; } = null!;
+        public MessageId MessageId { get; private set; }
+        public UserId UserId { get; private set; }
     }
 }

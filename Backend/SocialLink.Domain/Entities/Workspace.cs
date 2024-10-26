@@ -1,37 +1,18 @@
 ﻿using DomainCommons;
-using Strongly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DomainCommons.EntityStronglyIds;
 
 namespace SocialLink.Domain.Entities
 {
-    [Strongly(converters: StronglyConverter.EfValueConverter |
-                          StronglyConverter.SwaggerSchemaFilter |
-                          StronglyConverter.SystemTextJson |
-                          StronglyConverter.TypeConverter)]
-    public partial struct WorkspaceId;
-
     public class Workspace : AggregateRootEntity<WorkspaceId>
     {
-        public Workspace()
+        public Workspace(string name)
         {
             Id = WorkspaceId.New();
-
-            MemberId = new HashSet<UserId>();
+            Name = name;
         }
 
-        public override WorkspaceId Id { get; }
-
-
-        public ICollection<UserId> MemberId { get; }
-
-
-
-
-
-
+        public override WorkspaceId Id { get; protected set; }
+        public ICollection<UserId> MemberIds { get; } = new HashSet<UserId>();
+        public string Name { get; set; }
     }
 }

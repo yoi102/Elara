@@ -32,7 +32,7 @@ namespace FileService.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreationTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("Filename")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .IsUnicode(true)

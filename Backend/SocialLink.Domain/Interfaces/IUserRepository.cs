@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DomainCommons.EntityStronglyIds;
+using Microsoft.AspNetCore.Identity;
 using SocialLink.Domain.Entities;
 using SocialLink.Domain.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialLink.Domain.Interfaces
 {
@@ -23,7 +19,7 @@ namespace SocialLink.Domain.Interfaces
 
         Task<User?> FindByNameAsync(string name);
 
-        Task<SignUpResult> SignUpAsync(string name,string email, string password);
+        Task<SignUpResult> SignUpAsync(string name, string email, string password);
 
         Task<IdentityResult> RemoveUserAsync(UserId id);
 

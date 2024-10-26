@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace Elara.Maui
+namespace Elara.Maui.Platforms.MacCatalyst
 {
     public class Program
     {

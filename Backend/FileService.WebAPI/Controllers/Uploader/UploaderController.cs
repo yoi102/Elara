@@ -44,7 +44,7 @@ public class UploaderController : ControllerBase
         var file = request.File;
         string fileName = file.FileName;
         using Stream stream = file.OpenReadStream();
-        var result = await domainService.UploadAsync(stream, fileName, cancellationToken);
+        var result = await domainService.UploadAsync(stream, fileName, file.ContentType, cancellationToken);
         if (!result.isOldUploadedItem)
         {
             dbContext.Add(result.UploadedItem);
@@ -61,7 +61,7 @@ public class UploaderController : ControllerBase
         {
             string fileName = file.FileName;
             using Stream stream = file.OpenReadStream();
-            var result = await domainService.UploadAsync(stream, fileName, cancellationToken);
+            var result = await domainService.UploadAsync(stream, fileName, file.ContentType, cancellationToken);
             if (!result.isOldUploadedItem)
             {
                 dbContext.Add(result.UploadedItem);

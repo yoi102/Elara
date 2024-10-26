@@ -1,15 +1,12 @@
 ﻿using DomainCommons;
+using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Identity;
 using Strongly;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SocialLink.Domain.Entities
 {
-    [Strongly(converters: StronglyConverter.EfValueConverter |
-                          StronglyConverter.SwaggerSchemaFilter |
-                          StronglyConverter.SystemTextJson |
-                          StronglyConverter.TypeConverter)]
-    public partial struct UserId;
+
 
     public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDeletionTime
     {
@@ -20,7 +17,6 @@ namespace SocialLink.Domain.Entities
             UserName = name;
             DisplayName = name;
             CreationTime = DateTimeOffset.Now;
-            Workspaces = new HashSet<WorkspaceId>();
         }
         private User()
         {
@@ -31,8 +27,7 @@ namespace SocialLink.Domain.Entities
         public DateTimeOffset? DeletionTime { get; private set; }
         public string? DisplayName { get; set; }
         public bool IsDeleted { get; private set; }
-        [NotNull]
-        public ICollection<WorkspaceId> Workspaces { get; private set; }
+        public ICollection<WorkspaceId> WorkspaceIds { get; private set; } = new HashSet<WorkspaceId>();
 
         public void SoftDelete()
         {

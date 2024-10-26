@@ -1,19 +1,14 @@
 ﻿using DomainCommons;
+using DomainCommons.EntityStronglyIds;
 using SocialLink.Domain.Events.MessageEvents;
 using Strongly;
 
 namespace SocialLink.Domain.Entities
 {
-    [Strongly(converters: StronglyConverter.EfValueConverter |
-                          StronglyConverter.SwaggerSchemaFilter |
-                          StronglyConverter.SystemTextJson |
-                          StronglyConverter.TypeConverter)]
-    public partial struct MessageId;
-    public class Message : Entity<MessageId>,ISoftDelete
+
+
+    public class Message : Entity<MessageId>, ISoftDelete
     {
-        private Message()
-        {
-        }
         public Message(string content, UserId senderId, ConversationId conversationId)
         {
             Id = MessageId.New();
@@ -24,15 +19,27 @@ namespace SocialLink.Domain.Entities
             ConversationId = conversationId;
         }
 
-        public override MessageId Id { get; }
+        private Message()
+        {
+        }
 
-        public string Content { get; private set; }
-        public DateTimeOffset SentAt { get; private set; }
-        public UserId SenderId { get; private set; }
+        public string Content { get; private set; } = string.Empty;
         public ConversationId ConversationId { get; private set; }
-        public bool IsRead { get; private set; }
-
+        public override MessageId Id { get; protected set; }
         public bool IsDeleted { get; private set; }
+        public bool IsRead { get; private set; }
+        public ICollection<UploadedItemId> FileIds { get; private set; } = new List<UploadedItemId>();
+        public UserId SenderId { get; private set; }
+        public DateTimeOffset SentAt { get; private set; }
+        public bool IsModified { get; private set; }
+
+        public void ModifyMessage(string content, List<UploadedItemId> fileIds)
+        {
+            Content = content;
+            FileIds = fileIds;
+            IsModified = true;
+            AddDomainEvent(new MessageContentChanged(this));
+        }
 
         public void MarkAsRead()
         {
@@ -44,7 +51,6 @@ namespace SocialLink.Domain.Entities
         {
             IsDeleted = true;
             AddDomainEvent(new MessageDeleted(this));
-
         }
     }
 }

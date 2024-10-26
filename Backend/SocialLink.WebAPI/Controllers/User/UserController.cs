@@ -1,17 +1,16 @@
-﻿using EventBus;
+﻿using DomainCommons.EntityStronglyIds;
+using EventBus;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SocialLink.Domain;
-using SocialLink.Domain.Entities;
 using SocialLink.Domain.Interfaces;
 using SocialLink.Domain.Results;
 using SocialLink.WebAPI.Controllers.User.Request;
 using SocialLink.WebAPI.Controllers.User.Response;
 using SocialLink.WebAPI.Events;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Claims;
 

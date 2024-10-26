@@ -2,7 +2,7 @@
 {
     public interface IEntity<T> : IEntity where T : struct
     {
-        public T Id { get; }
+        T Id { get; }
     }
 
     public interface IEntity

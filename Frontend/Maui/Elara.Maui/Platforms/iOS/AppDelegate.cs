@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace Elara.Maui
+namespace Elara.Maui.Platforms.iOS
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate
