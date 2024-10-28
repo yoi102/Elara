@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SocialLink.Domain.Events.MessageEvents
 {
-    public record class MessageDeleted(Message Message) : INotification;
+    public record class MessageRecalled(Message Message) : INotification;
 
  
 }

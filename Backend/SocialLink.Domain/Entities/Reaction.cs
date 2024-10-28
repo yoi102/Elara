@@ -3,23 +3,21 @@ using DomainCommons.EntityStronglyIds;
 
 namespace SocialLink.Domain.Entities
 {
-
-
     public class Reaction : Entity<ReactionId>
     {
-        private Reaction()
-        {
-        }
         public Reaction(string emoji, MessageId messageId, UserId userId)
         {
             Id = ReactionId.New();
-            this.Emoji = emoji;
-            this.MessageId = messageId;
-            this.UserId = userId;
+            Emoji = emoji;
+            MessageId = messageId;
+            UserId = userId;
         }
 
-        public override ReactionId Id { get; protected set; }
+        private Reaction()
+        {
+        }
         public string Emoji { get; private set; } = null!;
+        public override ReactionId Id { get; protected set; }
         public MessageId MessageId { get; private set; }
         public UserId UserId { get; private set; }
     }
