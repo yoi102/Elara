@@ -1,4 +1,4 @@
-﻿using DomainCommons.EntityStronglyIds;
+﻿using SocialLink.Domain.Entities;
 
 namespace SocialLink.WebAPI.Controllers.User.Response
 {

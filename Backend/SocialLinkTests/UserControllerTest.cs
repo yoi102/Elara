@@ -1,5 +1,4 @@
-﻿using DomainCommons.EntityStronglyIds;
-using EventBus;
+﻿using EventBus;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

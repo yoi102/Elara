@@ -1,5 +1,4 @@
-﻿using DomainCommons.EntityStronglyIds;
-using SocialLink.Domain.Entities;
+﻿using SocialLink.Domain.Entities;
 
 namespace SocialLink.WebAPI.Events
 {

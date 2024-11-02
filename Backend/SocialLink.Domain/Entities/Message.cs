@@ -1,9 +1,15 @@
 ﻿using DomainCommons;
-using DomainCommons.EntityStronglyIds;
 using SocialLink.Domain.Events.MessageEvents;
+using Strongly;
 
 namespace SocialLink.Domain.Entities
 {
+    [Strongly(converters: StronglyConverter.EfValueConverter |
+                          StronglyConverter.SwaggerSchemaFilter |
+                          StronglyConverter.SystemTextJson |
+                          StronglyConverter.TypeConverter)]
+    public partial struct MessageId;
+
     public class Message : Entity<MessageId>
     {
         public Message(string content, UserId senderId, ConversationId conversationId)
@@ -20,9 +26,9 @@ namespace SocialLink.Domain.Entities
         {
         }
 
+        public ICollection<AttachmentId> AttachmentIds { get; private set; } = new List<AttachmentId>();
         public string Content { get; private set; } = string.Empty;
         public ConversationId ConversationId { get; private set; }
-        public ICollection<UploadedItemId> FileIds { get; private set; } = new List<UploadedItemId>();
         public override MessageId Id { get; protected set; }
         public bool IsModified { get; private set; }
         public bool IsRead { get; private set; }
@@ -37,10 +43,10 @@ namespace SocialLink.Domain.Entities
             AddDomainEvent(new MessageMarkAsRead(this));
         }
 
-        public void ModifyMessage(string content, List<UploadedItemId> fileIds)
+        public void ModifyMessage(string content, List<AttachmentId> attachmentId)
         {
             Content = content;
-            FileIds = fileIds;
+            AttachmentIds = attachmentId;
             IsModified = true;
             AddDomainEvent(new MessageContentChanged(this));
         }
