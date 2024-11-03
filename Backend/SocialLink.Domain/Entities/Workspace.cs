@@ -21,5 +21,6 @@ namespace SocialLink.Domain.Entities
         public override WorkspaceId Id { get; protected set; }
         public ICollection<WorkspaceMemberId> MemberIds { get; } = new HashSet<WorkspaceMemberId>();
         public string Name { get; set; }
+        public ICollection<WorkspaceInvitationId> SentWorkspaceInvitationIds { get; private set; } = new HashSet<WorkspaceInvitationId>();
     }
 }

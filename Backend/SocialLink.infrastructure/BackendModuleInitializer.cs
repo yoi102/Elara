@@ -1,7 +1,5 @@
 ﻿using Commons.Interfaces;
-using JWT;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using SocialLink.Domain.Interfaces;
 using SocialLink.Domain.Services;
