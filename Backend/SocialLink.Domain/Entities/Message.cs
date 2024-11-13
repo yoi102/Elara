@@ -10,7 +10,7 @@ namespace SocialLink.Domain.Entities
                           StronglyConverter.TypeConverter)]
     public partial struct MessageId;
 
-    public class Message : Entity<MessageId>
+    public class Message : AggregateRootEntity<MessageId>
     {
         public Message(string content, UserId senderId, ConversationId conversationId)
         {

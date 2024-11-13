@@ -9,23 +9,22 @@ namespace SocialLink.Domain.Entities
                       StronglyConverter.TypeConverter)]
     public partial struct ConversationId;
 
-    public class Conversation : Entity<ConversationId>, IHasCreationTime
+    public class Conversation : AggregateRootEntity<ConversationId>
     {
         public Conversation(string name)
         {
             Id = ConversationId.New();
             Name = name;
-            CreationTime = DateTimeOffset.Now;
         }
 
         private Conversation()
         {
         }
 
-        public DateTimeOffset CreationTime { get; private set; }
+
         public override ConversationId Id { get; protected set; }
-        public ICollection<MessageId> MessageIds { get; set; } = new HashSet<MessageId>();
+        public ICollection<MessageId> MessageIds { get;private set; } = new HashSet<MessageId>();
         public string Name { get; set; } = null!;
-        public ICollection<ParticipantId> ParticipantIds { get; set; } = new HashSet<ParticipantId>();
+        public ICollection<ParticipantId> ParticipantIds { get; private set; } = new HashSet<ParticipantId>();
     }
 }
