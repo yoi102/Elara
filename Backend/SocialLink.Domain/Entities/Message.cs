@@ -12,7 +12,7 @@ namespace SocialLink.Domain.Entities
 
     public class Message : AggregateRootEntity<MessageId>
     {
-        public Message(string content, UserId senderId, ConversationId conversationId)
+        public Message(string content, UserId senderId, PersonalConversationId conversationId)
         {
             Id = MessageId.New();
             SentAt = DateTimeOffset.Now;
@@ -28,7 +28,7 @@ namespace SocialLink.Domain.Entities
 
         public ICollection<AttachmentId> AttachmentIds { get; private set; } = new List<AttachmentId>();
         public string Content { get; private set; } = string.Empty;
-        public ConversationId ConversationId { get; private set; }
+        public PersonalConversationId ConversationId { get; private set; }
         public override MessageId Id { get; protected set; }
         public bool IsModified { get; private set; }
         public bool IsRead { get; private set; }

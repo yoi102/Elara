@@ -1,15 +1,15 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using JWT;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.Extensions.Options;
 using Moq;
-using SocialLink.Domain.Entities;
-using SocialLink.Domain.Interfaces;
-using SocialLink.Domain.Services;
+using IdentityService.Domain.Entities;
+using IdentityService.Domain.Interfaces;
+using IdentityService.Domain;
 using System.Security.Claims;
 
-namespace SocialLinkTests
+namespace IdentityService.Tests
 {
     public class UserDomainServiceTest
     {

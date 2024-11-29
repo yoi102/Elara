@@ -3,14 +3,14 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using SocialLink.Domain.Entities;
-using SocialLink.infrastructure;
+using IdentityService.Domain.Entities;
+using IdentityService.Infrastructure;
 
-namespace SocialLinkTests
+namespace IdentityService.Tests
 {
     public class UserRepositoryTest
     {
-        private readonly SocialLinkDbContext _context;
+        private readonly IdentityDbContext _context;
         private readonly Mock<IdUserManager> _mockUserManager;
         private readonly UserRepository _userRepository;
         private Mock<IUserLoginStore<User>> _userStoreMock;
@@ -247,20 +247,20 @@ namespace SocialLinkTests
             result.User.Should().BeOfType<User>();
         }
 
-        private async Task<SocialLinkDbContext> GetDataBaseContext()
+        private async Task<IdentityDbContext> GetDataBaseContext()
         {
             var mediatorMock = new Mock<IMediator>();
 
-            var options = new DbContextOptionsBuilder<SocialLinkDbContext>()
+            var options = new DbContextOptionsBuilder<IdentityDbContext>()
                                     .UseInMemoryDatabase(Guid.NewGuid().ToString())
                                     .Options;
-            var dbContext = new SocialLinkDbContext(options, mediatorMock.Object);
+            var dbContext = new IdentityDbContext(options, mediatorMock.Object);
             await dbContext.Database.EnsureCreatedAsync();
             if (await dbContext.Users.CountAsync() <= 0)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    dbContext.Users.Add(new SocialLink.Domain.Entities.User(i.ToString(), $"{i}123@1mail.com"));
+                    dbContext.Users.Add(new IdentityService.Domain.Entities.User(i.ToString(), $"{i}123@1mail.com"));
                 }
 
                 await dbContext.SaveChangesAsync();

@@ -17,7 +17,7 @@ namespace SocialLink.Domain.Entities
             Name = name;
         }
 
-        public ICollection<ConversationId> ConversationIds { get; } = new HashSet<ConversationId>();
+        public ICollection<WorkspaceConversationId> ConversationIds { get; } = new HashSet<WorkspaceConversationId>();
         public override WorkspaceId Id { get; protected set; }
         public ICollection<WorkspaceMemberId> MemberIds { get; } = new HashSet<WorkspaceMemberId>();
         public string Name { get; set; }

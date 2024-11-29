@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SocialLink.Domain.Entities;
-using SocialLink.Domain.Results;
+﻿using IdentityService.Domain.Entities;
+using IdentityService.Domain.Results;
+using Microsoft.AspNetCore.Identity;
 
-namespace SocialLink.Domain.Interfaces
+namespace IdentityService.Domain.Interfaces
 {
     public interface IUserRepository
     {
@@ -17,16 +17,6 @@ namespace SocialLink.Domain.Interfaces
         Task<User?> FindByIdAsync(UserId userId);
 
         Task<User?> FindByNameAsync(string name);
-
-        Task<PersonalConversation[]> GetConversationsByIdAsync(UserId userId);
-
-        Task<ContactInvitation[]> GetReceivedContactInvitationsByIdAsync(UserId userId);
-
-        Task<WorkspaceInvitation[]> GetReceivedWorkspaceInvitationsByIdAsync(UserId userId);
-
-        Task<UserContact[]> GetUserContactsByIdAsync(UserId userId);
-
-        Task<Workspace[]> GetWorkspacesByIdAsync(UserId userId);
 
         Task<IdentityResult> RemoveUserAsync(UserId id);
 

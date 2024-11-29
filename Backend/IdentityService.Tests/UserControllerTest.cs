@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SocialLink.Domain.Entities;
-using SocialLink.Domain.Interfaces;
-using SocialLink.Domain.Results;
-using SocialLink.WebAPI.Controllers.User;
-using SocialLink.WebAPI.Controllers.User.Request;
-using SocialLink.WebAPI.Controllers.User.Response;
-using SocialLink.WebAPI.Events;
+using IdentityService.Domain.Entities;
+using IdentityService.Domain.Interfaces;
+using IdentityService.Domain.Results;
+using IdentityService.WebAPI.Controllers.User;
+using IdentityService.WebAPI.Controllers.User.Request;
+using IdentityService.WebAPI.Controllers.User.Response;
+using IdentityService.WebAPI.Events;
 using System.Net;
 using System.Security.Claims;
 
-namespace SocialLinkTests
+namespace IdentityService.Tests
 {
     public class UserControllerTest
     {

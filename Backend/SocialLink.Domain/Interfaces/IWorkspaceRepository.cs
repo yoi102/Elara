@@ -8,7 +8,7 @@ namespace SocialLink.Domain.Interfaces
 
         Task<Workspace?> FindByNameAsync(string name);
 
-        Task<Conversation[]> GetWorkspaceAllConversationAsync(WorkspaceId id);
+        Task<WorkspaceConversation[]> GetWorkspaceAllConversationsAsync(WorkspaceId id);
 
         Task<WorkspaceMember[]> GetWorkspaceAllWorkspaceMemberAsync(WorkspaceId id);
 

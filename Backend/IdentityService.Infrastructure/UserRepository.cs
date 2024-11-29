@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SocialLink.Domain.Entities;
-using SocialLink.Domain.Interfaces;
-using SocialLink.Domain.Results;
+﻿using IdentityService.Domain.Entities;
+using IdentityService.Domain.Interfaces;
+using IdentityService.Domain.Results;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-namespace SocialLink.infrastructure
+
+namespace IdentityService.Infrastructure
 {
     public class UserRepository : IUserRepository
     {
@@ -141,14 +143,14 @@ namespace SocialLink.infrastructure
         {
             var user = new User(name, email);
 
-            var identityResult = await this.userManager.CreateAsync(user, password);
+            var identityResult = await userManager.CreateAsync(user, password);
 
             var result = new SignUpResult() { IdentityResult = identityResult };
 
             if (!result.Succeeded)
                 return result;
 
-            var createdUser = await this.userManager.FindByNameAsync(name);
+            var createdUser = await userManager.FindByNameAsync(name);
             if (createdUser == null)
             {
                 result.IdentityResult = IdentityResult.Failed();
@@ -165,34 +167,14 @@ namespace SocialLink.infrastructure
             return IdentityResult.Failed(idError);
         }
 
-        public Task<PersonalConversation[]> GetConversationsByIdAsync(UserId userId)
+        public async Task<User[]> SearchUsersByNameAsync(string partialName)
         {
-            throw new NotImplementedException();
+            return await userManager.Users
+                                         .Where(user => !string.IsNullOrEmpty(user.UserName) && user.UserName.Contains(partialName))
+                                         .ToArrayAsync();
+
         }
 
-        public Task<ContactInvitation[]> GetReceivedContactInvitationsByIdAsync(UserId userId)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<WorkspaceInvitation[]> GetReceivedWorkspaceInvitationsByIdAsync(UserId userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<UserContact[]> GetUserContactsByIdAsync(UserId userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Workspace[]> GetWorkspacesByIdAsync(UserId userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User[]> SearchUsersByNameAsync(string partialName)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

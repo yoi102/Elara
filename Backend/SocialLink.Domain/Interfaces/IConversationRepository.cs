@@ -4,10 +4,10 @@ namespace SocialLink.Domain.Interfaces
 {
     public interface IConversationRepository
     {
-        Task<Message[]> GetConversationAllMessagesAsync(ConversationId id);
+        Task<Message[]> GetConversationAllMessagesAsync(PersonalConversationId id);
 
-        Task<Participant[]> GetConversationAllParticipantsAsync(ConversationId id);
+        Task<Participant[]> GetConversationAllParticipantsAsync(PersonalConversationId id);
 
-        Task<Conversation?> FindByIdAsync(ConversationId id);
+        Task<PersonalConversation?> FindByIdAsync(PersonalConversationId id);
     }
 }
