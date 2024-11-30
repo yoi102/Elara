@@ -1,13 +1,11 @@
-﻿using EventBus;
-using IdentityService.Domain.Entities;
+﻿using DomainCommons.EntityStronglyIds;
+using EventBus;
+using IdentityService.Domain;
 using IdentityService.Domain.Interfaces;
 using IdentityService.Domain.Results;
 using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
 using IdentityService.WebAPI.Events;
-
-using IdentityService.WebAPI.Events;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +13,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Claims;
-using IdentityService.Domain;
 
 namespace IdentityService.WebAPI.Controllers.User
 {

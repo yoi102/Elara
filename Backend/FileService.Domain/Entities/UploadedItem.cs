@@ -1,14 +1,8 @@
 ﻿using DomainCommons;
-using Strongly;
+using DomainCommons.EntityStronglyIds;
 
 namespace FileService.Domain.Entities
 {
-    [Strongly(converters: StronglyConverter.EfValueConverter |
-                 StronglyConverter.SwaggerSchemaFilter |
-                 StronglyConverter.SystemTextJson |
-                 StronglyConverter.TypeConverter)]
-    public partial struct UploadedItemId;
-
     public class UploadedItem : Entity<UploadedItemId>, IHasCreationTime
     {
         private UploadedItem()

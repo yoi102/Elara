@@ -14,6 +14,7 @@ using IdentityService.WebAPI.Controllers.User.Response;
 using IdentityService.WebAPI.Events;
 using System.Net;
 using System.Security.Claims;
+using DomainCommons.EntityStronglyIds;
 
 namespace IdentityService.Tests
 {

@@ -1,4 +1,5 @@
-﻿using IdentityService.Domain.Entities;
+﻿using DomainCommons.EntityStronglyIds;
+using IdentityService.Domain.Entities;
 using IdentityService.Domain.Interfaces;
 using IdentityService.Domain.Results;
 using Microsoft.AspNetCore.Identity;

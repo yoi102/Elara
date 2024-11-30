@@ -1,15 +1,9 @@
 ﻿using DomainCommons;
+using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Identity;
-using Strongly;
 
 namespace IdentityService.Domain.Entities
 {
-    [Strongly(converters: StronglyConverter.EfValueConverter |
-                     StronglyConverter.SwaggerSchemaFilter |
-                     StronglyConverter.SystemTextJson |
-                     StronglyConverter.TypeConverter)]
-    public partial struct UserId;
-
     public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDeletionTime
     {
         public User(string name, string email)
@@ -17,7 +11,6 @@ namespace IdentityService.Domain.Entities
             Id = UserId.New();
             Email = email;
             UserName = name;
-            DisplayName = name;
             CreationTime = DateTimeOffset.Now;
         }
 
@@ -25,10 +18,8 @@ namespace IdentityService.Domain.Entities
         {
         }
 
-        public Uri? Avatar { get; set; }
         public DateTimeOffset CreationTime { get; private set; }
         public DateTimeOffset? DeletionTime { get; private set; }
-        public string? DisplayName { get; set; }
         public bool IsDeleted { get; private set; }
 
         public void SoftDelete()

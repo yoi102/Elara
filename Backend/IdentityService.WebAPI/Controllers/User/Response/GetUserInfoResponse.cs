@@ -1,4 +1,4 @@
-﻿using IdentityService.Domain.Entities;
+﻿using DomainCommons.EntityStronglyIds;
 
 namespace IdentityService.WebAPI.Controllers.User.Response
 {
