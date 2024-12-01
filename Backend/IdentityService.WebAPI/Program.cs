@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ReadAndSetHostBuilderConfiguration();
-
 builder.ConfigureCommonServices(new InitializerOptions
 {
     EventBusQueueName = "IdentityService.WebAPI",

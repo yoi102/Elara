@@ -21,11 +21,13 @@ namespace IdentityService.WebAPI.Controllers.User
     public class UserController : ControllerBase
     {
         private readonly IEventBus eventBus;
+        private readonly ILogger<UserController> logger;
         private readonly IUserDomainService userDomainService;
         private readonly IUserRepository userRepository;
 
-        public UserController(IUserDomainService userDomainService, IUserRepository userRepository, IEventBus eventBus)
+        public UserController(ILogger<UserController> logger,IUserDomainService userDomainService, IUserRepository userRepository, IEventBus eventBus)
         {
+            this.logger = logger;
             this.userDomainService = userDomainService;
             this.userRepository = userRepository;
             this.eventBus = eventBus;

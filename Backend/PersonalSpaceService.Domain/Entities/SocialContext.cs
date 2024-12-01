@@ -17,11 +17,9 @@ namespace PersonalSpaceService.Domain.Entities
         {
         }
 
+        public List<ContactId> ContactIds { get; private set; } = null!;
         public override SocialContextId Id { get; protected set; }
         public UserId UserId { get; private set; }
-
-        public List<ContactId> ContactIds { get; private set; } = null!;
-
         public List<WorkspaceId> WorkspaceIds { get; private set; } = null!;
     }
 }

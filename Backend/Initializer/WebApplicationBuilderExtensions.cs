@@ -7,9 +7,7 @@ using FluentValidation.AspNetCore;
 using Infrastructure.EFCore;
 using JWT;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,31 +15,14 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-
 namespace Initializer
 {
     public static class WebApplicationBuilderExtensions
     {
-        public static void ReadAndSetHostBuilderConfiguration(this WebApplicationBuilder builder)
-        {
-
-            string settingsFullPath = Path.Combine("C:\\Users\\yoiri\\source\\repos\\Elara", "appsettings.json");
-            builder.Configuration.AddJsonFile(settingsFullPath);
-
-            var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");
-            ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
-
-            string programFilesFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            var dbFileFolder = Path.Combine(programFilesFolder, "Elara\\db");//C:\Program Files\Elara\db
-            Directory.CreateDirectory(dbFileFolder);
-
-            var dbFullPath = Path.Combine(dbFileFolder, dbFileName);
-            builder.Configuration["DefaultDB:ConnectionStrings"] = "Data Source=" + dbFullPath;
-            builder.Configuration["LogFolder"] = Path.Combine(programFilesFolder, "Elara\\logs");//C:\Program Files\Elara\logs
-        }
-
         public static void ConfigureCommonServices(this WebApplicationBuilder builder, InitializerOptions initOptions)
         {
+            ReadAndSetHostBuilderConfiguration(builder);
+
             IServiceCollection services = builder.Services;
             IConfiguration configuration = builder.Configuration;
 
@@ -50,11 +31,9 @@ namespace Initializer
             var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
             services.RunBackendModuleInitializers(assemblies);
 
-
             ConfigureDbContexts(services, configuration, assemblies);
 
             ConfigureAuthentication(builder, services, configuration);
-
 
             services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
 
@@ -77,20 +56,6 @@ namespace Initializer
             services.Configure<JWTOptions>(configuration.GetSection("JWT"));
             services.Configure<IntegrationEventRabbitMQOptions>(configuration.GetSection("RabbitMQ"));
             services.AddEventBus(initOptions.EventBusQueueName, assemblies);
-
-
-        }
-
-        private static void ConfigureCors(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddCors(options =>
-            {
-                var corsOption = configuration.GetSection("Cors").Get<CorsSettings>();
-                ArgumentNullException.ThrowIfNull(corsOption, "Cors");
-
-                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOption.Origins)
-                        .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            });
         }
 
         private static void ConfigureAuthentication(WebApplicationBuilder builder, IServiceCollection services, IConfiguration configuration)
@@ -109,6 +74,18 @@ namespace Initializer
             builder.Services.Configure<SwaggerGenOptions>(c =>
             {
                 c.AddAuthenticationHeader();
+            });
+        }
+
+        private static void ConfigureCors(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddCors(options =>
+            {
+                var corsOption = configuration.GetSection("Cors").Get<CorsSettings>();
+                ArgumentNullException.ThrowIfNull(corsOption, "Cors");
+
+                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOption.Origins)
+                        .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             });
         }
 
@@ -140,6 +117,23 @@ namespace Initializer
                        .ReadFrom.Services(services)
                        .Enrich.FromLogContext()
                        .WriteTo.Console());
+        }
+
+        private static void ReadAndSetHostBuilderConfiguration(WebApplicationBuilder builder)
+        {
+            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string settingsFullPath = Path.Combine(programFilesPath, "Elara\\appsettings.json");
+            builder.Configuration.AddJsonFile(settingsFullPath);
+
+            var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");
+            ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
+
+            var dbFileFolder = Path.Combine(programFilesPath, "Elara\\db");//C:\Program Files\Elara\db
+            Directory.CreateDirectory(dbFileFolder);
+
+            var dbFullPath = Path.Combine(dbFileFolder, dbFileName);
+            builder.Configuration["DefaultDB:ConnectionStrings"] = "Data Source=" + dbFullPath;
+            builder.Configuration["LogFolder"] = Path.Combine(programFilesPath, "Elara\\logs");//C:\Program Files\Elara\logs
         }
     }
 }

@@ -1,8 +1,8 @@
-using FileService.Infrastructure.Services;
+﻿using FileService.Infrastructure.Services;
 using Initializer;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.ReadAndSetHostBuilderConfiguration();
+
 builder.ConfigureCommonServices(new InitializerOptions
 {
     EventBusQueueName = "FileService.WebAPI",
