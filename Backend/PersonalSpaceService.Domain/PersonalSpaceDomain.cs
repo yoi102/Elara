@@ -1,4 +1,6 @@
-﻿using PersonalSpaceService.Domain.Interfaces;
+﻿using DomainCommons.EntityStronglyIds;
+using PersonalSpaceService.Domain.Entities;
+using PersonalSpaceService.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,15 @@ namespace PersonalSpaceService.Domain
         {
             this.personalSpaceRepository = personalSpaceRepository;
         }
+
+
+        public async Task<Contact> AddContactAsync(UserId userId, string remark)
+        {
+            var contact = new Contact(userId, remark);
+            return contact;
+
+        }
+
 
 
 

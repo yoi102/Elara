@@ -17,9 +17,6 @@ namespace DomainCommons.EntityStronglyIds
     public partial struct ProfileId;
 
     [Strongly]
-    public partial struct SocialContextId;
-
-    [Strongly]
     public partial struct ContactId;
 
     [Strongly]
