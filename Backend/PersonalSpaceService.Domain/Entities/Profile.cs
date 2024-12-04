@@ -1,5 +1,6 @@
 ﻿using DomainCommons;
 using DomainCommons.EntityStronglyIds;
+using PersonalSpaceService.Domain.Events;
 
 namespace PersonalSpaceService.Domain.Entities
 {
@@ -20,5 +21,16 @@ namespace PersonalSpaceService.Domain.Entities
         public string DisplayName { get; private set; } = null!;
         public override ProfileId Id { get; protected set; }
         public UserId UserId { get; private set; }
+
+
+
+
+        public void ChangeDisplayName(string displayName)
+        {
+            if (DisplayName == displayName) return;
+            DisplayName = displayName;
+            this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
+
+        }
     }
 }

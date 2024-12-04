@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PersonalSpaceService.Domain;
 using PersonalSpaceService.Domain.Interfaces;
-using PersonalSpaceService.Infrastructure.Configs;
 
 namespace PersonalSpaceService.Infrastructure
 {
@@ -11,7 +10,7 @@ namespace PersonalSpaceService.Infrastructure
         public void Initialize(IServiceCollection services)
         {
             services.AddScoped<IPersonalSpaceRepository, PersonalSpaceRepository>();
-            services.AddScoped<PersonalSpaceDomain>();
+            services.AddScoped<PersonalSpaceDomainService>();
         }
     }
 }
