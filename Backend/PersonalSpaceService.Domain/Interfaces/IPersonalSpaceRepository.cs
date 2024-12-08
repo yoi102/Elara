@@ -5,11 +5,8 @@ namespace PersonalSpaceService.Domain.Interfaces
 {
     public interface IPersonalSpaceRepository
     {
-
         Task<Contact> AddContactAsync(UserId userId, string remark);
+
         Task<Profile> CreateProfileAsync(UserId userId, string displayName);
-
-
-
     }
 }

@@ -1,10 +1,6 @@
-﻿using EventBus;
+﻿using DomainCommons.EntityStronglyIds;
+using EventBus;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 using IdentityService.Domain.Entities;
 using IdentityService.Domain.Interfaces;
 using IdentityService.Domain.Results;
@@ -12,25 +8,32 @@ using IdentityService.WebAPI.Controllers.User;
 using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
 using IdentityService.WebAPI.Events;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System.Net;
 using System.Security.Claims;
-using DomainCommons.EntityStronglyIds;
 
 namespace IdentityService.Tests
 {
     public class UserControllerTest
     {
-        private Mock<IEventBus> eventBusMock;
-        private UserController userController;
-        private Mock<IUserDomainService> userDomainServiceMock;
-        private Mock<IUserRepository> userRepositoryMock;
+        private readonly Mock<IEventBus> eventBusMock;
+        private readonly Mock<ILogger<UserController>> loggerMock;
+        private readonly UserController userController;
+        private readonly Mock<IUserDomainService> userDomainServiceMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
 
         public UserControllerTest()
         {
             userDomainServiceMock = new Mock<IUserDomainService>();
             userRepositoryMock = new Mock<IUserRepository>();
             eventBusMock = new Mock<IEventBus>();
-            userController = new UserController(userDomainServiceMock.Object,
+            loggerMock = new Mock<ILogger<UserController>>();
+            userController = new UserController(loggerMock.Object, userDomainServiceMock.Object,
                                        userRepositoryMock.Object, eventBusMock.Object);
         }
 

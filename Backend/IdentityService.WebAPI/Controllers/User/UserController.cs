@@ -117,7 +117,7 @@ namespace IdentityService.WebAPI.Controllers.User
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPut]
         [Route("reset-password")]
         public async Task<ActionResult> ResetPassword([Required] string newPassword)
         {
@@ -140,7 +140,7 @@ namespace IdentityService.WebAPI.Controllers.User
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPut]
         [Route("reset-password-with-email-code")]
         public async Task<ActionResult> ResetPasswordWithEmailCode(ResetPasswordRequest resetPasswordRequest)
         {
