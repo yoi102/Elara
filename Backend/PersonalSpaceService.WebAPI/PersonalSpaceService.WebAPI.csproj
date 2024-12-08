@@ -11,4 +11,8 @@
     <ProjectReference Include="..\PersonalSpaceService.Infrastructure\PersonalSpaceService.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Events\" />
+  </ItemGroup>
+
 </Project>

@@ -1,10 +1,10 @@
 ﻿using ASPNETCore;
 using FluentValidation;
 
-namespace PersonalSpaceService.WebAPI.Controllers.Request
+namespace PersonalSpaceService.WebAPI.Controllers.ProfileController.Requsets
 {
     public record class UpdateProfileRequest(string DisplayName, Uri Avatar);
-   
+
 
 
     public class LoginByEmailAndPasswordRequestValidator : AbstractValidator<UpdateProfileRequest>
