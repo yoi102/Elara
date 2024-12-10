@@ -2,7 +2,7 @@
 
 namespace PersonalSpaceService.WebAPI.EventHandlers
 {
-    [EventName("UserDeletedEvent")]
+    [EventName("UserService.User.Deleted")]
     public class UserDeletedEventHandler : DynamicIntegrationEventHandler
     {
         public override Task HandleDynamic(string eventName, dynamic eventData)

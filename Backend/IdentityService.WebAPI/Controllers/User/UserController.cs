@@ -1,4 +1,5 @@
-﻿using DomainCommons.EntityStronglyIds;
+﻿using Azure.Core;
+using DomainCommons.EntityStronglyIds;
 using EventBus;
 using IdentityService.Domain;
 using IdentityService.Domain.Interfaces;
@@ -7,6 +8,7 @@ using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
 using IdentityService.WebAPI.Events;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -46,9 +48,12 @@ namespace IdentityService.WebAPI.Controllers.User
                     message = "The user with the specified ID does not exist."
                 });
             }
-            var result = await userRepository.RemoveUserAsync(UserId.Parse(userId!));
+            var result = await userRepository.RemoveUserAsync(UserId.Parse(userId));
             if (!result.Succeeded)
                 return BadRequest();
+         
+            var userDeletedEvent = new UserDeletedEvent(UserId.Parse(userId));
+            eventBus.Publish("UserService.User.Deleted", userDeletedEvent);
             return Ok();
         }
 

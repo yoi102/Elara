@@ -2,6 +2,7 @@
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PersonalSpaceService.Domain.Interfaces;
 using PersonalSpaceService.WebAPI.Controllers.ContactController.Requests;
 
 namespace PersonalSpaceService.WebAPI.Controllers.ContactController
@@ -11,10 +12,12 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
     public class ContactController : ControllerBase
     {
         private readonly ILogger<ContactController> _logger;
+        private readonly IPersonalSpaceRepository personalSpaceRepository;
 
-        public ContactController(ILogger<ContactController> logger)
+        public ContactController(ILogger<ContactController> logger, IPersonalSpaceRepository personalSpaceRepository)
         {
             _logger = logger;
+            this.personalSpaceRepository = personalSpaceRepository;
         }
 
 

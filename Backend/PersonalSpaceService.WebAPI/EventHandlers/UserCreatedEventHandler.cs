@@ -2,7 +2,7 @@
 
 namespace PersonalSpaceService.WebAPI.EventHandlers
 {
-    [EventName("UserCreateEvent")]
+    [EventName("UserService.User.Created")]
     public class UserCreatedEventHandler : DynamicIntegrationEventHandler
     {
         public override Task HandleDynamic(string eventName, dynamic eventData)

@@ -11,12 +11,14 @@ namespace PersonalSpaceService.Infrastructure.Configs
 {
     internal class ContactConfig : IEntityTypeConfiguration<Contact>
     {
-
         public void Configure(EntityTypeBuilder<Contact> builder)
         {
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.UserId)
+                   .IsRequired();
+
             builder.ToTable("T_Contacts");
-
         }
-
     }
 }
