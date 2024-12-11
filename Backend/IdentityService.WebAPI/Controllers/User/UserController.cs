@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using DomainCommons.EntityStronglyIds;
+﻿using DomainCommons.EntityStronglyIds;
 using EventBus;
 using IdentityService.Domain;
 using IdentityService.Domain.Interfaces;
@@ -8,10 +7,8 @@ using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
 using IdentityService.WebAPI.Events;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Claims;
@@ -27,7 +24,7 @@ namespace IdentityService.WebAPI.Controllers.User
         private readonly IUserDomainService userDomainService;
         private readonly IUserRepository userRepository;
 
-        public UserController(ILogger<UserController> logger,IUserDomainService userDomainService, IUserRepository userRepository, IEventBus eventBus)
+        public UserController(ILogger<UserController> logger, IUserDomainService userDomainService, IUserRepository userRepository, IEventBus eventBus)
         {
             this.logger = logger;
             this.userDomainService = userDomainService;
@@ -39,20 +36,15 @@ namespace IdentityService.WebAPI.Controllers.User
         [HttpDelete]
         public async Task<ActionResult> Delete()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId.IsNullOrEmpty())
+            if (TryFindUserId(out var userId))
             {
-                return NotFound(new
-                {
-                    error = "UserNotFound",
-                    message = "The user with the specified ID does not exist."
-                });
+                return Unauthorized();
             }
-            var result = await userRepository.RemoveUserAsync(UserId.Parse(userId));
+            var result = await userRepository.RemoveUserAsync(userId);
             if (!result.Succeeded)
                 return BadRequest();
-         
-            var userDeletedEvent = new UserDeletedEvent(UserId.Parse(userId));
+
+            var userDeletedEvent = new UserDeletedEvent(userId);
             eventBus.Publish("UserService.User.Deleted", userDeletedEvent);
             return Ok();
         }
@@ -78,16 +70,11 @@ namespace IdentityService.WebAPI.Controllers.User
         [HttpGet]
         public async Task<ActionResult<GetUserInfoResponse>> GetUserInfo()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId.IsNullOrEmpty())
+            if (TryFindUserId(out var userId))
             {
-                return NotFound(new
-                {
-                    error = "Unauthorized",
-                    message = "You must be logged in to perform this action."
-                });
+                return Unauthorized();
             }
-            var user = await userRepository.FindByIdAsync(UserId.Parse(userId!));
+            var user = await userRepository.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound(new
@@ -96,6 +83,7 @@ namespace IdentityService.WebAPI.Controllers.User
                     message = "The user with the specified ID does not exist."
                 });
             }
+
             if (user.UserName == null)
             {
                 throw new ArgumentNullException(nameof(user.UserName), "UserName cannot be null");
@@ -126,17 +114,12 @@ namespace IdentityService.WebAPI.Controllers.User
         [Route("reset-password")]
         public async Task<ActionResult> ResetPassword([Required] string newPassword)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId.IsNullOrEmpty())
+            if (TryFindUserId(out var userId))
             {
-                return NotFound(new
-                {
-                    error = "Unauthorized",
-                    message = "You must be logged in to perform this action."
-                });
+                return Unauthorized();
             }
 
-            var result = await userRepository.ResetPasswordByIdAsync(UserId.Parse(userId!), newPassword);
+            var result = await userRepository.ResetPasswordByIdAsync(userId, newPassword);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors.SumErrors());
@@ -212,6 +195,22 @@ namespace IdentityService.WebAPI.Controllers.User
                 string msg = loginResult.SignInResult.ToString();
                 return Unauthorized("Login failed \n" + msg);
             }
+        }
+
+        private bool TryFindUserId(out UserId userId)
+        {
+            userId = UserId.Empty;
+            var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(stringUserId))
+            {
+                return false;
+            }
+            if (!UserId.TryParse(stringUserId, out var result))
+            {
+                return false;
+            }
+            userId = result;
+            return true;
         }
     }
 }

@@ -2,17 +2,21 @@
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PersonalSpaceService.Domain;
 using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
 using PersonalSpaceService.WebAPI.Controllers.ContactController.Requests;
+using System.Security.Claims;
 
 namespace PersonalSpaceService.WebAPI.Controllers.ContactController
 {
+    [Authorize]
     [ApiController]
     [Route("api/contact")]
     public class ContactController : ControllerBase
     {
+        private readonly UserId userId;
         private readonly ILogger<ContactController> logger;
         private readonly IPersonalSpaceRepository repository;
         private readonly PersonalSpaceDomainService domainService;
@@ -22,20 +26,28 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
             this.logger = logger;
             this.repository = repository;
             this.domainService = domainService;
+
+            var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(stringUserId))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            if (!UserId.TryParse(stringUserId, out userId))
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
 
 
 
-        [Authorize]
         [HttpPost]
         [Route("all-contacts")]
-        public async Task<ActionResult<Contact[]>> AllContacts([RequiredGuidStronglyId] UserId userId)
+        public async Task<ActionResult<Contact[]>> AllContacts()
         {
             var contacts = await repository.AllUserContactsAsync(userId);
             return Ok(contacts);
         }
 
-        [Authorize]
         [HttpPost]
         [Route("get-contact")]
         public ActionResult GetContact([RequiredGuidStronglyId] ContactId contactId)
@@ -48,7 +60,6 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
 
 
 
-        [Authorize]
         [HttpPost]
         [Route("add-contact")]
         public ActionResult AddContact([RequiredGuidStronglyId] UserId userId, [RequiredGuidStronglyId] UserId contactUserId)
@@ -59,7 +70,6 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
             return Ok();
         }
 
-        [Authorize]
         [HttpPatch]
         [Route("update-contact-info")]
         public ActionResult UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
@@ -71,7 +81,6 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
         }
 
 
-        [Authorize]
         [HttpDelete]
         [Route("delete-contact")]
         public ActionResult DeleteContact([RequiredGuidStronglyId] ContactId contactId)
