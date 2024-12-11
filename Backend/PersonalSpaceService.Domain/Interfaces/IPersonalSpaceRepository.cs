@@ -7,15 +7,15 @@ namespace PersonalSpaceService.Domain.Interfaces
     {
         #region Contact
 
-        Task<Contact> AddContactAsync(UserId userId, string remark);
+        Task<Contact> AddContactsAsync(UserId userId, string remark);
 
-        Task<Contact> AllUserContactAsync(UserId userId);
+        Task<Contact[]> AllUserContactsAsync(UserId userId);
 
-        Task<Contact> DeleteContactAsync(ContactId contactId);
+        Task<Task> DeleteContactAsync(ContactId contactId);
 
-        Task<Contact> GetContactAsync(ContactId contactId);
+        Task<Contact?> FindContactByContactIdAsync(ContactId contactId);
 
-        Task<Contact> UpdateContactInfoAsync(ContactId contactId, string remark);
+        Task<Contact?> UpdateContactInfoAsync(ContactId contactId, string remark);
 
         #endregion Contact
 
@@ -23,7 +23,11 @@ namespace PersonalSpaceService.Domain.Interfaces
 
         Task<Profile> CreateProfileAsync(UserId userId, string displayName);
 
-        Task<Profile> UpdateProfileAsync(UserId userId, string displayName, Uri avatar);
+        Task<Profile?> FindProfileByProfileIdAsync(ProfileId profileId);
+
+        Task<Profile?> FindProfileByUserIdAsync(UserId userId);
+
+        Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, Uri avatar);
 
         #endregion Profile
     }

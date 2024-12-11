@@ -22,15 +22,18 @@ namespace PersonalSpaceService.Domain.Entities
         public override ProfileId Id { get; protected set; }
         public UserId UserId { get; private set; }
 
-
-
-
         public void ChangeDisplayName(string displayName)
         {
             if (DisplayName == displayName) return;
             DisplayName = displayName;
             this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
+        }
 
+        public void ChangeAvatar(Uri avatar)
+        {
+            if (Avatar == avatar) return;
+            Avatar = avatar;
+            this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
         }
     }
 }

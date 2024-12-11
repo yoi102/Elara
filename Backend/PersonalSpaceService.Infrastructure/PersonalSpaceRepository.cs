@@ -1,4 +1,5 @@
 ﻿using DomainCommons.EntityStronglyIds;
+using Microsoft.EntityFrameworkCore;
 using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
 
@@ -15,31 +16,39 @@ namespace PersonalSpaceService.Infrastructure
 
         #region Contact
 
-        public async Task<Contact> AddContactAsync(UserId userId, string remark)
+        public async Task<Contact> AddContactsAsync(UserId userId, string remark)
         {
             var contact = new Contact(userId, remark);
             var entityEntry = await dbContext.Contacts.AddAsync(contact);
             return entityEntry.Entity;
         }
 
-        public Task<Contact> AllUserContactAsync(UserId userId)
+        public async Task<Contact[]> AllUserContactsAsync(UserId userId)
         {
-            throw new NotImplementedException();
+            return await dbContext.Contacts.Where(c => c.UserId == userId).ToArrayAsync();
         }
 
-        public Task<Contact> DeleteContactAsync(ContactId contactId)
+        public async Task<Task> DeleteContactAsync(ContactId contactId)
         {
-            throw new NotImplementedException();
+            var contact = await dbContext.Contacts.FindAsync(contactId);
+            if (contact == null)
+                return Task.CompletedTask;
+            dbContext.Contacts.Remove(contact);
+            return Task.CompletedTask;
         }
 
-        public Task<Contact> GetContactAsync(ContactId contactId)
+        public async Task<Contact?> FindContactByContactIdAsync(ContactId contactId)
         {
-            throw new NotImplementedException();
+            return await dbContext.Contacts.FindAsync(contactId);
         }
 
-        public Task<Contact> UpdateContactInfoAsync(ContactId contactId, string remark)
+        public async Task<Contact?> UpdateContactInfoAsync(ContactId contactId, string remark)
         {
-            throw new NotImplementedException();
+            var contact = await dbContext.Contacts.FindAsync(contactId);
+            if (contact == null)
+                return null;
+            contact.ChangeRemark(remark);
+            return contact;
         }
 
         #endregion Contact
@@ -53,9 +62,24 @@ namespace PersonalSpaceService.Infrastructure
             return entityEntry.Entity;
         }
 
-        public Task<Profile> UpdateProfileAsync(UserId userId, string displayName, Uri avatar)
+        public async Task<Profile?> FindProfileByProfileIdAsync(ProfileId profileId)
         {
-            throw new NotImplementedException();
+            return await dbContext.Profiles.FindAsync(profileId);
+        }
+
+        public async Task<Profile?> FindProfileByUserIdAsync(UserId userId)
+        {
+            return await dbContext.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        }
+
+        public async Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, Uri avatar)
+        {
+            var profile = await dbContext.Profiles.FindAsync(profileId);
+            if (profile == null)
+                return null;
+            profile.ChangeDisplayName(displayName);
+            profile.ChangeAvatar(avatar);
+            return profile;
         }
 
         #endregion Profile

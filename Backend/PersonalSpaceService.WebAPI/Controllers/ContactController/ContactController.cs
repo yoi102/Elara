@@ -2,6 +2,8 @@
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PersonalSpaceService.Domain;
+using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
 using PersonalSpaceService.WebAPI.Controllers.ContactController.Requests;
 
@@ -11,26 +13,26 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
     [Route("api/contact")]
     public class ContactController : ControllerBase
     {
-        private readonly ILogger<ContactController> _logger;
-        private readonly IPersonalSpaceRepository personalSpaceRepository;
+        private readonly ILogger<ContactController> logger;
+        private readonly IPersonalSpaceRepository repository;
+        private readonly PersonalSpaceDomainService domainService;
 
-        public ContactController(ILogger<ContactController> logger, IPersonalSpaceRepository personalSpaceRepository)
+        public ContactController(ILogger<ContactController> logger, IPersonalSpaceRepository repository, PersonalSpaceDomainService domainService)
         {
-            _logger = logger;
-            this.personalSpaceRepository = personalSpaceRepository;
+            this.logger = logger;
+            this.repository = repository;
+            this.domainService = domainService;
         }
 
 
 
         [Authorize]
         [HttpPost]
-        [Route("all-contact")]
-        public ActionResult AllContact([RequiredGuidStronglyId] UserId userId)
+        [Route("all-contacts")]
+        public async Task<ActionResult<Contact[]>> AllContacts([RequiredGuidStronglyId] UserId userId)
         {
-
-
-
-            return Ok();
+            var contacts = await repository.AllUserContactsAsync(userId);
+            return Ok(contacts);
         }
 
         [Authorize]
