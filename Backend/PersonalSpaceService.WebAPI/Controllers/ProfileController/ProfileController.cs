@@ -7,6 +7,7 @@ using PersonalSpaceService.WebAPI.Controllers.ProfileController.Requsets;
 namespace PersonalSpaceService.WebAPI.Controllers.ProfileController
 {
     [ApiController]
+    [Authorize]
     [Route("api/personal")]
     public class ProfileController : ControllerBase
     {
@@ -20,7 +21,6 @@ namespace PersonalSpaceService.WebAPI.Controllers.ProfileController
 
 
 
-        [Authorize]
         [HttpPatch]
         [Route("update-profile")]
         public ActionResult UserUpdateProfile([RequiredGuidStronglyId] UserId userId, UpdateProfileRequest request)

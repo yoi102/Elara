@@ -7,6 +7,7 @@ using PersonalSpaceService.Domain;
 using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
 using PersonalSpaceService.WebAPI.Controllers.ContactController.Requests;
+using System.Net.Http;
 using System.Security.Claims;
 
 namespace PersonalSpaceService.WebAPI.Controllers.ContactController
@@ -18,12 +19,14 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
     {
         private readonly UserId userId;
         private readonly ILogger<ContactController> logger;
+        private readonly HttpClient httpClient;
         private readonly IPersonalSpaceRepository repository;
         private readonly PersonalSpaceDomainService domainService;
 
-        public ContactController(ILogger<ContactController> logger, IPersonalSpaceRepository repository, PersonalSpaceDomainService domainService)
+        public ContactController(ILogger<ContactController> logger, HttpClient httpClient, IPersonalSpaceRepository repository, PersonalSpaceDomainService domainService)
         {
             this.logger = logger;
+            this.httpClient = httpClient;
             this.repository = repository;
             this.domainService = domainService;
 
@@ -38,40 +41,39 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
             }
         }
 
-
-
-        [HttpPost]
-        [Route("all-contacts")]
+        [HttpGet]
         public async Task<ActionResult<Contact[]>> AllContacts()
         {
             var contacts = await repository.AllUserContactsAsync(userId);
             return Ok(contacts);
         }
 
-        [HttpPost]
-        [Route("get-contact")]
-        public ActionResult GetContact([RequiredGuidStronglyId] ContactId contactId)
+        [HttpGet]
+        [Route("{contactId}")]
+        public async Task<ActionResult<Contact>> GetContact([RequiredGuidStronglyId] ContactId contactId)
         {
+            var contact = await repository.FindContactByContactIdAsync(contactId);
+            if (contact == null)
+                return NotFound();
 
-
-
-            return Ok();
+            return Ok(contact);
         }
 
 
 
         [HttpPost]
-        [Route("add-contact")]
-        public ActionResult AddContact([RequiredGuidStronglyId] UserId userId, [RequiredGuidStronglyId] UserId contactUserId)
+        [Route("{contactUserId}")]
+        public async Task<ActionResult<Contact>> AddContact([RequiredGuidStronglyId] UserId contactUserId)
         {
+            var response = await httpClient.GetAsync($"XXXXX{contactUserId}");
 
+            //var contact = new Contact(userId,);
 
 
             return Ok();
         }
 
         [HttpPatch]
-        [Route("update-contact-info")]
         public ActionResult UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
         {
 
@@ -82,7 +84,6 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
 
 
         [HttpDelete]
-        [Route("delete-contact")]
         public ActionResult DeleteContact([RequiredGuidStronglyId] ContactId contactId)
         {
 
