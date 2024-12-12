@@ -49,7 +49,7 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
         }
 
         [HttpGet]
-        [Route("{contactId}")]
+        [Route("id/{contactId}")]
         public async Task<ActionResult<Contact>> GetContact([RequiredGuidStronglyId] ContactId contactId)
         {
             var contact = await repository.FindContactByContactIdAsync(contactId);
@@ -62,12 +62,14 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
 
 
         [HttpPost]
-        [Route("{contactUserId}")]
+        [Route("user-id/{contactUserId}")]
         public async Task<ActionResult<Contact>> AddContact([RequiredGuidStronglyId] UserId contactUserId)
         {
             var response = await httpClient.GetAsync($"XXXXX{contactUserId}");
 
             //var contact = new Contact(userId,);
+
+
 
 
             return Ok();

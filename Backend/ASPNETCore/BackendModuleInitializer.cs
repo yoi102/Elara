@@ -11,6 +11,7 @@ namespace ASPNETCore
             services.AddDistributedMemoryCache();
             services.AddScoped<IMemoryCacheHelper, MemoryCacheHelper>();
             services.AddScoped<IDistributedCacheHelper, DistributedCacheHelper>();
+
         }
     }
 }

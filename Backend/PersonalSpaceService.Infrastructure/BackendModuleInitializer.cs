@@ -9,7 +9,6 @@ namespace PersonalSpaceService.Infrastructure
     {
         public void Initialize(IServiceCollection services)
         {
-            services.AddHttpClient();
             services.AddScoped<IPersonalSpaceRepository, PersonalSpaceRepository>();
             services.AddScoped<PersonalSpaceDomainService>();
         }

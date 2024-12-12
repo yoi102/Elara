@@ -17,6 +17,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDataProtection();
 
+builder.Services.AddGrpc();
+
 IdentityBuilder idBuilder = builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = false;
