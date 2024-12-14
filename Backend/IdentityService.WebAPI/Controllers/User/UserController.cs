@@ -6,6 +6,7 @@ using IdentityService.Domain.Results;
 using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
 using IdentityService.WebAPI.Events;
+using IdentityService.WebAPI.Events.Args;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -44,8 +45,8 @@ namespace IdentityService.WebAPI.Controllers.User
             if (!result.Succeeded)
                 return BadRequest();
 
-            var userDeletedEvent = new UserDeletedEvent(userId);
-            eventBus.Publish("UserService.User.Deleted", userDeletedEvent);
+            var userDeletedEventArgs = new UserDeletedEventArgs(userId);
+            await eventBus.PublishAsync("UserService.User.Deleted", userDeletedEventArgs);
             return Ok();
         }
 
@@ -60,9 +61,9 @@ namespace IdentityService.WebAPI.Controllers.User
                 return NotFound(result.IdentityResult.Errors.SumErrors());
             }
             var resetPasswordByEmailResetCodeEvent =
-                new ResetPasswordByEmailResetCodeEvent(result.Email, result.Subject, result.HtmlMessage);
+                new ResetPasswordByEmailResetCodeEventArgs(result.Email, result.Subject, result.HtmlMessage);
 
-            eventBus.Publish("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent);
+            await eventBus.PublishAsync("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent);
             return Ok("Email reset code has been sent.");
         }
 
@@ -179,8 +180,8 @@ namespace IdentityService.WebAPI.Controllers.User
             {
                 return BadRequest(signUpResult.IdentityResult.Errors.SumErrors());
             }
-            var userCreatedEvent = new UserCreatedEvent(signUpResult.User.Id, request.Name, request.Password);
-            eventBus.Publish("UserService.User.Created", userCreatedEvent);
+            var userCreatedEvent = new UserCreatedEventArgs(signUpResult.User.Id, request.Name, request.Password);
+            await eventBus.PublishAsync("UserService.User.Created", userCreatedEvent);
 
             return CreatedAtAction(nameof(SignUp), new { id = signUpResult.User.Id }, new { message = "User created successfully." });
         }

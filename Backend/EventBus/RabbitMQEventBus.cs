@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EventBus.Handlers;
+using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Diagnostics;
@@ -10,52 +11,49 @@ namespace EventBus;
 
 internal class RabbitMQEventBus : IEventBus, IDisposable
 {
-    private readonly string _exchangeName;
-    private readonly RabbitMQConnection _persistentConnection;
     private readonly IServiceProvider _serviceProvider;
-    private readonly SubscriptionsManager _subsManager;
+    private readonly SubscriptionsManager consumerChannelSubscriptionsManager;
+    private readonly string exchangeName;
+    private readonly RabbitMQConnection persistentConnection;
     private readonly IServiceScope serviceScope;
-    private IModel _consumerChannel;
-    private string _queueName;
+    private IChannel _consumerChannel;
+    private string queueName;
 
     public RabbitMQEventBus(RabbitMQConnection persistentConnection,
         IServiceScopeFactory serviceProviderFactory, string exchangeName, string queueName)
     {
-        _persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
-        _subsManager = new SubscriptionsManager();
-        _exchangeName = exchangeName;
-        _queueName = queueName;
+        this.persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
+        consumerChannelSubscriptionsManager = new SubscriptionsManager();
+        this.exchangeName = exchangeName;
+        this.queueName = queueName;
+        _consumerChannel = CreateConsumerChannelAsync().Result;
 
         //因为RabbitMQEventBus是Singleton对象，而它创建的IIntegrationEventHandler以及用到的IIntegrationEventHandler用到的服务
         //大部分是Scoped，因此必须这样显式创建一个 scope，否则在getservice的时候会报错：Cannot resolve from root provider because it requires scoped service
         serviceScope = serviceProviderFactory.CreateScope();
         _serviceProvider = serviceScope.ServiceProvider;
-        _consumerChannel = CreateConsumerChannel();
-        _subsManager.OnEventRemoved += SubsManager_OnEventRemoved; ;
+        consumerChannelSubscriptionsManager.OnAllEventRemovedAsync += SubscriptionsManager_OnAllEventRemoved;
     }
 
     public void Dispose()
     {
-        if (_consumerChannel != null)
-        {
-            _consumerChannel.Dispose();
-        }
-        _subsManager.Clear();
-        _persistentConnection.Dispose();
+        _consumerChannel.Dispose();
+        consumerChannelSubscriptionsManager.Clear();
+        persistentConnection.Dispose();
         serviceScope.Dispose();
     }
 
-    public void Publish(string eventName, object? eventData)
+    public async Task PublishAsync(string eventName, object? eventData)
     {
-        if (!_persistentConnection.IsConnected)
+        if (!persistentConnection.IsConnected)
         {
-            _persistentConnection.TryConnect();
+            await persistentConnection.TryConnectAsync();
         }
         //Channel 是建立在 Connection 上的虚拟连接
         //创建和销毁 TCP 连接的代价非常高，
         //Connection 可以创建多个 Channel ，Channel 不是线程安全的所以不能在线程间共享。
-        using var channel = _persistentConnection.CreateModel();
-        channel.ExchangeDeclare(exchange: _exchangeName, type: "direct");
+        using var publishChannel = await persistentConnection.CreateChannelAsync();
+        await publishChannel.ExchangeDeclareAsync(exchange: exchangeName, type: "direct");
 
         byte[] body;
         if (eventData == null)
@@ -70,29 +68,27 @@ internal class RabbitMQEventBus : IEventBus, IDisposable
             };
             body = JsonSerializer.SerializeToUtf8Bytes(eventData, eventData.GetType(), options);
         }
-        var properties = channel.CreateBasicProperties();
-        properties.DeliveryMode = 2; // persistent
 
-        channel.BasicPublish(
-            exchange: _exchangeName,
-            routingKey: eventName,
-            mandatory: true,
-            basicProperties: properties,
-            body: body);
+        await publishChannel.BasicPublishAsync(
+             exchange: exchangeName,
+             routingKey: eventName,
+             mandatory: true,
+             basicProperties: new BasicProperties() { DeliveryMode = DeliveryModes.Persistent },
+             body: body);
     }
 
-    public void Subscribe(string eventName, Type handlerType)
+    public async Task SubscribeAsync(string eventName, Type handlerType)
     {
         CheckHandlerType(handlerType);
-        DoInternalSubscription(eventName);
-        _subsManager.AddSubscription(eventName, handlerType);
-        StartBasicConsume();
+        await DoInternalSubscription(eventName);
+        consumerChannelSubscriptionsManager.AddSubscription(eventName, handlerType);
+        await StartBasicConsumeAsync();
     }
 
-    public void Unsubscribe(string eventName, Type handlerType)
+    public async Task Unsubscribe(string eventName, Type handlerType)
     {
         CheckHandlerType(handlerType);
-        _subsManager.RemoveSubscription(eventName, handlerType);
+        await consumerChannelSubscriptionsManager.RemoveSubscription(eventName, handlerType);
     }
 
     private void CheckHandlerType(Type handlerType)
@@ -103,76 +99,79 @@ internal class RabbitMQEventBus : IEventBus, IDisposable
         }
     }
 
-    private async Task Consumer_Received(object sender, BasicDeliverEventArgs eventArgs)
+    private async Task ConsumerReceivedAsync(object sender, BasicDeliverEventArgs eventArgs)
     {
         var eventName = eventArgs.RoutingKey;//这个框架中，就是用 eventName当 RoutingKey
         var message = Encoding.UTF8.GetString(eventArgs.Body.Span);//框架要求所有的消息都是字符串的 json
         try
         {
             await ProcessEvent(eventName, message);
-            //如果在获取消息时采用不自动应答，但是获取消息后不调用 basicAck，
+            //如果在获取消息时采用不自动应答，但是获取消息后不调用 BasicAckAsync，
             //RabbitMQ会认为消息没有投递成功，不仅所有的消息都会保留到内存中，
             //而且在客户重新连接后，会将消息重新投递一遍。这种情况无法完全避免，因此EventHandler的代码需要幂等
-            _consumerChannel.BasicAck(eventArgs.DeliveryTag, multiple: false);
+            await _consumerChannel.BasicAckAsync(eventArgs.DeliveryTag, multiple: false);
             //multiple：批量确认标志。如果值为 true，则执行批量确认，此 deliveryTag之前收到的消息全部进行确认; 如果值为 false，则只对当前收到的消息进行确认
         }
         catch (Exception ex)
         {
             //requeue：表示如何处理这条消息，如果值为 true，则重新放入RabbitMQ的发送队列，如果值为 false，则通知RabbitMQ销毁这条消息
-            //_consumerChannel.BasicReject(eventArgs.DeliveryTag, true);
+            await _consumerChannel.BasicRejectAsync(eventArgs.DeliveryTag, true);
             Debug.Fail(ex.ToString());
         }
     }
 
-    private IModel CreateConsumerChannel()
+    private async Task<IChannel> CreateConsumerChannelAsync()
     {
-        if (!_persistentConnection.IsConnected)
+        if (!persistentConnection.IsConnected)
         {
-            _persistentConnection.TryConnect();
+            await persistentConnection.TryConnectAsync();
         }
 
-        var channel = _persistentConnection.CreateModel();
-        channel.ExchangeDeclare(exchange: _exchangeName,
-                                type: "direct");
+        var consumerChannel = await persistentConnection.CreateChannelAsync();
+        await consumerChannel.ExchangeDeclareAsync(exchange: exchangeName,
+                                    type: "direct");
 
-        channel.QueueDeclare(queue: _queueName,
+        await consumerChannel.QueueDeclareAsync(queue: queueName,
                              durable: true,
                              exclusive: false,
                              autoDelete: false,
                              arguments: null);
 
-        channel.CallbackException += (sender, ea) =>
-        {
-            /*
-            _consumerChannel.Dispose();
-            _consumerChannel = CreateConsumerChannel();
-            StartBasicConsume();*/
-            Debug.Fail(ea.ToString());
-        };
-
-        return channel;
+        consumerChannel.CallbackExceptionAsync += async (sender, ea) =>
+       {
+           await _consumerChannel.DisposeAsync();
+           _consumerChannel = await CreateConsumerChannelAsync();
+           await StartBasicConsumeAsync();
+           Debug.Fail(ea.ToString());
+       };
+        return consumerChannel;
     }
 
-    private void DoInternalSubscription(string eventName)
+    private async Task DoInternalSubscription(string eventName)
     {
-        var containsKey = _subsManager.HasSubscriptionsForEvent(eventName);
-        if (!containsKey)
+        var containsKey = consumerChannelSubscriptionsManager.HasSubscriptionsForEvent(eventName);
+        if (containsKey)
+            return;
+
+        if (!persistentConnection.IsConnected)
         {
-            if (!_persistentConnection.IsConnected)
-            {
-                _persistentConnection.TryConnect();
-            }
-            _consumerChannel.QueueBind(queue: _queueName,
-                                exchange: _exchangeName,
-                                routingKey: eventName);
+            await persistentConnection.TryConnectAsync();
         }
+        if (_consumerChannel?.IsOpen != true)
+        {
+            _consumerChannel = await CreateConsumerChannelAsync();
+        }
+
+        await _consumerChannel.QueueBindAsync(queue: queueName,
+                              exchange: exchangeName,
+                              routingKey: eventName);
     }
 
     private async Task ProcessEvent(string eventName, string message)
     {
-        if (_subsManager.HasSubscriptionsForEvent(eventName))
+        if (consumerChannelSubscriptionsManager.HasSubscriptionsForEvent(eventName))
         {
-            var subscriptions = _subsManager.GetHandlersForEvent(eventName);
+            var subscriptions = consumerChannelSubscriptionsManager.GetHandlersForEvent(eventName);
             foreach (var subscription in subscriptions)
             {
                 //各自在不同的Scope中，避免DbContext等的共享造成如下问题：
@@ -195,37 +194,37 @@ internal class RabbitMQEventBus : IEventBus, IDisposable
         }
     }
 
-    private void StartBasicConsume()
+    private async Task StartBasicConsumeAsync()
     {
-        if (_consumerChannel != null)
-        {
-            var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
-            consumer.Received += Consumer_Received;
-            _consumerChannel.BasicConsume(
-                queue: _queueName,
-                autoAck: false,
-                consumer: consumer);
-        }
+        if (_consumerChannel?.IsOpen != true)
+            return;
+        var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
+        consumer.ReceivedAsync += ConsumerReceivedAsync;
+        await _consumerChannel.BasicConsumeAsync(
+             queue: queueName,
+             autoAck: false,
+             consumer: consumer);
     }
 
-    private void SubsManager_OnEventRemoved(object? sender, string eventName)
+    private async Task SubscriptionsManager_OnAllEventRemoved(object? sender, string eventName)
     {
-        if (!_persistentConnection.IsConnected)
+        if (_consumerChannel?.IsOpen != true)
+            return;
+
+        if (!persistentConnection.IsConnected)
         {
-            _persistentConnection.TryConnect();
+            await persistentConnection.TryConnectAsync();
         }
 
-        using (var channel = _persistentConnection.CreateModel())
-        {
-            channel.QueueUnbind(queue: _queueName,
-                exchange: _exchangeName,
-                routingKey: eventName);
+        await _consumerChannel.QueueUnbindAsync(queue: queueName,
+                  exchange: exchangeName,
+                  routingKey: eventName);
 
-            if (_subsManager.IsEmpty)
-            {
-                _queueName = string.Empty;
-                _consumerChannel.Close();
-            }
+        if (consumerChannelSubscriptionsManager.IsEmpty)
+        {
+            queueName = string.Empty;
+
+            await _consumerChannel.CloseAsync();
         }
     }
 }

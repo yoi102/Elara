@@ -1,4 +1,5 @@
-﻿using EventBus;
+﻿using EventBus.Attributes;
+using EventBus.Handlers;
 
 namespace PersonalSpaceService.WebAPI.EventHandlers
 {

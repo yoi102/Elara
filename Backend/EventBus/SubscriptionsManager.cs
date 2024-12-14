@@ -1,48 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EventBus.Handlers;
 
 namespace EventBus
 {
     internal class SubscriptionsManager
     {
         //key是eventName，值是监听这个事件的实现了IIntegrationEventHandler接口的类型
-        private readonly Dictionary<string, List<Type>> _handlers = new Dictionary<string, List<Type>>();
+        private readonly Dictionary<string, List<Type>> handlers = new Dictionary<string, List<Type>>();
 
-        public event EventHandler<string>? OnEventRemoved;
+        public event AsyncEventHandler<string>? OnAllEventRemovedAsync;
 
-        public bool IsEmpty => !_handlers.Keys.Any();
-
+        public bool IsEmpty => handlers.Count == 0;
 
         public void AddSubscription(string eventName, Type eventHandlerType)
         {
             if (!HasSubscriptionsForEvent(eventName))
             {
-                _handlers.Add(eventName, new List<Type>());
+                handlers.Add(eventName, new List<Type>());
             }
 
-            if (_handlers[eventName].Contains(eventHandlerType))
+            if (handlers[eventName].Contains(eventHandlerType))
             {
                 throw new ArgumentException($"Handler Type {eventHandlerType} already registered for '{eventName}'", nameof(eventHandlerType));
             }
-            _handlers[eventName].Add(eventHandlerType);
+            handlers[eventName].Add(eventHandlerType);
         }
 
-        public void Clear() => _handlers.Clear();
+        public void Clear() => handlers.Clear();
 
+        public IEnumerable<Type> GetHandlersForEvent(string eventName) => handlers[eventName];
 
-        public IEnumerable<Type> GetHandlersForEvent(string eventName) => _handlers[eventName];
+        public bool HasSubscriptionsForEvent(string eventName) => handlers.ContainsKey(eventName);
 
-
-        public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
-
-        public void RemoveSubscription(string eventName, Type handlerType)
+        public async Task RemoveSubscription(string eventName, Type handlerType)
         {
-            _handlers[eventName].Remove(handlerType);
-            if (!_handlers[eventName].Any())
+            handlers[eventName].Remove(handlerType);
+            if (handlers[eventName].Count == 0)
             {
-                _handlers.Remove(eventName);
-                OnEventRemoved?.Invoke(this, eventName);
+                handlers.Remove(eventName);
+                await Task.Run(() =>
+                  {
+                      OnAllEventRemovedAsync?.Invoke(this, eventName);
+                  });
             }
         }
     }

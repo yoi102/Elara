@@ -1,13 +1,11 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
 
 namespace EventBus
 {
     internal class RabbitMQConnection
     {
         private readonly IConnectionFactory _connectionFactory;
-        private readonly object sync_root = new object();
         private IConnection? _connection;
         private bool _disposed;
 
@@ -24,14 +22,14 @@ namespace EventBus
             }
         }
 
-        public IModel CreateModel()
+        public async Task<IChannel> CreateChannelAsync()
         {
             if (!IsConnected)
             {
                 throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
             }
 
-            return _connection!.CreateModel();
+            return await _connection!.CreateChannelAsync();
         }
 
         public void Dispose()
@@ -41,42 +39,39 @@ namespace EventBus
             _connection?.Dispose();
         }
 
-        public bool TryConnect()
+        public async Task<bool> TryConnectAsync()
         {
-            lock (sync_root)
-            {
-                _connection = _connectionFactory.CreateConnection();
+            _connection = await _connectionFactory.CreateConnectionAsync();
 
-                if (IsConnected)
-                {
-                    _connection.ConnectionShutdown += OnConnectionShutdown;
-                    _connection.CallbackException += OnCallbackException;
-                    _connection.ConnectionBlocked += OnConnectionBlocked;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+            if (IsConnected)
+            {
+                _connection.ConnectionShutdownAsync += OnConnectionShutdown;
+                _connection.CallbackExceptionAsync += OnCallbackException;
+                _connection.ConnectionBlockedAsync += OnConnectionBlocked;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
-        private void OnCallbackException(object? sender, CallbackExceptionEventArgs e)
+        private async Task OnCallbackException(object? sender, CallbackExceptionEventArgs e)
         {
             if (_disposed) return;
-            TryConnect();
+            await TryConnectAsync();
         }
 
-        private void OnConnectionBlocked(object? sender, ConnectionBlockedEventArgs e)
+        private async Task OnConnectionBlocked(object? sender, ConnectionBlockedEventArgs e)
         {
             if (_disposed) return;
-            TryConnect();
+            await TryConnectAsync();
         }
 
-        private void OnConnectionShutdown(object? sender, ShutdownEventArgs reason)
+        private async Task OnConnectionShutdown(object? sender, ShutdownEventArgs args)
         {
             if (_disposed) return;
-            TryConnect();
+            await TryConnectAsync();
         }
     }
 }

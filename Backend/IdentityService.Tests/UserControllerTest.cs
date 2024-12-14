@@ -7,7 +7,7 @@ using IdentityService.Domain.Results;
 using IdentityService.WebAPI.Controllers.User;
 using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
-using IdentityService.WebAPI.Events;
+using IdentityService.WebAPI.Events.Args;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
@@ -114,8 +114,8 @@ namespace IdentityService.Tests
             var email = "123@123.com";
             GetEmailResetCodeResult getEmailResetCodeResult =
                 new GetEmailResetCodeResult(IdentityResult.Failed(), email, "Subject", "Message");
-            ResetPasswordByEmailResetCodeEvent resetPasswordByEmailResetCodeEvent =
-                new ResetPasswordByEmailResetCodeEvent(getEmailResetCodeResult.Email, getEmailResetCodeResult.Subject, getEmailResetCodeResult.HtmlMessage);
+            ResetPasswordByEmailResetCodeEventArgs resetPasswordByEmailResetCodeEvent =
+                new ResetPasswordByEmailResetCodeEventArgs(getEmailResetCodeResult.Email, getEmailResetCodeResult.Subject, getEmailResetCodeResult.HtmlMessage);
             userDomainServiceMock.Setup(ud => ud.GetEmailResetCode(It.IsAny<string>())).ReturnsAsync(getEmailResetCodeResult);
 
             var result = await userController.GetEmailResetCode(email);
@@ -131,15 +131,15 @@ namespace IdentityService.Tests
             var email = "123@123.com";
             GetEmailResetCodeResult getEmailResetCodeResult =
                 new GetEmailResetCodeResult(IdentityResult.Success, email, "Subject", "Message");
-            ResetPasswordByEmailResetCodeEvent resetPasswordByEmailResetCodeEvent =
-                new ResetPasswordByEmailResetCodeEvent(getEmailResetCodeResult.Email, getEmailResetCodeResult.Subject, getEmailResetCodeResult.HtmlMessage);
+            ResetPasswordByEmailResetCodeEventArgs resetPasswordByEmailResetCodeEvent =
+                new ResetPasswordByEmailResetCodeEventArgs(getEmailResetCodeResult.Email, getEmailResetCodeResult.Subject, getEmailResetCodeResult.HtmlMessage);
             userDomainServiceMock.Setup(ud => ud.GetEmailResetCode(It.IsAny<string>())).ReturnsAsync(getEmailResetCodeResult);
-            eventBusMock.Setup(eb => eb.Publish(It.IsAny<string>(), It.IsAny<ResetPasswordByEmailResetCodeEvent>()));
+            eventBusMock.Setup(eb => eb.PublishAsync(It.IsAny<string>(), It.IsAny<ResetPasswordByEmailResetCodeEventArgs>()));
 
             var result = await userController.GetEmailResetCode(email);
 
             userDomainServiceMock.Verify(ud => ud.GetEmailResetCode(email));
-            eventBusMock.Verify(eb => eb.Publish("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent));
+            eventBusMock.Verify(eb => eb.PublishAsync("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent));
             var okResult = Assert.IsType<OkObjectResult>(result);
             okResult.StatusCode.Should().Be(200);
         }
@@ -610,7 +610,7 @@ namespace IdentityService.Tests
                 .ReturnsAsync((User)null!);
             userRepositoryMock.Setup(repo => repo.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync((User)null!);
-            eventBusMock.Setup(eb => eb.Publish(It.IsAny<string>(), It.IsAny<UserCreatedEvent>()));
+            eventBusMock.Setup(eb => eb.PublishAsync(It.IsAny<string>(), It.IsAny<UserCreatedEventArgs>()));
 
             var userId = Guid.NewGuid();
             userRepositoryMock.Setup(repo => repo.SignUpAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -628,7 +628,7 @@ namespace IdentityService.Tests
             userRepositoryMock.Verify(repo => repo.FindByEmailAsync(request.Email));
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
             createdResult.StatusCode.Should().Be(201);
-            eventBusMock.Verify(bus => bus.Publish("UserService.User.Created", It.IsAny<UserCreatedEvent>()), Times.Once);
+            eventBusMock.Verify(bus => bus.PublishAsync("UserService.User.Created", It.IsAny<UserCreatedEventArgs>()), Times.Once);
         }
     }
 }

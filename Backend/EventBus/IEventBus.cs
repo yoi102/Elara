@@ -4,10 +4,10 @@ namespace EventBus
 {
     public interface IEventBus
     {
-        void Publish(string eventName, object? eventData);
+        Task PublishAsync(string eventName, object? eventData);
 
-        void Subscribe(string eventName, Type handlerType);
+        Task SubscribeAsync(string eventName, Type handlerType);
 
-        void Unsubscribe(string eventName, Type handlerType);
+        Task Unsubscribe(string eventName, Type handlerType);
     }
 }

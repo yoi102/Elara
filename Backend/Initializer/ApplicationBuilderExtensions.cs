@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using EventBus;
+using EventBus.Extensions;
 
 namespace Initializer
 {

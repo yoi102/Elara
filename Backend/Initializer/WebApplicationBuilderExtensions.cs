@@ -2,6 +2,7 @@
 using Commons.Extensions;
 using Commons.Helpers;
 using EventBus;
+using EventBus.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.EFCore;
