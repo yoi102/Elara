@@ -15,7 +15,7 @@ namespace IdentityService.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserDomainService, UserDomainService>();
             services.AddScoped<IEmailSender, EmailSenderServiceMock>();
-            services.AddSingleton<IEmailResetCodeValidator, EmailResetCodeValidatorService>();
+            services.AddSingleton<IResetTokenCacheService, ResetTokenCacheService>();
         }
     }
 }

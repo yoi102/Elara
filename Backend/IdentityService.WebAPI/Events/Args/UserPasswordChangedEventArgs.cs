@@ -2,5 +2,7 @@
 
 namespace IdentityService.WebAPI.Events.Args
 {
-    public record UserCreatedEventArgs(UserId Id, string Name);
+    public record class UserPasswordChangedEventArgs(UserId Id, string userName);
+
+
 }

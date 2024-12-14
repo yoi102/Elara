@@ -11,6 +11,7 @@ using IdentityService.WebAPI.Events.Args;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -21,20 +22,19 @@ namespace IdentityService.Tests
 {
     public class UserControllerTest
     {
-        private readonly Mock<IEventBus> eventBusMock;
+        private readonly Mock<IEmailSender> emailSenderMock;
         private readonly Mock<ILogger<UserController>> loggerMock;
         private readonly UserController userController;
         private readonly Mock<IUserDomainService> userDomainServiceMock;
         private readonly Mock<IUserRepository> userRepositoryMock;
-
         public UserControllerTest()
         {
             userDomainServiceMock = new Mock<IUserDomainService>();
             userRepositoryMock = new Mock<IUserRepository>();
-            eventBusMock = new Mock<IEventBus>();
+            emailSenderMock = new Mock<IEmailSender>();
             loggerMock = new Mock<ILogger<UserController>>();
             userController = new UserController(loggerMock.Object, userDomainServiceMock.Object,
-                                       userRepositoryMock.Object, eventBusMock.Object);
+                                       userRepositoryMock.Object, emailSenderMock.Object);
         }
 
         [Fact]
@@ -114,8 +114,7 @@ namespace IdentityService.Tests
             var email = "123@123.com";
             GetEmailResetCodeResult getEmailResetCodeResult =
                 new GetEmailResetCodeResult(IdentityResult.Failed(), email, "Subject", "Message");
-            ResetPasswordByEmailResetCodeEventArgs resetPasswordByEmailResetCodeEvent =
-                new ResetPasswordByEmailResetCodeEventArgs(getEmailResetCodeResult.Email, getEmailResetCodeResult.Subject, getEmailResetCodeResult.HtmlMessage);
+
             userDomainServiceMock.Setup(ud => ud.GetEmailResetCode(It.IsAny<string>())).ReturnsAsync(getEmailResetCodeResult);
 
             var result = await userController.GetEmailResetCode(email);
@@ -131,15 +130,13 @@ namespace IdentityService.Tests
             var email = "123@123.com";
             GetEmailResetCodeResult getEmailResetCodeResult =
                 new GetEmailResetCodeResult(IdentityResult.Success, email, "Subject", "Message");
-            ResetPasswordByEmailResetCodeEventArgs resetPasswordByEmailResetCodeEvent =
-                new ResetPasswordByEmailResetCodeEventArgs(getEmailResetCodeResult.Email, getEmailResetCodeResult.Subject, getEmailResetCodeResult.HtmlMessage);
+
             userDomainServiceMock.Setup(ud => ud.GetEmailResetCode(It.IsAny<string>())).ReturnsAsync(getEmailResetCodeResult);
-            eventBusMock.Setup(eb => eb.PublishAsync(It.IsAny<string>(), It.IsAny<ResetPasswordByEmailResetCodeEventArgs>()));
 
             var result = await userController.GetEmailResetCode(email);
 
             userDomainServiceMock.Verify(ud => ud.GetEmailResetCode(email));
-            eventBusMock.Verify(eb => eb.PublishAsync("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent));
+
             var okResult = Assert.IsType<OkObjectResult>(result);
             okResult.StatusCode.Should().Be(200);
         }
@@ -384,7 +381,7 @@ namespace IdentityService.Tests
         {
             // Arrange
             var userId = UserId.New();
-            userRepositoryMock.Setup(repo => repo.ResetPasswordByIdAsync(It.IsAny<UserId>(), It.IsAny<string>()))
+            userRepositoryMock.Setup(repo => repo.ResetPasswordByIdAsync(It.IsAny<UserId>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Password too weak" }));
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(
@@ -398,10 +395,10 @@ namespace IdentityService.Tests
             };
 
             // Act
-            var result = await userController.ResetPassword("weak");
+            var result = await userController.ResetPassword("oldPassword", "weak");
 
             // Assert
-            userRepositoryMock.Verify(repo => repo.ResetPasswordByIdAsync(userId, "weak"));
+            userRepositoryMock.Verify(repo => repo.ResetPasswordByIdAsync(userId, "oldPassword", "weak"));
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             badRequestResult.StatusCode.Should().Be(400);
         }
@@ -409,7 +406,8 @@ namespace IdentityService.Tests
         [Fact]
         public async Task ResetPassword_ReturnsNotFound_WhenUserIsNotLoggedIn()
         {
-            string newPassword = "";
+            string oldPassword = "oldPassword";
+            string newPassword = "newPassword";
             var user = new ClaimsPrincipal(new ClaimsIdentity(
             [
             new Claim(ClaimTypes.NameIdentifier, string.Empty)
@@ -420,7 +418,7 @@ namespace IdentityService.Tests
                 HttpContext = new DefaultHttpContext { User = user }
             };
 
-            var result = await userController.ResetPassword(newPassword);
+            var result = await userController.ResetPassword(oldPassword, newPassword);
 
             var notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(result);
             notFoundObjectResult.StatusCode.Should().Be(404);
@@ -431,7 +429,7 @@ namespace IdentityService.Tests
         {
             // Arrange
             var userId = UserId.New();
-            userRepositoryMock.Setup(repo => repo.ResetPasswordByIdAsync(It.IsAny<UserId>(), It.IsAny<string>()))
+            userRepositoryMock.Setup(repo => repo.ResetPasswordByIdAsync(It.IsAny<UserId>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(
@@ -445,10 +443,10 @@ namespace IdentityService.Tests
             };
 
             // Act
-            var result = await userController.ResetPassword("NewStrongPassword123");
+            var result = await userController.ResetPassword("oldPassword", "NewStrongPassword123");
 
             // Assert
-            userRepositoryMock.Verify(repo => repo.ResetPasswordByIdAsync(userId, "NewStrongPassword123"));
+            userRepositoryMock.Verify(repo => repo.ResetPasswordByIdAsync(userId, "oldPassword", "NewStrongPassword123"));
             var okResult = Assert.IsType<OkObjectResult>(result);
             okResult.StatusCode.Should().Be(200);
         }
@@ -600,6 +598,7 @@ namespace IdentityService.Tests
             var conflictResult = Assert.IsType<ConflictObjectResult>(result);
             conflictResult.StatusCode.Should().Be(409);
         }
+
         [Fact]
         public async Task SignUp_ReturnsCreated_WhenSignUpSucceeds()
         {
@@ -610,7 +609,6 @@ namespace IdentityService.Tests
                 .ReturnsAsync((User)null!);
             userRepositoryMock.Setup(repo => repo.FindByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync((User)null!);
-            eventBusMock.Setup(eb => eb.PublishAsync(It.IsAny<string>(), It.IsAny<UserCreatedEventArgs>()));
 
             var userId = Guid.NewGuid();
             userRepositoryMock.Setup(repo => repo.SignUpAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -628,7 +626,6 @@ namespace IdentityService.Tests
             userRepositoryMock.Verify(repo => repo.FindByEmailAsync(request.Email));
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
             createdResult.StatusCode.Should().Be(201);
-            eventBusMock.Verify(bus => bus.PublishAsync("UserService.User.Created", It.IsAny<UserCreatedEventArgs>()), Times.Once);
         }
     }
 }

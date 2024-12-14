@@ -39,6 +39,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+app.MapGrpcService<IdentityService.WebAPI.Services.IdentityService>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

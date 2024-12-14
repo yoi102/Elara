@@ -5,7 +5,6 @@ using IdentityService.Domain.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace IdentityService.Infrastructure
 {
     public class UserRepository : IUserRepository
@@ -88,6 +87,11 @@ namespace IdentityService.Infrastructure
             return userManager.FindByNameAsync(name);
         }
 
+        public Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            return userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
         public async Task<IdentityResult> RemoveUserAsync(UserId id)
         {
             var user = await FindByIdAsync(id);
@@ -106,7 +110,7 @@ namespace IdentityService.Infrastructure
             return result;
         }
 
-        public async Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword)
+        public async Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword, string token)
         {
             var user = await FindByEmailAsync(email);
 
@@ -118,12 +122,13 @@ namespace IdentityService.Infrastructure
             {
                 return ErrorResult("New password cannot be the same as the old password.");
             }
-            string token = await userManager.GeneratePasswordResetTokenAsync(user);
+            //应该和ResetCode一起存储在Redis上
+            string _token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-            return await userManager.ResetPasswordAsync(user, token, newPassword);
+            return await userManager.ResetPasswordAsync(user, _token, newPassword);
         }
 
-        public async Task<IdentityResult> ResetPasswordByIdAsync(UserId id, string newPassword)
+        public async Task<IdentityResult> ResetPasswordByIdAsync(UserId id, string oldPassword, string newPassword)
         {
             var user = await FindByIdAsync(id);
 
@@ -131,13 +136,24 @@ namespace IdentityService.Infrastructure
             {
                 return ErrorResult("User not found");
             }
+            if (!await userManager.CheckPasswordAsync(user, oldPassword))
+            {
+                return ErrorResult("Incorrect original password.");
+            }
             if (await userManager.CheckPasswordAsync(user, newPassword))
             {
                 return ErrorResult("New password cannot be the same as the old password.");
             }
-            string token = await userManager.GeneratePasswordResetTokenAsync(user);
+            string _token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-            return await userManager.ResetPasswordAsync(user, token, newPassword);
+            return await userManager.ResetPasswordAsync(user, _token, newPassword);
+        }
+
+        public async Task<User[]> SearchUsersByNameAsync(string partialName)
+        {
+            return await userManager.Users
+                                         .Where(user => !string.IsNullOrEmpty(user.UserName) && user.UserName.Contains(partialName))
+                                         .ToArrayAsync();
         }
 
         public async Task<SignUpResult> SignUpAsync(string name, string email, string password)
@@ -167,15 +183,5 @@ namespace IdentityService.Infrastructure
             IdentityError idError = new IdentityError { Description = msg };
             return IdentityResult.Failed(idError);
         }
-
-        public async Task<User[]> SearchUsersByNameAsync(string partialName)
-        {
-            return await userManager.Users
-                                         .Where(user => !string.IsNullOrEmpty(user.UserName) && user.UserName.Contains(partialName))
-                                         .ToArrayAsync();
-
-        }
-
-
     }
 }

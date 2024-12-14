@@ -1,14 +1,13 @@
 ﻿using DomainCommons.EntityStronglyIds;
-using EventBus;
 using IdentityService.Domain;
 using IdentityService.Domain.Interfaces;
 using IdentityService.Domain.Results;
 using IdentityService.WebAPI.Controllers.User.Request;
 using IdentityService.WebAPI.Controllers.User.Response;
-using IdentityService.WebAPI.Events;
-using IdentityService.WebAPI.Events.Args;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -20,17 +19,17 @@ namespace IdentityService.WebAPI.Controllers.User
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IEventBus eventBus;
         private readonly ILogger<UserController> logger;
         private readonly IUserDomainService userDomainService;
         private readonly IUserRepository userRepository;
+        private readonly IEmailSender emailSender;
 
-        public UserController(ILogger<UserController> logger, IUserDomainService userDomainService, IUserRepository userRepository, IEventBus eventBus)
+        public UserController(ILogger<UserController> logger, IUserDomainService userDomainService, IUserRepository userRepository, IEmailSender emailSender)
         {
             this.logger = logger;
             this.userDomainService = userDomainService;
             this.userRepository = userRepository;
-            this.eventBus = eventBus;
+            this.emailSender = emailSender;
         }
 
         [Authorize]
@@ -45,8 +44,6 @@ namespace IdentityService.WebAPI.Controllers.User
             if (!result.Succeeded)
                 return BadRequest();
 
-            var userDeletedEventArgs = new UserDeletedEventArgs(userId);
-            await eventBus.PublishAsync("UserService.User.Deleted", userDeletedEventArgs);
             return Ok();
         }
 
@@ -60,10 +57,7 @@ namespace IdentityService.WebAPI.Controllers.User
             {
                 return NotFound(result.IdentityResult.Errors.SumErrors());
             }
-            var resetPasswordByEmailResetCodeEvent =
-                new ResetPasswordByEmailResetCodeEventArgs(result.Email, result.Subject, result.HtmlMessage);
-
-            await eventBus.PublishAsync("UserService.User.ResetUserPasswordByEmail", resetPasswordByEmailResetCodeEvent);
+            await emailSender.SendEmailAsync(result.Email, result.Subject, result.HtmlMessage);
             return Ok("Email reset code has been sent.");
         }
 
@@ -113,14 +107,14 @@ namespace IdentityService.WebAPI.Controllers.User
         [Authorize]
         [HttpPut]
         [Route("reset-password")]
-        public async Task<ActionResult> ResetPassword([Required] string newPassword)
+        public async Task<ActionResult> ResetPassword([Required] string oldPassword, [Required] string newPassword)
         {
             if (TryFindUserId(out var userId))
             {
                 return Unauthorized();
             }
 
-            var result = await userRepository.ResetPasswordByIdAsync(userId, newPassword);
+            var result = await userRepository.ResetPasswordByIdAsync(userId, oldPassword, newPassword);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors.SumErrors());
@@ -180,8 +174,6 @@ namespace IdentityService.WebAPI.Controllers.User
             {
                 return BadRequest(signUpResult.IdentityResult.Errors.SumErrors());
             }
-            var userCreatedEvent = new UserCreatedEventArgs(signUpResult.User.Id, request.Name, request.Password);
-            await eventBus.PublishAsync("UserService.User.Created", userCreatedEvent);
 
             return CreatedAtAction(nameof(SignUp), new { id = signUpResult.User.Id }, new { message = "User created successfully." });
         }

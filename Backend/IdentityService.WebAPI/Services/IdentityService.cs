@@ -18,7 +18,6 @@ namespace IdentityService.WebAPI.Services
 
         public override async Task<UserInfoReply> GetUserInfo(UserInfoRequest request, ServerCallContext context)
         {
-            var stringId = request.Id;
             if (!UserId.TryParse(request.Id, out var userId))
             {
                 return new UserInfoReply();

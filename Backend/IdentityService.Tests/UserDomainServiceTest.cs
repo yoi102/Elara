@@ -13,7 +13,7 @@ namespace IdentityService.Tests
 {
     public class UserDomainServiceTest
     {
-        private readonly Mock<IEmailResetCodeValidator> _emailResetCodeValidatorMock;
+        private readonly Mock<IResetTokenCacheService> _resetTokenCacheService;
         private readonly Mock<IOptions<JWTOptions>> _optJWTMock;
         private readonly Mock<ITokenService> _tokenServiceMock;
         private readonly UserDomainService _userDomainService;
@@ -24,11 +24,11 @@ namespace IdentityService.Tests
             _userRepositoryMock = new Mock<IUserRepository>();
             _tokenServiceMock = new Mock<ITokenService>();
             _optJWTMock = new Mock<IOptions<JWTOptions>>();
-            _emailResetCodeValidatorMock = new Mock<IEmailResetCodeValidator>();
+            _resetTokenCacheService = new Mock<IResetTokenCacheService>();
             _userDomainService = new UserDomainService(_userRepositoryMock.Object,
                                               _tokenServiceMock.Object,
                                                  _optJWTMock.Object,
-                                      _emailResetCodeValidatorMock.Object);
+                                      _resetTokenCacheService.Object);
         }
 
         [Fact]
@@ -36,12 +36,12 @@ namespace IdentityService.Tests
         {
             var user = new User("name", "email@123.com");
             _userRepositoryMock.Setup(ur => ur.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
-            _emailResetCodeValidatorMock.Setup(ev => ev.StashEmailResetCode(It.IsAny<string>(), It.IsAny<string>()));
+            _resetTokenCacheService.Setup(ev => ev.CacheToken( It.IsAny<string>())).Returns(It.IsAny<string>());
 
             var result = await _userDomainService.GetEmailResetCode(user.Email!);
 
             _userRepositoryMock.Verify(ur => ur.FindByEmailAsync(user.Email!));
-            _emailResetCodeValidatorMock.Verify(ev => ev.StashEmailResetCode(user.Email!, It.IsAny<string>()));
+            _resetTokenCacheService.Verify(ev => ev.CacheToken( It.IsAny<string>()));
 
             result.Should().NotBeNull();
             result.IdentityResult.Succeeded.Should().BeTrue();
@@ -99,13 +99,13 @@ namespace IdentityService.Tests
                 NewPassword = "14567"
             };
 
-            _emailResetCodeValidatorMock.Setup(ev => ev.Validate(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
-            _userRepositoryMock.Setup(ur => ur.ResetPasswordByEmailAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+            _resetTokenCacheService.Setup(ev => ev.FindTokenByResetCode(It.IsAny<string>())).Returns(It.IsAny<string>());
+            _userRepositoryMock.Setup(ur => ur.ResetPasswordByEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
             var result = await _userDomainService.ResetPasswordByEmailResetCodeAsync(resetPasswordRequest);
 
-            _emailResetCodeValidatorMock.Verify(ev => ev.Validate(resetPasswordRequest.Email, resetPasswordRequest.ResetCode));
-            _userRepositoryMock.Verify(ur => ur.ResetPasswordByEmailAsync(resetPasswordRequest.Email, resetPasswordRequest.NewPassword));
+            _resetTokenCacheService.Verify(ev => ev.FindTokenByResetCode(resetPasswordRequest.ResetCode));
+            _userRepositoryMock.Verify(ur => ur.ResetPasswordByEmailAsync(resetPasswordRequest.Email, resetPasswordRequest.NewPassword, It.IsAny<string>()));
 
             result.Should().Be(IdentityResult.Success);
         }

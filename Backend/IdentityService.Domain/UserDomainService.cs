@@ -4,6 +4,7 @@ using IdentityService.Domain.Results;
 using JWT;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 using System.Security.Claims;
@@ -12,20 +13,20 @@ namespace IdentityService.Domain
 {
     public class UserDomainService : IUserDomainService
     {
-        private readonly IEmailResetCodeValidator emailResetCodeValidator;
         private readonly IOptions<JWTOptions> optJWT;
+        private readonly IResetTokenCacheService resetTokenCacheService;
         private readonly ITokenService tokenService;
         private readonly IUserRepository userRepository;
 
         public UserDomainService(IUserRepository userRepository,
             ITokenService tokenService,
             IOptions<JWTOptions> optJWT,
-            IEmailResetCodeValidator emailResetCodeValidator)
+            IResetTokenCacheService resetTokenCacheService)
         {
             this.userRepository = userRepository;
             this.tokenService = tokenService;
             this.optJWT = optJWT;
-            this.emailResetCodeValidator = emailResetCodeValidator;
+            this.resetTokenCacheService = resetTokenCacheService;
         }
 
         public async Task<GetEmailResetCodeResult> GetEmailResetCode(string email)
@@ -38,9 +39,9 @@ namespace IdentityService.Domain
 
                 return new GetEmailResetCodeResult(identityResult, email, "Reset Code", string.Empty);
             }
+            var token = await userRepository.GeneratePasswordResetTokenAsync(user);
+            var resetCode = resetTokenCacheService.CacheToken(token);
 
-            var resetCode = GenerateResetCode();
-            emailResetCodeValidator.StashEmailResetCode(email, resetCode);
             return new GetEmailResetCodeResult(IdentityResult.Success, email, "Reset Code", resetCode);
         }
 
@@ -58,13 +59,15 @@ namespace IdentityService.Domain
 
         public async Task<IdentityResult> ResetPasswordByEmailResetCodeAsync(ResetPasswordRequest resetPasswordRequest)
         {
-            if (!emailResetCodeValidator.Validate(resetPasswordRequest.Email, resetPasswordRequest.ResetCode))
+            //应该从Redis获取ResetToken
+            var token = resetTokenCacheService.FindTokenByResetCode(resetPasswordRequest.ResetCode);
+            token = "Token";//应该从Redis获取ResetToken
+            if (token is null)
             {
-                IdentityError error = new IdentityError { Description = "Invalid or expired verification code" };
-                return IdentityResult.Failed(error);
+                return IdentityResult.Failed();
             }
 
-            var identityResult = await userRepository.ResetPasswordByEmailAsync(resetPasswordRequest.Email, resetPasswordRequest.NewPassword);
+            var identityResult = await userRepository.ResetPasswordByEmailAsync(resetPasswordRequest.Email, resetPasswordRequest.NewPassword, token);
             return identityResult;
         }
 
@@ -84,7 +87,6 @@ namespace IdentityService.Domain
             return tokenService.BuildToken(claims, optJWT.Value);
         }
 
-      
         private async Task<(SignInResult, User?)> CheckEmailAndPasswordAsync(string email, string password)
         {
             var user = await userRepository.FindByEmailAsync(email);
@@ -105,19 +107,6 @@ namespace IdentityService.Domain
             }
             var result = await userRepository.CheckForSignInAsync(user, password, true);
             return (result, user);
-        }
-
-        private string GenerateResetCode()
-        {
-            Random random = new Random();
-            string code = "";
-
-            for (int i = 0; i < 5; i++)
-            {
-                code += random.Next(0, 10);
-            }
-            code = "123456";//固定值
-            return code;
         }
 
         private LoginResult LoginAsync(SignInResult checkResult, User? user)

@@ -2,6 +2,6 @@
 
 namespace IdentityService.WebAPI.Events.Args
 {
-    public record UserDeletedEventArgs(UserId Id);
+    public record UserDeletedEventArgs(UserId Id,string userName);
 
 }

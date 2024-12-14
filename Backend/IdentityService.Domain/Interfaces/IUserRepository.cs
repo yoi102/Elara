@@ -7,6 +7,7 @@ namespace IdentityService.Domain.Interfaces
 {
     public interface IUserRepository
     {
+        Task<string> GeneratePasswordResetTokenAsync(User user);
         Task<IdentityResult> AccessFailedAsync(User user);
 
         Task<IdentityResult> ChangePasswordAsync(UserId userId, string newPassword);
@@ -21,9 +22,9 @@ namespace IdentityService.Domain.Interfaces
 
         Task<IdentityResult> RemoveUserAsync(UserId id);
 
-        Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword);
+        Task<IdentityResult> ResetPasswordByEmailAsync(string email, string newPassword, string token);
 
-        Task<IdentityResult> ResetPasswordByIdAsync(UserId id, string newPassword);
+        Task<IdentityResult> ResetPasswordByIdAsync(UserId id, string oldPassword, string newPassword);
 
         Task<User[]> SearchUsersByNameAsync(string partialName);
 

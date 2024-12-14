@@ -23,6 +23,7 @@ namespace DomainCommons
                 domainEvents.Add(eventItem);
             }
         }
+
         public void ClearDomainEvents()
         {
             domainEvents.Clear();

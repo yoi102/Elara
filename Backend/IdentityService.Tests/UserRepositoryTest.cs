@@ -197,7 +197,7 @@ namespace IdentityService.Tests
             _mockUserManager.Setup(um => um.GeneratePasswordResetTokenAsync(It.IsAny<User>())).ReturnsAsync(token);
             _mockUserManager.Setup(um => um.ResetPasswordAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
-            var result = await _userRepository.ResetPasswordByEmailAsync(user.Email!, newPassword);
+            var result = await _userRepository.ResetPasswordByEmailAsync(user.Email!, newPassword,"");
 
             _mockUserManager.Verify(um => um.FindByEmailAsync(user.Email!));
             _mockUserManager.Verify(um => um.CheckPasswordAsync(user, newPassword));
@@ -218,7 +218,7 @@ namespace IdentityService.Tests
             _mockUserManager.Setup(um => um.GeneratePasswordResetTokenAsync(It.IsAny<User>())).ReturnsAsync(token);
             _mockUserManager.Setup(um => um.ResetPasswordAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
-            var result = await _userRepository.ResetPasswordByIdAsync(user.Id, newPassword);
+            var result = await _userRepository.ResetPasswordByIdAsync(user.Id, newPassword, "");
 
             _mockUserManager.Verify(um => um.FindByIdAsync(user.Id.ToString()));
             _mockUserManager.Verify(um => um.CheckPasswordAsync(user, newPassword));
