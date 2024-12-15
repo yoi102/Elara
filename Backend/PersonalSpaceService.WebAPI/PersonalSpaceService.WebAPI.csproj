@@ -5,7 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
+  
+  <ItemGroup>
+    <Protobuf Include="..\ASPNETCore\Protos\identity.proto" GrpcServices="Client" Link="Protos\identity.proto" />
+    <Protobuf Include="..\ASPNETCore\Protos\personal.proto" GrpcServices="Server" Link="Protos\personal.proto" />
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\Initializer\Initializer.csproj" />
     <ProjectReference Include="..\PersonalSpaceService.Infrastructure\PersonalSpaceService.Infrastructure.csproj" />
@@ -13,6 +18,13 @@
 
   <ItemGroup>
     <Folder Include="Events\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Tools" Version="2.68.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,20 @@
+﻿
+syntax = "proto3";
+
+package identity;
+
+
+service Identifier {
+
+  rpc GetUserInfo (UserInfoRequest) returns (UserInfoReply);
+}
+
+
+message UserInfoRequest {
+  string id = 1;
+}
+
+
+message UserInfoReply {
+  string user_name = 1;
+}

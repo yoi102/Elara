@@ -15,7 +15,7 @@ namespace PersonalSpaceService.Infrastructure.Configs
         {
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.UserId)
+            builder.Property(c => c.OwnerId)
                    .IsRequired();
 
             builder.ToTable("T_Contacts");

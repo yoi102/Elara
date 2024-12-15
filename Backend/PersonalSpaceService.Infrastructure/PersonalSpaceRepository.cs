@@ -16,16 +16,16 @@ namespace PersonalSpaceService.Infrastructure
 
         #region Contact
 
-        public async Task<Contact> AddContactsAsync(UserId userId, string remark)
+        public async Task<Contact> AddContactAsync(UserId ownerId, UserId contactId, string remark)
         {
-            var contact = new Contact(userId, remark);
+            var contact = new Contact(ownerId, contactId, remark);
             var entityEntry = await dbContext.Contacts.AddAsync(contact);
             return entityEntry.Entity;
         }
 
         public async Task<Contact[]> AllUserContactsAsync(UserId userId)
         {
-            return await dbContext.Contacts.Where(c => c.UserId == userId).ToArrayAsync();
+            return await dbContext.Contacts.Where(c => c.OwnerId == userId).ToArrayAsync();
         }
 
         public async Task<Task> DeleteContactAsync(ContactId contactId)

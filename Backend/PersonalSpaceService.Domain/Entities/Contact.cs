@@ -6,10 +6,11 @@ namespace PersonalSpaceService.Domain.Entities
 {
     public class Contact : Entity<ContactId>
     {
-        public Contact(UserId userId, string remark)
+        public Contact(UserId ownerId, UserId contactId, string remark)
         {
-            UserId = userId;
-            Id = ContactId.New();
+            ContactId = contactId;
+            Id = DomainCommons.EntityStronglyIds.ContactId.New();
+            OwnerId = ownerId;
             Remark = remark;
         }
 
@@ -17,9 +18,10 @@ namespace PersonalSpaceService.Domain.Entities
         {
         }
 
+        public UserId ContactId { get; private set; }
         public override ContactId Id { get; protected set; }
+        public UserId OwnerId { get; private set; }
         public string Remark { get; private set; } = null!;
-        public UserId UserId { get; private set; }
 
         public void ChangeRemark(string remark)
         {

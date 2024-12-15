@@ -24,9 +24,9 @@ namespace IdentityService.Domain.Entities
         private User()
         {
         }
-        private string passwordHash;
+        private string? passwordHash;
 
-        public override string PasswordHash
+        public override string? PasswordHash
         {
             get => passwordHash;
             set

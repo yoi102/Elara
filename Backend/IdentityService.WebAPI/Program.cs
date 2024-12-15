@@ -1,23 +1,32 @@
-﻿using IdentityService.Domain.Entities;
+﻿using Identity;
+using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using Initializer;
 using Microsoft.AspNetCore.Identity;
+using Personal;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureCommonServices(new InitializerOptions
 {
-    EventBusQueueName = "IdentityService.WebAPI",
-    LogFileRelativePath = "IdentityService//log_.txt"
+    EventBusQueueName = "IdentifierService.WebAPI",
+    LogFileRelativePath = "IdentifierService//log_.txt"
 });
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "IdentityService.WebAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "IdentifierService.WebAPI", Version = "v1" });
 });
 
 builder.Services.AddDataProtection();
 
 builder.Services.AddGrpc();
+
+builder.Services.AddGrpcClient<Person.PersonClient>("PersonClient", options =>
+{
+    options.Address = new Uri("https://localhost:7120");
+    //options.Address = new Uri("https://localhost:8080/Elara/PersonalSpaceService");//Nginx
+});
+
 
 IdentityBuilder idBuilder = builder.Services.AddIdentityCore<User>(options =>
 {
@@ -39,14 +48,14 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.MapGrpcService<IdentityService.WebAPI.Services.IdentityService>();
+app.MapGrpcService<IdentityService.WebAPI.Services.IdentifierService>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentityService.WebAPI v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentifierService.WebAPI v1"));
 }
 
 app.UseCommonMiddleware();

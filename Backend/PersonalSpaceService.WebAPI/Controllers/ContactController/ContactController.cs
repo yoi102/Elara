@@ -1,5 +1,6 @@
 ﻿using ASPNETCore;
 using DomainCommons.EntityStronglyIds;
+using Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -17,19 +18,18 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
     [Route("api/contact")]
     public class ContactController : ControllerBase
     {
-        private readonly UserId userId;
+        private readonly Identifier.IdentifierClient identifierClient;
         private readonly ILogger<ContactController> logger;
-        private readonly HttpClient httpClient;
         private readonly IPersonalSpaceRepository repository;
-        private readonly PersonalSpaceDomainService domainService;
+        private readonly UserId userId;
 
-        public ContactController(ILogger<ContactController> logger, HttpClient httpClient, IPersonalSpaceRepository repository, PersonalSpaceDomainService domainService)
+        public ContactController(ILogger<ContactController> logger,
+            IPersonalSpaceRepository repository,
+            Identifier.IdentifierClient identifierClient)
         {
             this.logger = logger;
-            this.httpClient = httpClient;
             this.repository = repository;
-            this.domainService = domainService;
-
+            this.identifierClient = identifierClient;
             var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(stringUserId))
             {
@@ -41,6 +41,20 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Contact>> AddContact([RequiredGuidStronglyId] UserId contactUserId)
+        {
+            var userInfoRequest = new Identity.UserInfoRequest() { Id = contactUserId.ToString() };
+            var reply = await identifierClient.GetUserInfoAsync(userInfoRequest);
+            if (reply?.UserName is null)
+            {
+                return NotFound();
+            }
+            var contact = await repository.AddContactAsync(userId, contactUserId, reply.UserName);
+
+            return Ok(contact);
+        }
+
         [HttpGet]
         public async Task<ActionResult<Contact[]>> AllContacts()
         {
@@ -48,8 +62,15 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
             return Ok(contacts);
         }
 
+        [HttpDelete]
+        public async Task<ActionResult> DeleteContact([RequiredGuidStronglyId] ContactId contactId)
+        {
+            await repository.DeleteContactAsync(contactId);
+
+            return Ok();
+        }
+
         [HttpGet]
-        [Route("id/{contactId}")]
         public async Task<ActionResult<Contact>> GetContact([RequiredGuidStronglyId] ContactId contactId)
         {
             var contact = await repository.FindContactByContactIdAsync(contactId);
@@ -59,41 +80,15 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController
             return Ok(contact);
         }
 
-
-
-        [HttpPost]
-        [Route("user-id/{contactUserId}")]
-        public async Task<ActionResult<Contact>> AddContact([RequiredGuidStronglyId] UserId contactUserId)
-        {
-            var response = await httpClient.GetAsync($"XXXXX{contactUserId}");
-
-            //var contact = new Contact(userId,);
-
-
-
-
-            return Ok();
-        }
-
         [HttpPatch]
-        public ActionResult UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
+        public async Task<ActionResult<Contact>> UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
         {
-
-
-
-            return Ok();
+            var contact = await repository.UpdateContactInfoAsync(contactId, request.Remark);
+            if (contact is null)
+            {
+                return NotFound();
+            }
+            return Ok(contact);
         }
-
-
-        [HttpDelete]
-        public ActionResult DeleteContact([RequiredGuidStronglyId] ContactId contactId)
-        {
-
-
-
-            return Ok();
-        }
-
-
     }
 }

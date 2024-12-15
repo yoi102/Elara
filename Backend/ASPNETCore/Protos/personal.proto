@@ -1,0 +1,21 @@
+﻿
+syntax = "proto3";
+
+package personal;
+
+
+service Person {
+
+  rpc CreateProfile (CreateProfileRequest) returns (CreateProfileReply);
+}
+
+
+message CreateProfileRequest {
+  string user_id = 1;
+  string user_name = 2;
+}
+
+
+message CreateProfileReply {
+  bool is_created = 1;
+}

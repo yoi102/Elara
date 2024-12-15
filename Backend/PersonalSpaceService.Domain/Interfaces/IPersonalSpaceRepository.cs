@@ -7,7 +7,7 @@ namespace PersonalSpaceService.Domain.Interfaces
     {
         #region Contact
 
-        Task<Contact> AddContactsAsync(UserId userId, string remark);
+        Task<Contact> AddContactAsync(UserId ownerId, UserId contactId, string remark);
 
         Task<Contact[]> AllUserContactsAsync(UserId userId);
 

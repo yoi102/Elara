@@ -1,16 +1,16 @@
 ﻿using DomainCommons.EntityStronglyIds;
 using Grpc.Core;
+using Identity;
 using IdentityService.Infrastructure;
-using IdentityService.WebAPI.Protos;
 
 namespace IdentityService.WebAPI.Services
 {
-    public class IdentityService : Identity.IdentityBase
+    public class IdentifierService : Identifier.IdentifierBase
     {
-        private readonly ILogger<IdentityService> logger;
+        private readonly ILogger<IdentifierService> logger;
         private readonly UserRepository userRepository;
 
-        public IdentityService(ILogger<IdentityService> logger, UserRepository userRepository)
+        public IdentifierService(ILogger<IdentifierService> logger, UserRepository userRepository)
         {
             this.logger = logger;
             this.userRepository = userRepository;
