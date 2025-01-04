@@ -62,6 +62,17 @@ namespace PersonalSpaceService.Infrastructure
             return entityEntry.Entity;
         }
 
+        public async Task<Profile?> DeleteProfileByUserIdAsync(UserId userId)
+        {
+            var profile = await FindProfileByUserIdAsync(userId);
+            if (profile == null)
+            {
+                return profile;
+            }
+            profile.SoftDelete();
+            return profile;
+        }
+
         public async Task<Profile?> FindProfileByProfileIdAsync(ProfileId profileId)
         {
             return await dbContext.Profiles.FindAsync(profileId);

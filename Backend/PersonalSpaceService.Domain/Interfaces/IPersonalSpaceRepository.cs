@@ -23,6 +23,8 @@ namespace PersonalSpaceService.Domain.Interfaces
 
         Task<Profile> CreateProfileAsync(UserId userId, string displayName);
 
+        Task<Profile?> DeleteProfileByUserIdAsync(UserId userId);
+
         Task<Profile?> FindProfileByProfileIdAsync(ProfileId profileId);
 
         Task<Profile?> FindProfileByUserIdAsync(UserId userId);

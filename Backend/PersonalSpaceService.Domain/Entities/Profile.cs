@@ -27,6 +27,7 @@ namespace PersonalSpaceService.Domain.Entities
             if (DisplayName == displayName) return;
             DisplayName = displayName;
             this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
+            NotifyModified();
         }
 
         public void ChangeAvatar(Uri avatar)
@@ -34,6 +35,13 @@ namespace PersonalSpaceService.Domain.Entities
             if (Avatar == avatar) return;
             Avatar = avatar;
             this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
+            NotifyModified();
         }
+        public override void SoftDelete()
+        {
+            base.SoftDelete();
+            this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
+        }
+
     }
 }

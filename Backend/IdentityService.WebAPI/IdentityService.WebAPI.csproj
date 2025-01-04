@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Protobuf Include="..\ASPNETCore\Protos\identity.proto" GrpcServices="Server" Link="Protos\identity.proto" />
-    <Protobuf Include="..\ASPNETCore\Protos\personal.proto" GrpcServices="Client" Link="Protos\personal.proto" />
   </ItemGroup>
 
   <ItemGroup>

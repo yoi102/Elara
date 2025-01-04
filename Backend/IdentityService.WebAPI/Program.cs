@@ -21,13 +21,6 @@ builder.Services.AddDataProtection();
 
 builder.Services.AddGrpc();
 
-builder.Services.AddGrpcClient<Person.PersonClient>("PersonClient", options =>
-{
-    options.Address = new Uri("https://localhost:7120");
-    //options.Address = new Uri("https://localhost:8080/Elara/PersonalSpaceService");//Nginx
-});
-
-
 IdentityBuilder idBuilder = builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit = false;

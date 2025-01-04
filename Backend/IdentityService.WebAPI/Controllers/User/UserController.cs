@@ -1,4 +1,5 @@
 ﻿using DomainCommons.EntityStronglyIds;
+using EventBus;
 using IdentityService.Domain;
 using IdentityService.Domain.Interfaces;
 using IdentityService.Domain.Results;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Personal;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Claims;
@@ -23,19 +23,19 @@ namespace IdentityService.WebAPI.Controllers.User
         private readonly IUserDomainService userDomainService;
         private readonly IUserRepository userRepository;
         private readonly IEmailSender emailSender;
-        private readonly Person.PersonClient personClient;
+        private readonly IEventBus eventBus;
 
-        public UserController(ILogger<UserController> logger, 
-            IUserDomainService userDomainService, 
-            IUserRepository userRepository, 
+        public UserController(ILogger<UserController> logger,
+            IUserDomainService userDomainService,
+            IUserRepository userRepository,
             IEmailSender emailSender,
-            Person.PersonClient personClient)
+            IEventBus eventBus)
         {
             this.logger = logger;
             this.userDomainService = userDomainService;
             this.userRepository = userRepository;
             this.emailSender = emailSender;
-            this.personClient = personClient;
+            this.eventBus = eventBus;
         }
 
         [Authorize]
@@ -49,7 +49,6 @@ namespace IdentityService.WebAPI.Controllers.User
             var result = await userRepository.RemoveUserAsync(userId);
             if (!result.Succeeded)
                 return BadRequest();
-
             return Ok();
         }
 
@@ -180,12 +179,9 @@ namespace IdentityService.WebAPI.Controllers.User
             {
                 return BadRequest(signUpResult.IdentityResult.Errors.SumErrors());
             }
-            var createProfileRequest = new CreateProfileRequest()
-            {
-                UserId = signUpResult.User.Id.ToString(),
-                UserName = signUpResult.User.UserName
-            };
-            await personClient.CreateProfileAsync(createProfileRequest);
+
+            await eventBus.PublishAsync("IdentityService.UserCreated", new { UserId = signUpResult.User.Id.ToString(), signUpResult.User.UserName });
+
             return CreatedAtAction(nameof(SignUp), new { id = signUpResult.User.Id }, new { message = "User created successfully." });
         }
 

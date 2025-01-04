@@ -24,8 +24,8 @@ namespace Initializer
         {
             ReadAndSetHostBuilderConfiguration(builder);
 
-            IServiceCollection services = builder.Services;
-            IConfiguration configuration = builder.Configuration;
+            var services = builder.Services;
+            var configuration = builder.Configuration;
 
             ConfigureSerilog(builder, initOptions);
 
