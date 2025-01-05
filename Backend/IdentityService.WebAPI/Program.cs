@@ -1,9 +1,7 @@
-﻿using Identity;
-using IdentityService.Domain.Entities;
+﻿using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
 using Initializer;
 using Microsoft.AspNetCore.Identity;
-using Personal;
 
 var builder = WebApplication.CreateBuilder(args);
 

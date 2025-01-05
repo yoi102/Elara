@@ -15,10 +15,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Personal;
 using System.Net;
 using System.Security.Claims;
-using static Personal.Person;
 
 namespace IdentityService.Tests
 {
@@ -26,7 +24,7 @@ namespace IdentityService.Tests
     {
         private readonly Mock<IEmailSender> emailSenderMock;
         private readonly Mock<ILogger<UserController>> loggerMock;
-        private Mock<PersonClient> personClientMock;
+        private Mock<IEventBus> eventBusMock;
         private readonly UserController userController;
         private readonly Mock<IUserDomainService> userDomainServiceMock;
         private readonly Mock<IUserRepository> userRepositoryMock;
@@ -36,9 +34,9 @@ namespace IdentityService.Tests
             userRepositoryMock = new Mock<IUserRepository>();
             emailSenderMock = new Mock<IEmailSender>();
             loggerMock = new Mock<ILogger<UserController>>();
-            personClientMock = new Mock<Person.PersonClient>();
+            eventBusMock = new Mock<IEventBus>();
             userController = new UserController(loggerMock.Object, userDomainServiceMock.Object,
-                                       userRepositoryMock.Object, emailSenderMock.Object, personClientMock.Object);
+                                       userRepositoryMock.Object, emailSenderMock.Object, eventBusMock.Object);
         }
 
         [Fact]

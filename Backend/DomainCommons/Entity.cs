@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DomainCommons
 {
-    public abstract class Entity<T> : IEntity<T>, IDomainEvents
+    public abstract record Entity<T> : IEntity<T>, IDomainEvents
         where T : struct
     {
         [NotMapped]

@@ -1,15 +1,17 @@
-﻿using DomainCommons;
-using DomainCommons.EntityStronglyIds;
+﻿using DomainCommons.EntityStronglyIds;
 
 namespace ChatService.Domain.Entities
 {
-    public class ReplyMessage : MessageBase
+    public record ReplyMessage : MessageBase
     {
         public ReplyMessage(UserId senderId, MessageId messageId) : base(senderId)
         {
             MessageId = messageId;
         }
-
+        private ReplyMessage()
+        {
+                
+        }
         public MessageId MessageId { get; private set; }
     }
 }

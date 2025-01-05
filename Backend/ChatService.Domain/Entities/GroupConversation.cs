@@ -4,7 +4,7 @@ using DomainCommons.EntityStronglyIds;
 
 namespace ChatService.Domain.Entities {
 
-    public class GroupConversation : AggregateRootEntity<GroupConversationId> {
+    public record GroupConversation : AggregateRootEntity<GroupConversationId> {
         private readonly List<UserId> member = new List<UserId>();
 
         public GroupConversation(string name)

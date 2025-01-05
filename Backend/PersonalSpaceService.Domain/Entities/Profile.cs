@@ -4,7 +4,7 @@ using PersonalSpaceService.Domain.Events;
 
 namespace PersonalSpaceService.Domain.Entities
 {
-    public class Profile : AggregateRootEntity<ProfileId>
+    public record Profile : AggregateRootEntity<ProfileId>
     {
         public Profile(UserId userId, string displayName)
         {

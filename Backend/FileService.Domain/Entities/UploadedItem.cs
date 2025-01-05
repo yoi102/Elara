@@ -3,7 +3,7 @@ using DomainCommons.EntityStronglyIds;
 
 namespace FileService.Domain.Entities
 {
-    public class UploadedItem : Entity<UploadedItemId>, IHasCreationTime
+    public record UploadedItem : Entity<UploadedItemId>, IHasCreationTime
     {
         private UploadedItem()
         {

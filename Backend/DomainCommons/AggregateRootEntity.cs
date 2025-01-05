@@ -1,6 +1,6 @@
 ﻿namespace DomainCommons
 {
-    public abstract class AggregateRootEntity<T> : Entity<T>, IAggregateRoot, ISoftDelete, IHasCreationTime, IHasDeletionTime, IHasModificationTime
+    public abstract record AggregateRootEntity<T> : Entity<T>, IAggregateRoot, ISoftDelete, IHasCreationTime, IHasDeletionTime, IHasModificationTime
         where T : struct
     {
         public bool IsDeleted { get; private set; }

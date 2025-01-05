@@ -4,7 +4,7 @@ using PersonalSpaceService.Domain.Events;
 
 namespace PersonalSpaceService.Domain.Entities
 {
-    public class Contact : Entity<ContactId>
+    public record Contact : Entity<ContactId>
     {
         public Contact(UserId ownerId, UserId contactId, string remark)
         {

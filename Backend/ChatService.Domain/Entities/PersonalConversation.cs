@@ -3,7 +3,7 @@ using DomainCommons.EntityStronglyIds;
 
 namespace ChatService.Domain.Entities
 {
-    public class PersonalConversation : AggregateRootEntity<PersonalConversationId>
+    public record PersonalConversation : AggregateRootEntity<PersonalConversationId>
     {
         public PersonalConversation(UserId user1Id, UserId user2Id)
         {

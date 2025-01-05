@@ -3,7 +3,7 @@ using DomainCommons.EntityStronglyIds;
 
 namespace WorkspaceService.Domain.Entities
 {
-    public class WorkspaceMember : Entity<WorkspaceMemberId>
+    public record WorkspaceMember : Entity<WorkspaceMemberId>
     {
         public WorkspaceMember(UserId userId,string role)
         {

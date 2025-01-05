@@ -2,16 +2,20 @@
 
 namespace ChatService.Domain.Entities
 {
-    public class PersonalMessage : MessageBase
+    public record PersonalMessage : MessageBase
     {
-        public PersonalMessage(UserId senderId, PersonalConversationId conversationId) : base(senderId)
+        public PersonalMessage(UserId senderId, PersonalConversationId personalConversationId) : base(senderId)
         {
-            ConversationId = conversationId;
+            this.PersonalConversationId = personalConversationId;
             Id = MessageId.New();
+        }
+        private PersonalMessage()
+        {
+
         }
 
         public bool IsRead { get; private set; }
         public MessageId? Quote { get; private set; }
-        public PersonalConversationId ConversationId { get; private set; }
+        public PersonalConversationId PersonalConversationId { get; private set; }
     }
 }

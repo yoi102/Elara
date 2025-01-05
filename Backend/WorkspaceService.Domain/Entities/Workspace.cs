@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WorkspaceService.Domain.Entities
 {
-    public class Workspace : AggregateRootEntity<WorkspaceId>
+    public record Workspace : AggregateRootEntity<WorkspaceId>
     {
         public Workspace(string name)
         {
