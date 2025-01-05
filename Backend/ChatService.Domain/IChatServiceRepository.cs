@@ -14,6 +14,7 @@ namespace ChatService.Domain
         #endregion GroupConversation
 
         #region GroupMessage
+        Task<GroupMessage?> FindGroupMessagesByIdAsync(MessageId id);
 
         Task<GroupMessage[]> FindGroupMessagesByGroupConversationIdAsync(GroupConversationId id);
 
@@ -27,11 +28,15 @@ namespace ChatService.Domain
 
         #region PersonalMessage
 
+        Task<PersonalMessage?> FindPersonalMessagesByIdAsync(MessageId id);
+
         Task<PersonalMessage[]> FindPersonalMessagesByPersonalConversationIdAsync(PersonalConversationId id);
 
         #endregion PersonalMessage
 
         #region ReplyMessage
+
+        Task<ReplyMessage?> FindReplyMessagesByIdAsync(MessageId id);
 
         Task<ReplyMessage[]> FindReplyMessagesByMessageIdAsync(MessageId id);
 

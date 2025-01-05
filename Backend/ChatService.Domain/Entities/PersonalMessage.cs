@@ -4,7 +4,8 @@ namespace ChatService.Domain.Entities
 {
     public record PersonalMessage : MessageBase
     {
-        public PersonalMessage(UserId senderId, PersonalConversationId personalConversationId) : base(senderId)
+        public PersonalMessage(UserId senderId, PersonalConversationId personalConversationId,
+                            string content, Uri[] attachments) : base(senderId, content, attachments)
         {
             this.PersonalConversationId = personalConversationId;
             Id = MessageId.New();

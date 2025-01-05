@@ -11,7 +11,10 @@ namespace ChatService.Domain.Entities
             User2Id = user2Id;
             Id = PersonalConversationId.New();
         }
-
+        private PersonalConversation()
+        {
+                
+        }
         public override PersonalConversationId Id { get; protected set; }
         public UserId User1Id { get; private set; }
         public UserId User2Id { get; private set; }

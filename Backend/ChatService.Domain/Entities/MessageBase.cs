@@ -6,13 +6,15 @@ namespace ChatService.Domain.Entities
 {
     public abstract record MessageBase : AggregateRootEntity<MessageId>
     {
-        private List<Uri> attachments = [];
+        protected List<Uri> attachments = [];
 
-        protected MessageBase(UserId senderId)
+        protected MessageBase(UserId senderId, string content, Uri[] attachments)
         {
             Id = MessageId.New();
             SenderId = senderId;
-            this.attachments = attachments.ToList();
+            Content = content;
+            this.attachments = [.. attachments];
+            AddDomainEvent(new MessageCreatedEvent(this));
         }
 
         protected MessageBase()
@@ -20,9 +22,9 @@ namespace ChatService.Domain.Entities
 
         public IReadOnlyCollection<Uri> Attachments => attachments.AsReadOnly();
 
-        public string? Content { get; private set; }
+        public string Content { get; protected set; } = string.Empty;
         public override MessageId Id { get; protected set; }
-        public UserId SenderId { get; private set; }
+        public UserId SenderId { get; protected set; }
 
         public void ChangeAttachments(Uri[] value)
         {

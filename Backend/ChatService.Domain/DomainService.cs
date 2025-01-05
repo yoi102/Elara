@@ -24,12 +24,18 @@ namespace ChatService.Domain
         }
 
 
-        //public async Task<MessageBase> UpdateMessage(MessageId messageId, string content)
-        //{
-
-
-
-        //}
+        public async Task<MessageBase?> UpdateMessage(MessageId messageId, string content, Uri[] attachments)
+        {
+            MessageBase? message = await chatServiceRepository.FindGroupMessagesByIdAsync(messageId);
+            message ??= await chatServiceRepository.FindPersonalMessagesByIdAsync(messageId);
+            if (message is null)
+            {
+                return null;
+            }
+            message.ChangeContent(content);
+            message.ChangeAttachments(attachments);
+            return message;
+        }
 
 
 

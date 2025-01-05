@@ -4,7 +4,8 @@ namespace ChatService.Domain.Entities
 {
     public record ReplyMessage : MessageBase
     {
-        public ReplyMessage(UserId senderId, MessageId messageId) : base(senderId)
+        public ReplyMessage(UserId senderId, MessageId messageId, 
+                        string content, Uri[] attachments) : base(senderId, content, attachments)
         {
             MessageId = messageId;
         }
