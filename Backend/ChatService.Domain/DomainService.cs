@@ -23,11 +23,33 @@ namespace ChatService.Domain
             return groupConversation;
         }
 
-
-        public async Task<MessageBase?> UpdateMessage(MessageId messageId, string content, Uri[] attachments)
+        public async Task<GroupMessage?> UpdateGroupMessage(MessageId messageId, string content, Uri[] attachments)
         {
-            MessageBase? message = await chatServiceRepository.FindGroupMessagesByIdAsync(messageId);
-            message ??= await chatServiceRepository.FindPersonalMessagesByIdAsync(messageId);
+            var message = await chatServiceRepository.FindGroupMessageByIdAsync(messageId);
+            if (message is null)
+            {
+                return null;
+            }
+            message.ChangeContent(content);
+            message.ChangeAttachments(attachments);
+            return message;
+        }
+
+        public async Task<PersonalMessage?> UpdatePersonalMessage(MessageId messageId, string content, Uri[] attachments)
+        {
+            var message = await chatServiceRepository.FindPersonalMessageByIdAsync(messageId);
+            if (message is null)
+            {
+                return null;
+            }
+            message.ChangeContent(content);
+            message.ChangeAttachments(attachments);
+            return message;
+        }
+
+        public async Task<ReplyMessage?> UpdateReplyMessage(MessageId messageId, string content, Uri[] attachments)
+        {
+            var message = await chatServiceRepository.FindReplyMessageByIdAsync(messageId);
             if (message is null)
             {
                 return null;

@@ -41,7 +41,7 @@ namespace ChatService.Infrastructure
                          .ToArrayAsync();
         }
 
-        public async Task<GroupMessage?> FindGroupMessagesByIdAsync(MessageId id)
+        public async Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id)
         {
             return await dbContext.FindAsync<GroupMessage>(id);
         }
@@ -55,7 +55,7 @@ namespace ChatService.Infrastructure
             return await dbContext.FindAsync<PersonalConversation>(id);
         }
 
-        public async Task<PersonalMessage?> FindPersonalMessagesByIdAsync(MessageId id)
+        public async Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id)
         {
             return await dbContext.FindAsync<PersonalMessage>(id);
         }
@@ -72,7 +72,7 @@ namespace ChatService.Infrastructure
                          .ToArrayAsync();
         }
 
-        public async Task<ReplyMessage?> FindReplyMessagesByIdAsync(MessageId id)
+        public async Task<ReplyMessage?> FindReplyMessageByIdAsync(MessageId id)
         {
             return await dbContext.FindAsync<ReplyMessage>(id);
         }
