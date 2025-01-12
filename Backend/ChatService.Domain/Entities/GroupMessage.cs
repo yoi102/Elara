@@ -1,27 +1,19 @@
-﻿using ChatService.Domain.Events;
-using DomainCommons.EntityStronglyIds;
+﻿using DomainCommons.EntityStronglyIds;
 
-namespace ChatService.Domain.Entities
+namespace ChatService.Domain.Entities;
+
+public record GroupMessage : BaseMessage
 {
-    public record GroupMessage : MessageBase
+    public GroupMessage(UserId senderId, GroupConversationId groupConversationId,
+                    string content, Uri[] attachments) : base(senderId, content, attachments)
     {
-        public GroupMessage(UserId senderId, GroupConversationId groupConversationId, 
-                        string content, Uri[] attachments) : base(senderId,  content, attachments)
-        {
-            GroupConversationId = groupConversationId;
-        }
-
-        private GroupMessage()
-        {
-        }
-
-
-        public GroupConversationId GroupConversationId { get; set; }
-        public MessageId? Quote { get; private set; } 
-
-
-
-
-
+        GroupConversationId = groupConversationId;
     }
+
+    private GroupMessage()
+    {
+    }
+
+    public GroupConversationId GroupConversationId { get; set; }
+    public MessageId? Quote { get; private set; }
 }

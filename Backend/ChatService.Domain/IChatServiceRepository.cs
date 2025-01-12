@@ -1,45 +1,45 @@
 ﻿using ChatService.Domain.Entities;
 using DomainCommons.EntityStronglyIds;
 
-namespace ChatService.Domain
+namespace ChatService.Domain;
+
+public interface IChatServiceRepository
 {
-    public interface IChatServiceRepository
-    {
-        #region GroupConversation
+    #region GroupConversation
 
-        Task<GroupConversation?> FindGroupConversationByIdAsync(GroupConversationId id);
+    Task<GroupConversation?> FindGroupConversationByIdAsync(GroupConversationId id);
 
-        Task<GroupConversation[]> FindGroupConversationsByUserIdAsync(UserId id);
+    Task<GroupConversation[]> FindGroupConversationsByUserIdAsync(UserId id);
 
-        #endregion GroupConversation
+    #endregion GroupConversation
 
-        #region GroupMessage
-        Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id);
+    #region GroupMessage
 
-        Task<GroupMessage[]> FindGroupMessagesByGroupConversationIdAsync(GroupConversationId id);
+    Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id);
 
-        #endregion GroupMessage
+    Task<GroupMessage[]> FindGroupMessagesByGroupConversationIdAsync(GroupConversationId id);
 
-        #region PersonalConversation
+    #endregion GroupMessage
 
-        Task<PersonalConversation?> FindPersonalConversationByIdAsync(PersonalConversationId id);
+    #region PersonalConversation
 
-        #endregion PersonalConversation
+    Task<PersonalConversation?> FindPersonalConversationByIdAsync(PersonalConversationId id);
 
-        #region PersonalMessage
+    #endregion PersonalConversation
 
-        Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id);
+    #region PersonalMessage
 
-        Task<PersonalMessage[]> FindPersonalMessagesByPersonalConversationIdAsync(PersonalConversationId id);
+    Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id);
 
-        #endregion PersonalMessage
+    Task<PersonalMessage[]> FindPersonalMessagesByPersonalConversationIdAsync(PersonalConversationId id);
 
-        #region ReplyMessage
+    #endregion PersonalMessage
 
-        Task<ReplyMessage?> FindReplyMessageByIdAsync(MessageId id);
+    #region ReplyMessage
 
-        Task<ReplyMessage[]> FindReplyMessagesByMessageIdAsync(MessageId id);
+    Task<ReplyMessage?> FindReplyMessageByIdAsync(MessageId id);
 
-        #endregion ReplyMessage
-    }
+    Task<ReplyMessage[]> FindReplyMessagesByMessageIdAsync(MessageId id);
+
+    #endregion ReplyMessage
 }

@@ -1,18 +1,16 @@
 ﻿using DomainCommons.EntityStronglyIds;
 
-namespace ChatService.Domain.Entities
+namespace ChatService.Domain.Entities;
+
+public record ReplyMessage : BaseMessage
 {
-    public record ReplyMessage : MessageBase
+    public ReplyMessage(UserId senderId, MessageId messageId,
+                    string content, Uri[] attachments) : base(senderId, content, attachments)
     {
-        public ReplyMessage(UserId senderId, MessageId messageId, 
-                        string content, Uri[] attachments) : base(senderId, content, attachments)
-        {
-            MessageId = messageId;
-        }
-        private ReplyMessage()
-        {
-                
-        }
-        public MessageId MessageId { get; private set; }
+        MessageId = messageId;
     }
+    private ReplyMessage()
+    {
+    }
+    public MessageId MessageId { get; private set; }
 }

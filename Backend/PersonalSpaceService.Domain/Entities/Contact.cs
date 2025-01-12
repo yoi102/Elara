@@ -2,31 +2,30 @@
 using DomainCommons.EntityStronglyIds;
 using PersonalSpaceService.Domain.Events;
 
-namespace PersonalSpaceService.Domain.Entities
+namespace PersonalSpaceService.Domain.Entities;
+
+public record Contact : AggregateRootEntity<ContactId>
 {
-    public record Contact : Entity<ContactId>
+    public Contact(UserId ownerId, UserId contactId, string remark)
     {
-        public Contact(UserId ownerId, UserId contactId, string remark)
-        {
-            ContactId = contactId;
-            Id = DomainCommons.EntityStronglyIds.ContactId.New();
-            OwnerId = ownerId;
-            Remark = remark;
-        }
+        ContactId = contactId;
+        Id = DomainCommons.EntityStronglyIds.ContactId.New();
+        OwnerId = ownerId;
+        Remark = remark;
+    }
 
-        private Contact()
-        {
-        }
+    private Contact()
+    {
+    }
 
-        public UserId ContactId { get; private set; }
-        public override ContactId Id { get; protected set; }
-        public UserId OwnerId { get; private set; }
-        public string Remark { get; private set; } = null!;
+    public UserId ContactId { get; private set; }
+    public override ContactId Id { get; protected set; }
+    public UserId OwnerId { get; private set; }
+    public string Remark { get; private set; } = null!;
 
-        public void ChangeRemark(string remark)
-        {
-            Remark = remark;
-            this.AddDomainEventIfAbsent(new ContactUpdatedEvent(this));
-        }
+    public void ChangeRemark(string remark)
+    {
+        Remark = remark;
+        this.AddDomainEventIfAbsent(new ContactUpdatedEvent(this));
     }
 }

@@ -1,22 +1,20 @@
 ﻿using DomainCommons;
 using DomainCommons.EntityStronglyIds;
 
-namespace ChatService.Domain.Entities
+namespace ChatService.Domain.Entities;
+
+public record PersonalConversation : AggregateRootEntity<PersonalConversationId>
 {
-    public record PersonalConversation : AggregateRootEntity<PersonalConversationId>
+    public PersonalConversation(UserId user1Id, UserId user2Id)
     {
-        public PersonalConversation(UserId user1Id, UserId user2Id)
-        {
-            User1Id = user1Id;
-            User2Id = user2Id;
-            Id = PersonalConversationId.New();
-        }
-        private PersonalConversation()
-        {
-                
-        }
-        public override PersonalConversationId Id { get; protected set; }
-        public UserId User1Id { get; private set; }
-        public UserId User2Id { get; private set; }
+        User1Id = user1Id;
+        User2Id = user2Id;
+        Id = PersonalConversationId.New();
     }
+    private PersonalConversation()
+    {
+    }
+    public override PersonalConversationId Id { get; protected set; }
+    public UserId User1Id { get; private set; }
+    public UserId User2Id { get; private set; }
 }
