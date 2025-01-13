@@ -11,6 +11,7 @@ internal class PersonalConversationConfig : IEntityTypeConfiguration<PersonalCon
         builder.ToTable("T_PersonalConversations");
         builder.HasKey(e => e.Id);
 
-
+        builder.HasIndex(m => new { m.User1Id, m.User2Id })
+       .IsUnique();
     }
 }

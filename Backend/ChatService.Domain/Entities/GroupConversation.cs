@@ -22,5 +22,6 @@ public record GroupConversation : AggregateRootEntity<GroupConversationId>
     {
         Name = name;
         AddDomainEventIfAbsent(new GroupConversationUpdatedEvent(this));
+        NotifyModified();
     }
 }

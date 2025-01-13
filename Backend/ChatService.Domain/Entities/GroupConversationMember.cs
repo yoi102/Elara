@@ -1,12 +1,12 @@
-﻿using DomainCommons.EntityStronglyIds;
+﻿using ChatService.Domain.Events;
 using DomainCommons;
-using ChatService.Domain.Events;
+using DomainCommons.EntityStronglyIds;
 
 namespace ChatService.Domain.Entities;
 
 public record GroupConversationMember : Entity<GroupConversationMemberId>
 {
-    public GroupConversationMember(GroupConversationId groupConversationId, UserId user, string role = "member")
+    public GroupConversationMember(GroupConversationId groupConversationId, UserId user, string role = "Member")
     {
         Id = GroupConversationMemberId.New();
         GroupConversationId = groupConversationId;
@@ -21,11 +21,18 @@ public record GroupConversationMember : Entity<GroupConversationMemberId>
     public override GroupConversationMemberId Id { get; protected set; }
     public UserId UserId { get; private set; }
     public GroupConversationId GroupConversationId { get; private set; }
-    public string Role { get; private set; } = string.Empty;
+    public string Role { get; private set; } = Roles.Member;
 
     public void ChangeRole(string value)
     {
         Role = value;
         this.AddDomainEventIfAbsent(new GroupConversationMemberUpdatedEvent(this));
     }
+}
+
+public static class Roles
+{
+    public static string Manager { get; } = "Manager";
+    public static string Member { get; } = "Member";
+    public static string Owner { get; } = "Owner";
 }

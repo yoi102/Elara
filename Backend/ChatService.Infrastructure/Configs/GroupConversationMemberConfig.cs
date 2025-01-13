@@ -1,6 +1,7 @@
 ﻿using ChatService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace ChatService.Infrastructure.Configs;
 internal class GroupConversationMemberConfig : IEntityTypeConfiguration<GroupConversationMember>
@@ -14,5 +15,8 @@ internal class GroupConversationMemberConfig : IEntityTypeConfiguration<GroupCon
        .WithMany()
        .HasForeignKey(e => e.GroupConversationId)
        .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(m => new { m.GroupConversationId, m.UserId })
+       .IsUnique();
     }
 }

@@ -11,5 +11,6 @@ internal class GroupConversationConfig : IEntityTypeConfiguration<GroupConversat
         builder.ToTable("T_GroupConversations");
         builder.HasKey(e => e.Id);
 
+        builder.HasIndex(e => e.Name).IsUnique();
     }
 }

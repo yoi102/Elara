@@ -13,6 +13,13 @@ public interface IChatServiceRepository
 
     #endregion GroupConversation
 
+    #region GroupConversationMember
+    Task<GroupConversationMember?> FindGroupConversationMemberByIdAsync(GroupConversationMemberId id);
+
+    Task<GroupConversationMember[]> FindGroupConversationMemberByGroupConversationIdAsync(GroupConversationId id);
+    #endregion
+
+
     #region GroupMessage
 
     Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id);

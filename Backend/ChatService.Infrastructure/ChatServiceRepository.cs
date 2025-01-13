@@ -23,15 +23,40 @@ public class ChatServiceRepository : IChatServiceRepository
 
     public async Task<GroupConversation[]> FindGroupConversationsByUserIdAsync(UserId id)
     {
-        return await dbContext
-                     .GroupConversations
-                     .Where(g => g.Member.Contains(id))
-                     .ToArrayAsync();
+        return await dbContext.GroupConversations
+                    .Join(
+                        dbContext.GroupConversationMembers.Where(gm => gm.UserId == id),
+                        gc => gc.Id,
+                        gm => gm.GroupConversationId,
+                        (gc, gm) => gc
+                    )
+                    .ToArrayAsync();
     }
 
     #endregion GroupConversation
 
+    #region GroupConversationMember
+
+    public async Task<GroupConversationMember[]> FindGroupConversationMemberByGroupConversationIdAsync(GroupConversationId id)
+    {
+        return await dbContext
+                  .GroupConversationMembers
+                  .Where(g => g.GroupConversationId == id)
+                  .ToArrayAsync();
+    }
+
+    public async Task<GroupConversationMember?> FindGroupConversationMemberByIdAsync(GroupConversationMemberId id)
+    {
+        return await dbContext.FindAsync<GroupConversationMember>(id);
+    }
+    #endregion GroupConversationMember
+
     #region GroupMessage
+
+    public async Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id)
+    {
+        return await dbContext.FindAsync<GroupMessage>(id);
+    }
 
     public async Task<GroupMessage[]> FindGroupMessagesByGroupConversationIdAsync(GroupConversationId id)
     {
@@ -40,12 +65,6 @@ public class ChatServiceRepository : IChatServiceRepository
                      .Where(g => g.GroupConversationId == id)
                      .ToArrayAsync();
     }
-
-    public async Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id)
-    {
-        return await dbContext.FindAsync<GroupMessage>(id);
-    }
-
     #endregion GroupMessage
 
     #region PersonalConversation

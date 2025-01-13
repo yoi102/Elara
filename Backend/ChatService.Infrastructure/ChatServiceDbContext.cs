@@ -13,6 +13,7 @@ public class ChatServiceDbContext : BaseDbContext
     }
 
     public DbSet<GroupConversation> GroupConversations { get; private set; }
+    public DbSet<GroupConversationMember> GroupConversationMembers { get; private set; }
     public DbSet<GroupMessage> GroupMessages { get; private set; }
     public DbSet<PersonalConversation> PersonalConversations { get; private set; }
     public DbSet<PersonalMessage> PersonalMessages { get; private set; }
