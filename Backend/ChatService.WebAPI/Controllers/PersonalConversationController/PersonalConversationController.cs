@@ -4,6 +4,7 @@ using ChatService.Domain.Entities;
 using ChatService.Infrastructure;
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,12 +26,23 @@ public class PersonalConversationController : ControllerBase
         this.repository = repository;
         this.domainService = domainService;
     }
-
-  
-    [HttpGet()]
-    public async Task<ActionResult<PersonalConversation>> Get([RequiredGuidStronglyId] UserId userId)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PersonalConversation>> Get([RequiredGuidStronglyId] PersonalConversationId id)
     {
-      var personalConversation = await repository.FindPersonalConversationByUserIdAsync(userId);
+        var personalConversation = await repository.FindPersonalConversationByIdAsync(id);
+
+        if (personalConversation is null)
+        {
+            return NotFound();
+        }
+
+        return personalConversation;
+    }
+
+    [HttpGet()]
+    public async Task<ActionResult<PersonalConversation>> FindByUserId([Required][RequiredGuidStronglyId] UserId userId)
+    {
+        var personalConversation = await repository.FindPersonalConversationByUserIdAsync(userId);
 
         if (personalConversation is null)
         {
@@ -42,9 +54,9 @@ public class PersonalConversationController : ControllerBase
 
 
     [HttpPost]
-    public async Task<ActionResult> Create([RequiredGuidStronglyId] UserId userId1, [RequiredGuidStronglyId] UserId userId2)
+    public async Task<ActionResult> Create([RequiredGuidStronglyId] UserId user1Id, [RequiredGuidStronglyId] UserId user2Id)
     {
-        var personalConversation = new PersonalConversation(userId1, userId2);
+        var personalConversation = new PersonalConversation(user1Id, user2Id);
         await dbContext.AddAsync(personalConversation);
         return Created();
     }

@@ -91,8 +91,8 @@ public class GroupConversationController : ControllerBase
         return Created();
     }
 
-    [HttpGet("name:{name}")]
-    public async Task<ActionResult<GroupConversation>> FindByName([Required][MinLength(1)] string name)
+    [HttpGet("find-by-name")]
+    public async Task<ActionResult<GroupConversation>> FindByName([FromQuery][Required][MinLength(1)] string name)
     {
         var conversation = await repository.FindGroupConversationsByNameAsync(name);
         if (conversation is null)
@@ -103,8 +103,8 @@ public class GroupConversationController : ControllerBase
         return conversation;
     }
 
-    [HttpGet("userId:{userId}")]
-    public async Task<ActionResult<GroupConversation[]>> FindByUserId([FromRoute][RequiredGuidStronglyId] UserId userId)
+    [HttpGet("find-by-user-id")]
+    public async Task<ActionResult<GroupConversation[]>> FindByUserId([FromQuery][Required][RequiredGuidStronglyId] UserId userId)
     {
         return await repository.FindGroupConversationsByUserIdAsync(userId);
     }
