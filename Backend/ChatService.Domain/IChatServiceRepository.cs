@@ -11,6 +11,8 @@ public interface IChatServiceRepository
 
     Task<GroupConversation[]> FindGroupConversationsByUserIdAsync(UserId id);
 
+    Task<GroupConversation?> FindGroupConversationsByNameAsync(string name);
+
     #endregion GroupConversation
 
     #region GroupConversationMember
@@ -31,6 +33,7 @@ public interface IChatServiceRepository
     #region PersonalConversation
 
     Task<PersonalConversation?> FindPersonalConversationByIdAsync(PersonalConversationId id);
+    Task<PersonalConversation?> FindPersonalConversationByUserIdAsync(UserId userId);
 
     #endregion PersonalConversation
 

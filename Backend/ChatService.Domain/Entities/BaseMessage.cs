@@ -39,6 +39,8 @@ public abstract record BaseMessage : AggregateRootEntity<MessageId>
 
     public void ChangeContent(string value)
     {
+        if (Content == value)
+            return;
         Content = value;
         this.AddDomainEventIfAbsent(new MessageUpdatedEvent(this));
         NotifyModified();

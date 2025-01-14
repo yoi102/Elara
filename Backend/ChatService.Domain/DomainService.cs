@@ -12,7 +12,7 @@ public class DomainService
         this.chatServiceRepository = chatServiceRepository;
     }
 
-    public async Task<GroupConversation?> ChangeGroupConversationName(GroupConversationId groupConversationId, string name)
+    public async Task<GroupConversation?> ChangeGroupConversationNameAsync(GroupConversationId groupConversationId, string name)
     {
         var groupConversation = await chatServiceRepository.FindGroupConversationByIdAsync(groupConversationId);
         groupConversation?.ChangeName(name);
@@ -20,7 +20,7 @@ public class DomainService
         return groupConversation;
     }
 
-    public async Task<GroupMessage?> UpdateGroupMessage(MessageId messageId, string content, Uri[] attachments)
+    public async Task<GroupMessage?> UpdateGroupMessageAsync(MessageId messageId, string content, Uri[] attachments)
     {
         var message = await chatServiceRepository.FindGroupMessageByIdAsync(messageId);
 
@@ -29,7 +29,7 @@ public class DomainService
         return message;
     }
 
-    public async Task<PersonalMessage?> UpdatePersonalMessage(MessageId messageId, string content, Uri[] attachments)
+    public async Task<PersonalMessage?> UpdatePersonalMessageAsync(MessageId messageId, string content, Uri[] attachments)
     {
         var message = await chatServiceRepository.FindPersonalMessageByIdAsync(messageId);
 
@@ -38,7 +38,7 @@ public class DomainService
         return message;
     }
 
-    public async Task<ReplyMessage?> UpdateReplyMessage(MessageId messageId, string content, Uri[] attachments)
+    public async Task<ReplyMessage?> UpdateReplyMessageAsync(MessageId messageId, string content, Uri[] attachments)
     {
         var message = await chatServiceRepository.FindReplyMessageByIdAsync(messageId);
 

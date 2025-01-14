@@ -18,9 +18,11 @@ public record GroupConversation : AggregateRootEntity<GroupConversationId>
     public override GroupConversationId Id { get; protected set; }
     public string Name { get; set; } = string.Empty;
 
-    public void ChangeName(string name)
+    public void ChangeName(string value)
     {
-        Name = name;
+        if (Name == value)
+            return;
+        Name = value;
         AddDomainEventIfAbsent(new GroupConversationUpdatedEvent(this));
         NotifyModified();
     }

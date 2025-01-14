@@ -33,6 +33,12 @@ public class ChatServiceRepository : IChatServiceRepository
                     .ToArrayAsync();
     }
 
+    public async Task<GroupConversation?> FindGroupConversationsByNameAsync(string name)
+    {
+        return await dbContext.GroupConversations
+                    .FirstOrDefaultAsync(g => g.Name == name);
+    }
+
     #endregion GroupConversation
 
     #region GroupConversationMember
@@ -73,16 +79,19 @@ public class ChatServiceRepository : IChatServiceRepository
     {
         return await dbContext.FindAsync<PersonalConversation>(id);
     }
-
-    public async Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id)
+    public async Task<PersonalConversation?> FindPersonalConversationByUserIdAsync(UserId userId)
     {
-        return await dbContext.FindAsync<PersonalMessage>(id);
+        return await dbContext.PersonalConversations.FirstOrDefaultAsync(x => x.User1Id == userId || x.User2Id == userId);
     }
+
 
     #endregion PersonalConversation
 
     #region PersonalMessage
-
+    public async Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id)
+    {
+        return await dbContext.FindAsync<PersonalMessage>(id);
+    }
     public async Task<PersonalMessage[]> FindPersonalMessagesByPersonalConversationIdAsync(PersonalConversationId id)
     {
         return await dbContext

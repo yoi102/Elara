@@ -1,6 +1,7 @@
 ﻿using ChatService.Domain.Events;
 using DomainCommons;
 using DomainCommons.EntityStronglyIds;
+using System.Xml.Linq;
 
 namespace ChatService.Domain.Entities;
 
@@ -25,6 +26,8 @@ public record GroupConversationMember : Entity<GroupConversationMemberId>
 
     public void ChangeRole(string value)
     {
+        if (Role == value)
+            return;
         Role = value;
         this.AddDomainEventIfAbsent(new GroupConversationMemberUpdatedEvent(this));
     }
