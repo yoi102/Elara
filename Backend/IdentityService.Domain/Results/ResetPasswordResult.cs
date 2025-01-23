@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace IdentityService.Domain.Results
+namespace IdentityService.Domain.Results;
+
+public record class ResetPasswordResult
 {
-    public record class ResetPasswordResult
-    {
-        public required IdentityResult IdentityResult { get; set; }
-    }
+    public required IdentityResult IdentityResult { get; set; }
 }

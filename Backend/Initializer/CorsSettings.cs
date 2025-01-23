@@ -1,7 +1,6 @@
-﻿namespace Initializer
+﻿namespace Initializer;
+
+public class CorsSettings
 {
-    public class CorsSettings
-    {
-        public required string[] Origins { get; set; }
-    }
+    public required string[] Origins { get; set; }
 }

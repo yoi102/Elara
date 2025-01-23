@@ -1,15 +1,14 @@
 ﻿using MediatR;
 
-namespace DomainCommons
+namespace DomainCommons;
+
+public interface IDomainEvents
 {
-    public interface IDomainEvents
-    {
-        void AddDomainEvent(INotification eventItem);
+    void AddDomainEvent(INotification eventItem);
 
-        void AddDomainEventIfAbsent(INotification eventItem);
+    void AddDomainEventIfAbsent(INotification eventItem);
 
-        void ClearDomainEvents();
+    void ClearDomainEvents();
 
-        IEnumerable<INotification> GetDomainEvents();
-    }
+    IEnumerable<INotification> GetDomainEvents();
 }

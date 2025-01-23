@@ -18,7 +18,7 @@ public class FileServiceDomainService
         this.remoteStorage = storageClients.First(c => c.StorageType == StorageType.Public);
     }
 
-    public async Task<UploadedItemResult> UploadAsync(Stream stream, string filename,string fileType, CancellationToken cancellationToken)
+    public async Task<UploadedItemResult> UploadAsync(Stream stream, string filename, string fileType, CancellationToken cancellationToken)
     {
         string hash = HashHelper.ComputeSha256Hash(stream);
         long fileSize = stream.Length;

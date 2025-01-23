@@ -1,10 +1,9 @@
-﻿namespace Initializer
+﻿namespace Initializer;
+
+public class InitializerOptions
 {
-    public class InitializerOptions
-    {
-        public required string LogFileRelativePath { get; set; }
+    public required string LogFileRelativePath { get; set; }
 
-        public required string EventBusQueueName { get; set; }
+    public required string EventBusQueueName { get; set; }
 
-    }
 }

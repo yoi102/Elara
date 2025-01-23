@@ -1,10 +1,9 @@
 ﻿using FileService.Domain.Entities;
 
-namespace FileService.Domain
-{
-    public interface IFileServiceRepository
-    {
+namespace FileService.Domain;
 
-        Task<UploadedItem?> FindFileAsync(long fileSize, string sha256Hash);
-    }
+public interface IFileServiceRepository
+{
+
+    Task<UploadedItem?> FindFileAsync(long fileSize, string sha256Hash);
 }

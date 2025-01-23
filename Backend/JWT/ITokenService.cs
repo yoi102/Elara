@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace JWT
+namespace JWT;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string BuildToken(IEnumerable<Claim> claims, JWTOptions options);
-    }
+    string BuildToken(IEnumerable<Claim> claims, JWTOptions options);
 }

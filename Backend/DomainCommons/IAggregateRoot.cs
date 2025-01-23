@@ -1,6 +1,5 @@
-﻿namespace DomainCommons
+﻿namespace DomainCommons;
+
+public interface IAggregateRoot
 {
-    public interface IAggregateRoot
-    {
-    }
 }

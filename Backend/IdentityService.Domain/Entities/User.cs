@@ -5,74 +5,73 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace IdentityService.Domain.Entities
+namespace IdentityService.Domain.Entities;
+
+public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDeletionTime, IDomainEvents
 {
-    public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDeletionTime, IDomainEvents
+    [NotMapped]
+    private readonly List<INotification> domainEvents = [];
+
+    public User(string name, string email)
     {
-        [NotMapped]
-        private readonly List<INotification> domainEvents = [];
+        Id = UserId.New();
+        Email = email;
+        UserName = name;
+        CreationTime = DateTimeOffset.Now;
+        AddDomainEvent(new UserCreatedEvent(this));
+    }
 
-        public User(string name, string email)
-        {
-            Id = UserId.New();
-            Email = email;
-            UserName = name;
-            CreationTime = DateTimeOffset.Now;
-            AddDomainEvent(new UserCreatedEvent(this));
-        }
+    private User()
+    {
+    }
+    private string? passwordHash;
 
-        private User()
+    public override string? PasswordHash
+    {
+        get => passwordHash;
+        set
         {
-        }
-        private string? passwordHash;
-
-        public override string? PasswordHash
-        {
-            get => passwordHash;
-            set
+            if (passwordHash != value) // 确保发生变化时触发事件
             {
-                if (passwordHash != value) // 确保发生变化时触发事件
-                {
-                    passwordHash = value;
+                passwordHash = value;
 
-                    // 触发事件逻辑
-                    AddDomainEventIfAbsent(new UserPasswordChangedEvent(this));
-                }
+                // 触发事件逻辑
+                AddDomainEventIfAbsent(new UserPasswordChangedEvent(this));
             }
         }
+    }
 
-        public DateTimeOffset CreationTime { get; private set; }
-        public DateTimeOffset? DeletionTime { get; private set; }
-        public bool IsDeleted { get; private set; }
+    public DateTimeOffset CreationTime { get; private set; }
+    public DateTimeOffset? DeletionTime { get; private set; }
+    public bool IsDeleted { get; private set; }
 
-        public void AddDomainEvent(INotification eventItem)
+    public void AddDomainEvent(INotification eventItem)
+    {
+        domainEvents.Add(eventItem);
+    }
+
+    public void AddDomainEventIfAbsent(INotification eventItem)
+    {
+        if (!domainEvents.Contains(eventItem))
         {
             domainEvents.Add(eventItem);
         }
+    }
 
-        public void AddDomainEventIfAbsent(INotification eventItem)
-        {
-            if (!domainEvents.Contains(eventItem))
-            {
-                domainEvents.Add(eventItem);
-            }
-        }
+    public void ClearDomainEvents()
+    {
+        domainEvents.Clear();
+    }
 
-        public void ClearDomainEvents()
-        {
-            domainEvents.Clear();
-        }
+    public IEnumerable<INotification> GetDomainEvents()
+    {
+        return domainEvents;
+    }
 
-        public IEnumerable<INotification> GetDomainEvents()
-        {
-            return domainEvents;
-        }
-
-        public void SoftDelete()
-        {
-            IsDeleted = true;
-            DeletionTime = DateTimeOffset.Now;
-            AddDomainEventIfAbsent(new UserDeletedEvent(this));
-        }
+    public void SoftDelete()
+    {
+        IsDeleted = true;
+        DeletionTime = DateTimeOffset.Now;
+        AddDomainEventIfAbsent(new UserDeletedEvent(this));
     }
 }

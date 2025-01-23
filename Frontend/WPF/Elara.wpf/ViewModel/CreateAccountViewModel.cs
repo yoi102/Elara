@@ -5,57 +5,56 @@ using Elara.wpf.Interfaces;
 using Service.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
-namespace Elara.wpf.ViewModel
+namespace Elara.wpf.ViewModel;
+
+internal partial class CreateAccountViewModel : ObservableValidator, IHasCompleted
 {
-    internal partial class CreateAccountViewModel : ObservableValidator, IHasCompleted
+    private readonly IDialogService dialogService;
+    private readonly IUserService userService;
+    [EmailAddress]
+    [ObservableProperty]
+    private string email = string.Empty;
+
+    [ObservableProperty]
+    private string name = string.Empty;
+
+    [MinLength(6)]
+    [ObservableProperty]
+    private string password = string.Empty;
+
+    public CreateAccountViewModel(IUserService userService, IDialogService dialogService)
     {
-        private readonly IDialogService dialogService;
-        private readonly IUserService userService;
-        [EmailAddress]
-        [ObservableProperty]
-        private string email = string.Empty;
+        this.userService = userService;
+        this.dialogService = dialogService;
+    }
+    public event EventHandler<AccountEventArgs>? Completed;
 
-        [ObservableProperty]
-        private string name = string.Empty;
+    protected virtual void OnCompleted(string nameOrEmail, string password)
+    {
+        Completed?.Invoke(this, new AccountEventArgs() { NameOrEmail = nameOrEmail, Password = password });
+    }
 
-        [MinLength(6)]
-        [ObservableProperty]
-        private string password = string.Empty;
-
-        public CreateAccountViewModel(IUserService userService, IDialogService dialogService)
+    [RelayCommand]
+    private async Task CreateAsync()
+    {
+        ValidateAllProperties();
+        if (HasErrors)
         {
-            this.userService = userService;
-            this.dialogService = dialogService;
+            return;
         }
-        public event EventHandler<AccountEventArgs>? Completed;
+        dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
+        await Task.Delay(1000);//Simulate
 
-        protected virtual void OnCompleted(string nameOrEmail, string password)
+        var response = await userService.CreateAsync(Name, Email, Password);
+
+        if (response.IsSuccessful)
         {
-            Completed?.Invoke(this, new AccountEventArgs() { NameOrEmail = nameOrEmail, Password = password });
+            await dialogService.TryShowMessageDialogAsync("Created", DialogHostIdentifiers.LoginRootDialog);
+            OnCompleted(Name, Password);
         }
-
-        [RelayCommand]
-        private async Task CreateAsync()
+        else
         {
-            ValidateAllProperties();
-            if (HasErrors)
-            {
-                return;
-            }
-            dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
-            await Task.Delay(1000);//Simulate
-
-            var response = await userService.CreateAsync(Name, Email, Password);
-
-            if (response.IsSuccessful)
-            {
-                await dialogService.TryShowMessageDialogAsync("Created", DialogHostIdentifiers.LoginRootDialog);
-                OnCompleted(Name,Password);
-            }
-            else
-            {
-                await dialogService.TryShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
-            }
+            await dialogService.TryShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
         }
     }
 }

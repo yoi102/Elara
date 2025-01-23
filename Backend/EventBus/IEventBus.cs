@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace EventBus;
 
-namespace EventBus
+public interface IEventBus
 {
-    public interface IEventBus
-    {
-        Task PublishAsync(string eventName, object? eventData);
+    Task PublishAsync(string eventName, object? eventData);
 
-        Task SubscribeAsync(string eventName, Type handlerType);
+    Task SubscribeAsync(string eventName, Type handlerType);
 
-        Task Unsubscribe(string eventName, Type handlerType);
-    }
+    Task Unsubscribe(string eventName, Type handlerType);
 }

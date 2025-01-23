@@ -1,5 +1,4 @@
-﻿using DomainCommons.EntityStronglyIds;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace ChatService.WebAPI.Controllers.GroupConversationController.Requests;
 

@@ -1,13 +1,12 @@
-﻿namespace EventBus.Attributes
-{
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class EventNameAttribute : Attribute
-    {
-        public EventNameAttribute(string name)
-        {
-            Name = name;
-        }
+﻿namespace EventBus.Attributes;
 
-        public string Name { get; init; }
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class EventNameAttribute : Attribute
+{
+    public EventNameAttribute(string name)
+    {
+        Name = name;
     }
+
+    public string Name { get; init; }
 }

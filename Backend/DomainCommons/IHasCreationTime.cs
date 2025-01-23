@@ -1,7 +1,6 @@
-﻿namespace DomainCommons
+﻿namespace DomainCommons;
+
+public interface IHasCreationTime
 {
-    public interface IHasCreationTime
-    {
-        DateTimeOffset CreationTime { get; }
-    }
+    DateTimeOffset CreationTime { get; }
 }

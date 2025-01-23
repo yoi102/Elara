@@ -3,21 +3,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace IdentityService.Infrastructure
-{
-    public class IdUserManager : UserManager<User>
-    {
-        public IdUserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor, IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators, IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger) :
-                 base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
-        {
-        }
+namespace IdentityService.Infrastructure;
 
-        public IUserLoginStore<User> UserLoginStore
+public class IdUserManager : UserManager<User>
+{
+    public IdUserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor, IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators, IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger) :
+             base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
+    {
+    }
+
+    public IUserLoginStore<User> UserLoginStore
+    {
+        get
         {
-            get
-            {
-                return (IUserLoginStore<User>)Store;
-            }
+            return (IUserLoginStore<User>)Store;
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace DomainCommons
+﻿namespace DomainCommons;
+
+public interface IHasDeletionTime
 {
-    public interface IHasDeletionTime
-    {
-        DateTimeOffset? DeletionTime { get; }
-    }
+    DateTimeOffset? DeletionTime { get; }
 }

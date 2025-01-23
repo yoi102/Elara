@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 
-namespace ASPNETCore
+namespace ASPNETCore;
+
+public interface IDistributedCacheHelper
 {
-    public interface IDistributedCacheHelper
-    {
-        TResult? GetOrCreate<TResult>(string cacheKey, Func<DistributedCacheEntryOptions, TResult?> valueFactory, int expireSeconds = 60);
+    TResult? GetOrCreate<TResult>(string cacheKey, Func<DistributedCacheEntryOptions, TResult?> valueFactory, int expireSeconds = 60);
 
-        Task<TResult?> GetOrCreateAsync<TResult>(string cacheKey, Func<DistributedCacheEntryOptions, Task<TResult?>> valueFactory, int expireSeconds = 60);
+    Task<TResult?> GetOrCreateAsync<TResult>(string cacheKey, Func<DistributedCacheEntryOptions, Task<TResult?>> valueFactory, int expireSeconds = 60);
 
-        void Remove(string cacheKey);
+    void Remove(string cacheKey);
 
-        Task RemoveAsync(string cacheKey);
-    }
+    Task RemoveAsync(string cacheKey);
 }

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Service.Abstractions.UserResponses
+namespace Service.Abstractions.UserResponses;
+
+public abstract record ResponseBase
 {
-    public abstract record ResponseBase
-    {
-        [MemberNotNullWhen(false, nameof(ErrorMessage))]
-        public required bool IsSuccessful { get; set; }
-        public string? ErrorMessage { get; set; }
-    }
+    [MemberNotNullWhen(false, nameof(ErrorMessage))]
+    public required bool IsSuccessful { get; set; }
+    public string? ErrorMessage { get; set; }
 }

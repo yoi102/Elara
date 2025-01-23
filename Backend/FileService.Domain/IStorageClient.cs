@@ -1,10 +1,9 @@
-﻿namespace FileService.Domain
+﻿namespace FileService.Domain;
+
+public interface IStorageClient
 {
-    public interface IStorageClient
-    {
-        StorageType StorageType { get; }
+    StorageType StorageType { get; }
 
 
-        Task<Uri> SaveAsync(string partialPath, Stream content, CancellationToken cancellationToken = default);
-    }
+    Task<Uri> SaveAsync(string partialPath, Stream content, CancellationToken cancellationToken = default);
 }

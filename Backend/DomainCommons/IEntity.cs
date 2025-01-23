@@ -1,12 +1,11 @@
-﻿namespace DomainCommons
+﻿namespace DomainCommons;
+
+public interface IEntity<T> : IEntity where T : struct
 {
-    public interface IEntity<T> : IEntity where T : struct
-    {
-        T Id { get; }
-    }
+    T Id { get; }
+}
 
-    public interface IEntity
-    {
+public interface IEntity
+{
 
-    }
 }

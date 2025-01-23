@@ -1,5 +1,6 @@
 ﻿using FileService.Infrastructure.Services;
 using Initializer;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,23 +9,18 @@ builder.ConfigureCommonServices(new InitializerOptions
     EventBusQueueName = "FileService.WebAPI",
     LogFileRelativePath = "FileService/log_.txt"
 });
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new() { Title = "FileService.WebAPI", Version = "v1" });
-});
+builder.Services.AddOpenApi();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<SMBStorageOptions>(builder.Configuration.GetSection("FileService:SMB"));
-
-builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FileService.WebAPI v1"));
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseStaticFiles();

@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Commons.Interfaces
+namespace Commons.Interfaces;
+
+public interface IFrontendModuleInitializer
 {
-    public interface IFrontendModuleInitializer
-    {
-        void Initialize(IServiceCollection services);
-    }
+    void Initialize(IServiceCollection services);
 }

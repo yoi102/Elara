@@ -1,37 +1,36 @@
 ﻿using MediatR;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DomainCommons
+namespace DomainCommons;
+
+public abstract record Entity<T> : IEntity<T>, IDomainEvents
+    where T : struct
 {
-    public abstract record Entity<T> : IEntity<T>, IDomainEvents
-        where T : struct
+    [NotMapped]
+    private readonly List<INotification> domainEvents = [];
+
+    public abstract T Id { get; protected set; }
+
+    public void AddDomainEvent(INotification eventItem)
     {
-        [NotMapped]
-        private readonly List<INotification> domainEvents = [];
+        domainEvents.Add(eventItem);
+    }
 
-        public abstract T Id { get; protected set; }
-
-        public void AddDomainEvent(INotification eventItem)
+    public void AddDomainEventIfAbsent(INotification eventItem)
+    {
+        if (!domainEvents.Contains(eventItem))
         {
             domainEvents.Add(eventItem);
         }
+    }
 
-        public void AddDomainEventIfAbsent(INotification eventItem)
-        {
-            if (!domainEvents.Contains(eventItem))
-            {
-                domainEvents.Add(eventItem);
-            }
-        }
+    public void ClearDomainEvents()
+    {
+        domainEvents.Clear();
+    }
 
-        public void ClearDomainEvents()
-        {
-            domainEvents.Clear();
-        }
-
-        public IEnumerable<INotification> GetDomainEvents()
-        {
-            return domainEvents;
-        }
+    public IEnumerable<INotification> GetDomainEvents()
+    {
+        return domainEvents;
     }
 }

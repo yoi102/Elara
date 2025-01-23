@@ -14,7 +14,6 @@ public record PersonalMessage : BaseMessage
     {
     }
 
-    public bool IsRead { get; private set; }
     public MessageId? Quote { get; private set; }
     public PersonalConversationId PersonalConversationId { get; private set; }
 }

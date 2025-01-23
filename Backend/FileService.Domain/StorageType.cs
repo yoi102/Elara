@@ -1,8 +1,7 @@
-﻿namespace FileService.Domain
+﻿namespace FileService.Domain;
+
+public enum StorageType
 {
-    public enum StorageType
-    {
-        Public,
-        Backup
-    }
+    Public,
+    Backup
 }

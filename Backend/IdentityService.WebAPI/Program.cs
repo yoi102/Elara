@@ -1,7 +1,9 @@
 ﻿using IdentityService.Domain.Entities;
 using IdentityService.Infrastructure;
+using IdentityService.WebAPI;
 using Initializer;
 using Microsoft.AspNetCore.Identity;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,14 +12,12 @@ builder.ConfigureCommonServices(new InitializerOptions
     EventBusQueueName = "IdentifierService.WebAPI",
     LogFileRelativePath = "IdentifierService//log_.txt"
 });
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new() { Title = "IdentifierService.WebAPI", Version = "v1" });
-});
 
 builder.Services.AddDataProtection();
+builder.Services.AddOpenApi();
 
 builder.Services.AddGrpc();
+builder.Services.AddScoped<IPasswordHasher<User>, BCryptPasswordHasher<User>>();
 
 IdentityBuilder idBuilder = builder.Services.AddIdentityCore<User>(options =>
 {
@@ -34,20 +34,17 @@ idBuilder.AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders()
     .AddUserManager<IdUserManager>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-
 var app = builder.Build();
 
 app.MapGrpcService<IdentityService.WebAPI.Services.IdentifierService>();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IdentifierService.WebAPI v1"));
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
+
+app.UseHttpsRedirection();
 
 app.UseCommonMiddleware();
 

@@ -1,7 +1,6 @@
 ﻿using ChatService.Domain.Events;
 using DomainCommons;
 using DomainCommons.EntityStronglyIds;
-using System.Xml.Linq;
 
 namespace ChatService.Domain.Entities;
 

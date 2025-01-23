@@ -4,19 +4,18 @@ using Elara.wpf.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using Service.Abstractions;
 
-namespace Elara.wpf
+namespace Elara.wpf;
+
+public class FrontendModuleInitializer : IFrontendModuleInitializer
 {
-    public class FrontendModuleInitializer : IFrontendModuleInitializer
+
+
+    public void Initialize(IServiceCollection services)
     {
+        services.AddTransient<LoginWindowViewModel>();
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<IDialogService, DialogService>();
 
 
-        public void Initialize(IServiceCollection services)
-        {
-            services.AddTransient<LoginWindowViewModel>();
-            services.AddTransient<MainWindowViewModel>();
-            services.AddTransient<IDialogService, DialogService>();
-
-
-        }
     }
 }

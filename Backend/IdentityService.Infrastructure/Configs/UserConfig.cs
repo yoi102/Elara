@@ -3,16 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-namespace IdentityService.Infrastructure.Configs
+namespace IdentityService.Infrastructure.Configs;
+
+internal class UserConfig : IEntityTypeConfiguration<User>
 {
-    internal class UserConfig : IEntityTypeConfiguration<User>
+
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-
-        public void Configure(EntityTypeBuilder<User> builder)
-        {
-            builder.ToTable("T_Users");
-
-        }
+        builder.ToTable("T_Users");
 
     }
+
 }

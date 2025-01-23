@@ -13,127 +13,121 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-namespace Initializer
+namespace Initializer;
+
+public static class WebApplicationBuilderExtensions
 {
-    public static class WebApplicationBuilderExtensions
+    public static void ConfigureCommonServices(this WebApplicationBuilder builder, InitializerOptions initOptions)
     {
-        public static void ConfigureCommonServices(this WebApplicationBuilder builder, InitializerOptions initOptions)
+        ReadAndSetHostBuilderConfiguration(builder);
+
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+
+        ConfigureSerilog(builder, initOptions);
+
+        var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
+        services.RunBackendModuleInitializers(assemblies);
+
+        ConfigureDbContexts(services, configuration, assemblies);
+
+        ConfigureAuthentication(builder, services, configuration);
+
+        services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
+
+        services.Configure<MvcOptions>(options =>
         {
-            ReadAndSetHostBuilderConfiguration(builder);
+            options.Filters.Add<UnitOfWorkFilter>();
+            //// Add XML Input Formatter
+            //options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
+            //// Add XML Output Formatter
+            //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+        });
+        builder.Services.AddControllers().AddXmlDataContractSerializerFormatters();
 
-            var services = builder.Services;
-            var configuration = builder.Configuration;
+        ConfigureCors(services, configuration);
 
-            ConfigureSerilog(builder, initOptions);
+        services.AddFluentValidationAutoValidation();
+        services.AddFluentValidationClientsideAdapters();
+        services.AddValidatorsFromAssemblies(assemblies);
 
-            var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
-            services.RunBackendModuleInitializers(assemblies);
+        services.Configure<JWTOptions>(configuration.GetSection("JWT"));
+        services.Configure<IntegrationEventRabbitMQOptions>(configuration.GetSection("RabbitMQ"));
+        services.AddEventBus(initOptions.EventBusQueueName, assemblies);
+    }
 
-            ConfigureDbContexts(services, configuration, assemblies);
+    private static void ConfigureAuthentication(WebApplicationBuilder builder, IServiceCollection services, IConfiguration configuration)
+    {
+        //services.AddAuthorization(options =>
+        //{
+        //    // AddPolicy
+        //    options.AddPolicy(UserRoles.Administrator, policy => policy.RequireRole(UserRoles.Administrator));
+        //});
 
-            ConfigureAuthentication(builder, services, configuration);
+        services.AddAuthentication();
+        var jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();
+        ArgumentNullException.ThrowIfNull(jwtOpt, "JWT");
+        services.AddJWTAuthentication(jwtOpt);
 
-            services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
+    }
 
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add<UnitOfWorkFilter>();
-                //// Add XML Input Formatter
-                //options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
-                //// Add XML Output Formatter
-                //options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-            });
-            builder.Services.AddControllers().AddXmlDataContractSerializerFormatters();
-
-            ConfigureCors(services, configuration);
-
-            services.AddFluentValidationAutoValidation();
-            services.AddFluentValidationClientsideAdapters();
-            services.AddValidatorsFromAssemblies(assemblies);
-
-            services.Configure<JWTOptions>(configuration.GetSection("JWT"));
-            services.Configure<IntegrationEventRabbitMQOptions>(configuration.GetSection("RabbitMQ"));
-            services.AddEventBus(initOptions.EventBusQueueName, assemblies);
-        }
-
-        private static void ConfigureAuthentication(WebApplicationBuilder builder, IServiceCollection services, IConfiguration configuration)
+    private static void ConfigureCors(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddCors(options =>
         {
-            //services.AddAuthorization(options =>
-            //{
-            //    // AddPolicy
-            //    options.AddPolicy(UserRoles.Administrator, policy => policy.RequireRole(UserRoles.Administrator));
-            //});
+            var corsOption = configuration.GetSection("Cors").Get<CorsSettings>();
+            ArgumentNullException.ThrowIfNull(corsOption, "Cors");
 
-            services.AddAuthentication();
-            var jwtOpt = configuration.GetSection("JWT").Get<JWTOptions>();
-            ArgumentNullException.ThrowIfNull(jwtOpt, "JWT");
-            services.AddJWTAuthentication(jwtOpt);
-            // 【Authorize】Button。
-            builder.Services.Configure<SwaggerGenOptions>(c =>
-            {
-                c.AddAuthenticationHeader();
-            });
-        }
+            options.AddDefaultPolicy(builder => builder.WithOrigins(corsOption.Origins)
+                    .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+        });
+    }
 
-        private static void ConfigureCors(IServiceCollection services, IConfiguration configuration)
+    private static void ConfigureDbContexts(IServiceCollection services, IConfiguration configuration, IEnumerable<Assembly> assemblies)
+    {
+        // DbContexts
+        services.AddAllDbContexts(options =>
         {
-            services.AddCors(options =>
-            {
-                var corsOption = configuration.GetSection("Cors").Get<CorsSettings>();
-                ArgumentNullException.ThrowIfNull(corsOption, "Cors");
+            var connectionStrings = configuration.GetValue<string>("DefaultDB:ConnectionStrings");
+            ArgumentException.ThrowIfNullOrEmpty(connectionStrings, "DefaultDB:ConnectionStrings");
 
-                options.AddDefaultPolicy(builder => builder.WithOrigins(corsOption.Origins)
-                        .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            });
-        }
+            options.UseSqlite(connectionStrings);
+            options.UseStronglyTypeConverters();
+        }, assemblies);
+    }
 
-        private static void ConfigureDbContexts(IServiceCollection services, IConfiguration configuration, IEnumerable<Assembly> assemblies)
-        {
-            // DbContexts
-            services.AddAllDbContexts(options =>
-            {
-                var connectionStrings = configuration.GetValue<string>("DefaultDB:ConnectionStrings");
-                ArgumentException.ThrowIfNullOrEmpty(connectionStrings, "DefaultDB:ConnectionStrings");
+    private static void ConfigureSerilog(WebApplicationBuilder builder, InitializerOptions initOptions)
+    {
+        //Serilog
+        var logFolder = builder.Configuration["LogFolder"];
+        if (logFolder == null)
+            ArgumentException.ThrowIfNullOrEmpty(logFolder);
 
-                options.UseSqlite(connectionStrings);
-                options.UseStronglyTypeConverters();
-            }, assemblies);
-        }
+        var logFilePath = Path.Combine(logFolder, initOptions.LogFileRelativePath);
+        builder.Host.UseSerilog((context, services, configuration) => configuration
+                   .ReadFrom.Configuration(context.Configuration)
+                   .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)
+                   .ReadFrom.Services(services)
+                   .Enrich.FromLogContext()
+                   .WriteTo.Console());
+    }
 
-        private static void ConfigureSerilog(WebApplicationBuilder builder, InitializerOptions initOptions)
-        {
-            //Serilog
-            var logFolder = builder.Configuration["LogFolder"];
-            if (logFolder == null)
-                ArgumentException.ThrowIfNullOrEmpty(logFolder);
+    private static void ReadAndSetHostBuilderConfiguration(WebApplicationBuilder builder)
+    {
+        string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        string settingsFullPath = Path.Combine(programFilesPath, "Elara\\appsettings.json");
+        builder.Configuration.AddJsonFile(settingsFullPath);
 
-            var logFilePath = Path.Combine(logFolder, initOptions.LogFileRelativePath);
-            builder.Host.UseSerilog((context, services, configuration) => configuration
-                       .ReadFrom.Configuration(context.Configuration)
-                       .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)
-                       .ReadFrom.Services(services)
-                       .Enrich.FromLogContext()
-                       .WriteTo.Console());
-        }
+        var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");
+        ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
 
-        private static void ReadAndSetHostBuilderConfiguration(WebApplicationBuilder builder)
-        {
-            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            string settingsFullPath = Path.Combine(programFilesPath, "Elara\\appsettings.json");
-            builder.Configuration.AddJsonFile(settingsFullPath);
+        var dbFileFolder = Path.Combine(programFilesPath, "Elara\\db");//C:\Program Files\Elara\db
+        Directory.CreateDirectory(dbFileFolder);
 
-            var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");
-            ArgumentException.ThrowIfNullOrEmpty(dbFileName, "DefaultDB:ConnectionStrings");
-
-            var dbFileFolder = Path.Combine(programFilesPath, "Elara\\db");//C:\Program Files\Elara\db
-            Directory.CreateDirectory(dbFileFolder);
-
-            var dbFullPath = Path.Combine(dbFileFolder, dbFileName);
-            builder.Configuration["DefaultDB:ConnectionStrings"] = "Data Source=" + dbFullPath;
-            builder.Configuration["LogFolder"] = Path.Combine(programFilesPath, "Elara\\logs");//C:\Program Files\Elara\logs
-        }
+        var dbFullPath = Path.Combine(dbFileFolder, dbFileName);
+        builder.Configuration["DefaultDB:ConnectionStrings"] = "Data Source=" + dbFullPath;
+        builder.Configuration["LogFolder"] = Path.Combine(programFilesPath, "Elara\\logs");//C:\Program Files\Elara\logs
     }
 }

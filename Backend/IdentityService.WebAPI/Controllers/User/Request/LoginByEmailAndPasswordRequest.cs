@@ -1,15 +1,14 @@
 ﻿using FluentValidation;
 
-namespace IdentityService.WebAPI.Controllers.User.Request
-{
-    public record class LoginByEmailAndPasswordRequest(string Email, string Password);
+namespace IdentityService.WebAPI.Controllers.User.Request;
 
-    public class LoginByEmailAndPasswordRequestValidator : AbstractValidator<LoginByEmailAndPasswordRequest>
+public record class LoginByEmailAndPasswordRequest(string Email, string Password);
+
+public class LoginByEmailAndPasswordRequestValidator : AbstractValidator<LoginByEmailAndPasswordRequest>
+{
+    public LoginByEmailAndPasswordRequestValidator()
     {
-        public LoginByEmailAndPasswordRequestValidator()
-        {
-            RuleFor(e => e.Email).NotNull().NotEmpty().EmailAddress();
-            RuleFor(e => e.Password).NotNull().NotEmpty();
-        }
+        RuleFor(e => e.Email).NotNull().NotEmpty().EmailAddress();
+        RuleFor(e => e.Password).NotNull().NotEmpty();
     }
 }

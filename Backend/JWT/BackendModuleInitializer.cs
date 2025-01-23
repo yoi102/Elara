@@ -1,13 +1,12 @@
 ﻿using Commons.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace JWT
+namespace JWT;
+
+internal class BackendModuleInitializer : IBackendModuleInitializer
 {
-    internal class BackendModuleInitializer : IBackendModuleInitializer
+    public void Initialize(IServiceCollection services)
     {
-        public void Initialize(IServiceCollection services)
-        {
-            services.AddScoped<ITokenService, TokenService>();
-        }
+        services.AddScoped<ITokenService, TokenService>();
     }
 }

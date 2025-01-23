@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace IdentityService.Infrastructure
+namespace IdentityService.Infrastructure;
+
+internal class BackendModuleInitializer : IBackendModuleInitializer
 {
-    internal class BackendModuleInitializer : IBackendModuleInitializer
+    public void Initialize(IServiceCollection services)
     {
-        public void Initialize(IServiceCollection services)
-        {
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserDomainService, UserDomainService>();
-            services.AddScoped<IEmailSender, EmailSenderServiceMock>();
-            services.AddSingleton<IResetTokenCacheService, ResetTokenCacheService>();
-        }
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserDomainService, UserDomainService>();
+        services.AddScoped<IEmailSender, EmailSenderServiceMock>();
+        services.AddSingleton<IResetTokenCacheService, ResetTokenCacheService>();
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace DomainCommons
-{
-    public interface ISoftDelete
-    {
-        bool IsDeleted { get; }
+﻿namespace DomainCommons;
 
-        void SoftDelete();
-    }
+public interface ISoftDelete
+{
+    bool IsDeleted { get; }
+
+    void SoftDelete();
 }

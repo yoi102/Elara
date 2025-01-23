@@ -1,7 +1,6 @@
-﻿namespace DomainCommons
+﻿namespace DomainCommons;
+
+public interface IHasModificationTime
 {
-    public interface IHasModificationTime
-    {
-        DateTimeOffset? LastModificationTime { get; }
-    }
+    DateTimeOffset? LastModificationTime { get; }
 }

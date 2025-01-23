@@ -4,26 +4,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace JWT
+namespace JWT;
+
+public static class AuthenticationExtensions
 {
-    public static class AuthenticationExtensions
+    public static AuthenticationBuilder AddJWTAuthentication(this IServiceCollection services, JWTOptions jwtOpt)
     {
-        public static AuthenticationBuilder AddJWTAuthentication(this IServiceCollection services, JWTOptions jwtOpt)
+        return services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(x =>
         {
-            return services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(x =>
+            x.TokenValidationParameters = new()
             {
-                x.TokenValidationParameters = new()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtOpt.Issuer,
-                    ValidAudience = jwtOpt.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpt.Key))
-                };
-            });
-        }
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtOpt.Issuer,
+                ValidAudience = jwtOpt.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpt.Key))
+            };
+        });
     }
 }

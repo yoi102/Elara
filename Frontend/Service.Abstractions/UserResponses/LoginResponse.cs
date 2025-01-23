@@ -1,9 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace Service.Abstractions.UserResponses;
 
-namespace Service.Abstractions.UserResponses
+public record LoginResponse : ResponseBase
 {
-    public record LoginResponse : ResponseBase
-    {
-   
-    }
+
 }

@@ -1,7 +1,6 @@
 ﻿using ChatService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace ChatService.Infrastructure.Configs;
 internal class GroupConversationMemberConfig : IEntityTypeConfiguration<GroupConversationMember>

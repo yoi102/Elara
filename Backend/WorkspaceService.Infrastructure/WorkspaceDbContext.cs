@@ -1,7 +1,6 @@
-﻿namespace WorkspaceService.Infrastructure
-{
-    public class WorkspaceDbContext
-    {
+﻿namespace WorkspaceService.Infrastructure;
 
-    }
+public class WorkspaceDbContext
+{
+
 }

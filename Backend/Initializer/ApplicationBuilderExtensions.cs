@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
-using EventBus.Extensions;
+﻿using EventBus.Extensions;
+using Microsoft.AspNetCore.Builder;
 
-namespace Initializer
+namespace Initializer;
+
+public static class ApplicationBuilderExtensions
 {
-    public static class ApplicationBuilderExtensions
+    public static IApplicationBuilder UseCommonMiddleware(this IApplicationBuilder app)
     {
-        public static IApplicationBuilder UseCommonMiddleware(this IApplicationBuilder app)
-        {
-            app.UseEventBus();
-            app.UseCors();
-            app.UseForwardedHeaders();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            return app;
-        }
+        app.UseEventBus();
+        app.UseCors();
+        app.UseForwardedHeaders();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        return app;
     }
 }

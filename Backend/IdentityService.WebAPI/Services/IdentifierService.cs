@@ -3,31 +3,30 @@ using Grpc.Core;
 using Identity;
 using IdentityService.Infrastructure;
 
-namespace IdentityService.WebAPI.Services
+namespace IdentityService.WebAPI.Services;
+
+public class IdentifierService : Identifier.IdentifierBase
 {
-    public class IdentifierService : Identifier.IdentifierBase
+    private readonly ILogger<IdentifierService> logger;
+    private readonly UserRepository userRepository;
+
+    public IdentifierService(ILogger<IdentifierService> logger, UserRepository userRepository)
     {
-        private readonly ILogger<IdentifierService> logger;
-        private readonly UserRepository userRepository;
+        this.logger = logger;
+        this.userRepository = userRepository;
+    }
 
-        public IdentifierService(ILogger<IdentifierService> logger, UserRepository userRepository)
+    public override async Task<UserInfoReply> GetUserInfo(UserInfoRequest request, ServerCallContext context)
+    {
+        if (!UserId.TryParse(request.Id, out var userId))
         {
-            this.logger = logger;
-            this.userRepository = userRepository;
+            return new UserInfoReply();
         }
 
-        public override async Task<UserInfoReply> GetUserInfo(UserInfoRequest request, ServerCallContext context)
-        {
-            if (!UserId.TryParse(request.Id, out var userId))
-            {
-                return new UserInfoReply();
-            }
-            
-            var user = await userRepository.FindByIdAsync(userId);
+        var user = await userRepository.FindByIdAsync(userId);
 
-            if (user == null) return new UserInfoReply();
+        if (user == null) return new UserInfoReply();
 
-            return new UserInfoReply { UserName = user.UserName };
-        }
+        return new UserInfoReply { UserName = user.UserName };
     }
 }
