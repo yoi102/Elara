@@ -14,7 +14,7 @@ public class ChatServiceDbContext : BaseDbContext
 
     public DbSet<Conversation> GroupConversations { get; private set; }
     public DbSet<Participant> GroupConversationMembers { get; private set; }
-    public DbSet<ConversationMessage> GroupMessages { get; private set; }
+    public DbSet<Message> GroupMessages { get; private set; }
     public DbSet<ReplyMessage> ReplyMessages { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ChatService.Infrastructure.Configs;
 
-internal class ConversationMessageConfig : IEntityTypeConfiguration<ConversationMessage>
+internal class MessageConfig : IEntityTypeConfiguration<Message>
 {
-    public void Configure(EntityTypeBuilder<ConversationMessage> builder)
+    public void Configure(EntityTypeBuilder<Message> builder)
     {
-        builder.ToTable("T_ConversationMessages");
+        builder.ToTable("T_Messages");
         builder.HasKey(e => e.Id);
 
         builder.Navigation(e => e.Attachments)

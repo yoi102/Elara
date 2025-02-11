@@ -9,25 +9,26 @@ public interface IChatServiceRepository
 
     Task<Conversation?> FindConversationByIdAsync(ConversationId id);
 
-    Task<Conversation[]> FindConversationsByUserIdAsync(UserId id);
-
     Task<Conversation?> FindConversationsByNameAsync(string name);
 
+    Task<Conversation[]> FindConversationsByUserIdAsync(UserId id);
     #endregion Conversation
 
-    #region ConversationParticipant
-    Task<Participant?> FindConversationParticipantByIdAsync(ParticipantId id);
+    #region Participant
 
-    Task<Participant[]> FindConversationParticipantByConversationIdAsync(ConversationId id);
-    #endregion ConversationParticipant
+    Task<Participant?> FindParticipantByIdAsync(ParticipantId id);
 
-    #region ConversationMessage
+    Task<Participant[]> FindParticipantsByConversationIdAsync(ConversationId id);
 
-    Task<ConversationMessage?> FindConversationMessageByIdAsync(MessageId id);
+    #endregion Participant
 
-    Task<ConversationMessage[]> FindConversationMessagesByConversationIdAsync(ConversationId id);
+    #region Message
 
-    #endregion ConversationMessage
+    Task<Message?> FindMessageByIdAsync(MessageId id);
+
+    Task<Message[]> FindMessagesByConversationIdAsync(ConversationId id);
+
+    #endregion Message
 
     #region ReplyMessage
 

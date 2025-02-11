@@ -2,15 +2,15 @@
 
 namespace ChatService.Domain.Entities;
 
-public record ConversationMessage : BaseMessage
+public record Message : BaseMessage
 {
-    public ConversationMessage(UserId senderId, ConversationId conversationId,
+    public Message(UserId senderId, ConversationId conversationId,
                     string content, Uri[] attachments) : base(senderId, content, attachments)
     {
         ConversationId = conversationId;
     }
 
-    private ConversationMessage()
+    private Message()
     {
     }
 

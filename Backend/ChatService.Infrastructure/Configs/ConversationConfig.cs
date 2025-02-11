@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FileService.Infrastructure.Configs;
+namespace ChatService.Infrastructure.Configs;
 
 internal class ConversationConfig : IEntityTypeConfiguration<Conversation>
 {

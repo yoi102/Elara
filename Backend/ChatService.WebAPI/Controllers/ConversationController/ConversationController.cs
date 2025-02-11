@@ -2,14 +2,14 @@
 using ChatService.Domain;
 using ChatService.Domain.Entities;
 using ChatService.Infrastructure;
-using ChatService.WebAPI.Controllers.GroupConversationController.Requests;
+using ChatService.WebAPI.Controllers.ConversationController.Requests;
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace ChatService.WebAPI.Controllers.GroupConversationController;
+namespace ChatService.WebAPI.Controllers.ConversationController;
 
 [Authorize]
 [ApiController]
@@ -60,7 +60,7 @@ public class ConversationController : ControllerBase
             return Conflict();
         }
 
-        var groupConversation = await domainService.ChangeGroupConversationNameAsync(id, name);
+        var groupConversation = await domainService.ChangeConversationNameAsync(id, name);
 
         if (groupConversation is null)
         {
@@ -78,7 +78,7 @@ public class ConversationController : ControllerBase
             return Conflict();
         }
 
-        Conversation newGroupConversation = new(request.Name);
+        Conversation newGroupConversation = new(request.Name, true);
         await dbContext.AddAsync(newGroupConversation);
 
         List<Participant> members = [];

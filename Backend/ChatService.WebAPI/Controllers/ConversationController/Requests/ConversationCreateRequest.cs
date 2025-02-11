@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ChatService.WebAPI.Controllers.GroupConversationController.Requests;
+namespace ChatService.WebAPI.Controllers.ConversationController.Requests;
 
 
 public record ConversationCreateRequest(string Name, ConversationAddMemberRequest[] Member);

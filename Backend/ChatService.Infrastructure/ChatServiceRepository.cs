@@ -41,9 +41,14 @@ public class ChatServiceRepository : IChatServiceRepository
 
     #endregion Conversation
 
-    #region ConversationMember
+    #region Participant
 
-    public async Task<Participant[]> FindConversationParticipantByConversationIdAsync(ConversationId id)
+    public async Task<Participant?> FindParticipantByIdAsync(ParticipantId id)
+    {
+        return await dbContext.FindAsync<Participant>(id);
+    }
+
+    public async Task<Participant[]> FindParticipantsByConversationIdAsync(ConversationId id)
     {
         return await dbContext
                   .GroupConversationMembers
@@ -51,21 +56,16 @@ public class ChatServiceRepository : IChatServiceRepository
                   .ToArrayAsync();
     }
 
-    public async Task<Participant?> FindConversationParticipantByIdAsync(ParticipantId id)
+    #endregion Participant
+
+    #region Message
+
+    public async Task<Message?> FindMessageByIdAsync(MessageId id)
     {
-        return await dbContext.FindAsync<Participant>(id);
+        return await dbContext.FindAsync<Message>(id);
     }
 
-    #endregion ConversationMember
-
-    #region ConversationMessage
-
-    public async Task<ConversationMessage?> FindConversationMessageByIdAsync(MessageId id)
-    {
-        return await dbContext.FindAsync<ConversationMessage>(id);
-    }
-
-    public async Task<ConversationMessage[]> FindConversationMessagesByConversationIdAsync(ConversationId id)
+    public async Task<Message[]> FindMessagesByConversationIdAsync(ConversationId id)
     {
         return await dbContext
                      .GroupMessages
@@ -73,7 +73,7 @@ public class ChatServiceRepository : IChatServiceRepository
                      .ToArrayAsync();
     }
 
-    #endregion ConversationMessage
+    #endregion Message
 
     #region ReplyMessage
 

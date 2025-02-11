@@ -12,26 +12,17 @@ public class DomainService
         this.chatServiceRepository = chatServiceRepository;
     }
 
-    public async Task<Conversation?> ChangeGroupConversationNameAsync(ConversationId groupConversationId, string name)
+    public async Task<Conversation?> ChangeConversationNameAsync(ConversationId conversationId, string name)
     {
-        var groupConversation = await chatServiceRepository.FindConversationByIdAsync(groupConversationId);
-        groupConversation?.ChangeName(name);
+        var conversation = await chatServiceRepository.FindConversationByIdAsync(conversationId);
+        conversation?.ChangeName(name);
 
-        return groupConversation;
+        return conversation;
     }
 
-    public async Task<ConversationMessage?> UpdateGroupMessageAsync(MessageId messageId, string content, Uri[] attachments)
+    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, Uri[] attachments)
     {
-        var message = await chatServiceRepository.FindConversationMessageByIdAsync(messageId);
-
-        message?.ChangeContent(content);
-        message?.ChangeAttachments(attachments);
-        return message;
-    }
-
-    public async Task<PersonalMessage?> UpdatePersonalMessageAsync(MessageId messageId, string content, Uri[] attachments)
-    {
-        var message = await chatServiceRepository.FindPersonalMessageByIdAsync(messageId);
+        var message = await chatServiceRepository.FindMessageByIdAsync(messageId);
 
         message?.ChangeContent(content);
         message?.ChangeAttachments(attachments);
