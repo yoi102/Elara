@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ChatService.Infrastructure.Configs;
+
 internal class ParticipantConfig : IEntityTypeConfiguration<Participant>
 {
     public void Configure(EntityTypeBuilder<Participant> builder)
@@ -10,12 +11,12 @@ internal class ParticipantConfig : IEntityTypeConfiguration<Participant>
         builder.ToTable("T_Participants");
         builder.HasKey(e => e.Id);
 
-        builder.HasOne<Participant>()
-       .WithMany()
-       .HasForeignKey(e => e.ConversationId)
-       .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Conversation>()
+               .WithMany()
+               .HasForeignKey(e => e.ConversationId)
+               .OnDelete(DeleteBehavior.Cascade);// 联级删除
 
-        builder.HasIndex(m => new { m.ConversationId, m.UserId })
-       .IsUnique();
+        builder.HasIndex(m => new { m.ConversationId, m.UserId })// 一个用户只能加入一次同一个会话
+               .IsUnique();
     }
 }

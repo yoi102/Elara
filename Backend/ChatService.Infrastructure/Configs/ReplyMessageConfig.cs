@@ -14,9 +14,9 @@ internal class ReplyMessageConfig : IEntityTypeConfiguration<ReplyMessage>
         builder.Navigation(e => e.Attachments)
                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.HasOne<BaseMessage>()
+        builder.HasOne<Message>()
                .WithMany()
                .HasForeignKey(e => e.MessageId)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Cascade);// 联级删除
     }
 }

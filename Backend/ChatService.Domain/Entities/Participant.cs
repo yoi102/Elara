@@ -6,7 +6,7 @@ namespace ChatService.Domain.Entities;
 
 public record Participant : Entity<ParticipantId>
 {
-    public Participant(ConversationId groupConversationId, UserId user, string role = "Member")
+    public Participant(ConversationId groupConversationId, UserId user, string role = "")
     {
         Id = ParticipantId.New();
         ConversationId = groupConversationId;
@@ -34,6 +34,7 @@ public record Participant : Entity<ParticipantId>
 
 public static class Roles
 {
+    public static string Empty { get; } = string.Empty;
     public static string Manager { get; } = "Manager";
     public static string Member { get; } = "Member";
     public static string Owner { get; } = "Owner";

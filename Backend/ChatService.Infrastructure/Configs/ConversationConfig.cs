@@ -11,6 +11,8 @@ internal class ConversationConfig : IEntityTypeConfiguration<Conversation>
         builder.ToTable("T_Conversations");
         builder.HasKey(e => e.Id);
 
-        builder.HasIndex(e => e.Name).IsUnique();
+        builder.HasIndex(c => new { c.Name, c.IsGroup })
+               .IsUnique()
+               .HasFilter("[IsGroup] = 1"); // Name只对群组聊天唯一
     }
 }
