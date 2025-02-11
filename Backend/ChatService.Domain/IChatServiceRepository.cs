@@ -5,45 +5,29 @@ namespace ChatService.Domain;
 
 public interface IChatServiceRepository
 {
-    #region GroupConversation
+    #region Conversation
 
-    Task<GroupConversation?> FindGroupConversationByIdAsync(GroupConversationId id);
+    Task<Conversation?> FindConversationByIdAsync(ConversationId id);
 
-    Task<GroupConversation[]> FindGroupConversationsByUserIdAsync(UserId id);
+    Task<Conversation[]> FindConversationsByUserIdAsync(UserId id);
 
-    Task<GroupConversation?> FindGroupConversationsByNameAsync(string name);
+    Task<Conversation?> FindConversationsByNameAsync(string name);
 
-    #endregion GroupConversation
+    #endregion Conversation
 
-    #region GroupConversationMember
-    Task<GroupConversationMember?> FindGroupConversationMemberByIdAsync(GroupConversationMemberId id);
+    #region ConversationParticipant
+    Task<Participant?> FindConversationParticipantByIdAsync(ParticipantId id);
 
-    Task<GroupConversationMember[]> FindGroupConversationMemberByGroupConversationIdAsync(GroupConversationId id);
-    #endregion
+    Task<Participant[]> FindConversationParticipantByConversationIdAsync(ConversationId id);
+    #endregion ConversationParticipant
 
+    #region ConversationMessage
 
-    #region GroupMessage
+    Task<ConversationMessage?> FindConversationMessageByIdAsync(MessageId id);
 
-    Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id);
+    Task<ConversationMessage[]> FindConversationMessagesByConversationIdAsync(ConversationId id);
 
-    Task<GroupMessage[]> FindGroupMessagesByGroupConversationIdAsync(GroupConversationId id);
-
-    #endregion GroupMessage
-
-    #region PersonalConversation
-
-    Task<PersonalConversation?> FindPersonalConversationByIdAsync(PersonalConversationId id);
-    Task<PersonalConversation?> FindPersonalConversationByUserIdAsync(UserId userId);
-
-    #endregion PersonalConversation
-
-    #region PersonalMessage
-
-    Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id);
-
-    Task<PersonalMessage[]> FindPersonalMessagesByPersonalConversationIdAsync(PersonalConversationId id);
-
-    #endregion PersonalMessage
+    #endregion ConversationMessage
 
     #region ReplyMessage
 

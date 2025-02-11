@@ -33,9 +33,9 @@ public static class WebApplicationBuilderExtensions
 
         ConfigureDbContexts(services, configuration, assemblies);
 
-        ConfigureAuthentication(builder, services, configuration);
+        ConfigureAuthentication(services, configuration);
 
-        services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies(assemblies.ToArray()));
+        services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblies([.. assemblies]));
 
         services.Configure<MvcOptions>(options =>
         {
@@ -58,7 +58,7 @@ public static class WebApplicationBuilderExtensions
         services.AddEventBus(initOptions.EventBusQueueName, assemblies);
     }
 
-    private static void ConfigureAuthentication(WebApplicationBuilder builder, IServiceCollection services, IConfiguration configuration)
+    private static void ConfigureAuthentication(IServiceCollection services, IConfiguration configuration)
     {
         //services.AddAuthorization(options =>
         //{

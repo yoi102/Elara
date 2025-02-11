@@ -3,4 +3,4 @@ using MediatR;
 
 namespace ChatService.Domain.Events;
 
-public record GroupConversationUpdatedEvent(GroupConversation Value) : INotification;
+public record ConversationUpdatedEvent(Conversation Value) : INotification;

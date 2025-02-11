@@ -14,13 +14,13 @@ namespace ChatService.WebAPI.Controllers.GroupConversationController;
 [Authorize]
 [ApiController]
 [Route("api/group-conversation")]
-public class GroupConversationController : ControllerBase
+public class ConversationController : ControllerBase
 {
     private readonly ChatServiceDbContext dbContext;
     private readonly DomainService domainService;
     private readonly IChatServiceRepository repository;
 
-    public GroupConversationController(ChatServiceDbContext dbContext,
+    public ConversationController(ChatServiceDbContext dbContext,
                                        IChatServiceRepository repository,
                                        DomainService domainService)
     {
@@ -31,19 +31,19 @@ public class GroupConversationController : ControllerBase
 
     [HttpPost("{id}")]
     public async Task<ActionResult> AddMember(
-                                    [RequiredGuidStronglyId] GroupConversationId id,
-                                    [FromBody] GroupConversationAddMemberRequest[] request)
+                                    [RequiredGuidStronglyId] ConversationId id,
+                                    [FromBody] ConversationAddMemberRequest[] request)
     {
-        var groupConversation = await repository.FindGroupConversationByIdAsync(id);
+        var groupConversation = await repository.FindConversationByIdAsync(id);
 
         if (groupConversation is null)
         {
             return NotFound();
         }
-        List<GroupConversationMember> members = [];
+        List<Participant> members = [];
         foreach (var item in request)
         {
-            members.Add(new GroupConversationMember(id, item.UserId, item.Role));
+            members.Add(new Participant(id, item.UserId, item.Role));
         }
         await dbContext.AddAsync(members);
 
@@ -51,8 +51,8 @@ public class GroupConversationController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult<GroupConversation>> ChangeName(
-                                             [RequiredGuidStronglyId] GroupConversationId id,
+    public async Task<ActionResult<Conversation>> ChangeName(
+                                             [RequiredGuidStronglyId] ConversationId id,
                                              [Required][MinLength(1)] string name)
     {
         if (await dbContext.GroupConversations.AnyAsync(g => g.Name == name))
@@ -71,20 +71,20 @@ public class GroupConversationController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<GroupConversation>> Create(GroupConversationCreateRequest request)
+    public async Task<ActionResult<Conversation>> Create(ConversationCreateRequest request)
     {
         if (await dbContext.GroupConversations.AnyAsync(g => g.Name == request.Name))
         {
             return Conflict();
         }
 
-        GroupConversation newGroupConversation = new(request.Name);
+        Conversation newGroupConversation = new(request.Name);
         await dbContext.AddAsync(newGroupConversation);
 
-        List<GroupConversationMember> members = [];
+        List<Participant> members = [];
         foreach (var item in request.Member)
         {
-            members.Add(new GroupConversationMember(newGroupConversation.Id, item.UserId, item.Role));
+            members.Add(new Participant(newGroupConversation.Id, item.UserId, item.Role));
         }
         await dbContext.AddAsync(members);
 
@@ -92,9 +92,9 @@ public class GroupConversationController : ControllerBase
     }
 
     [HttpGet("find-by-name")]
-    public async Task<ActionResult<GroupConversation>> FindByName([FromQuery][Required][MinLength(1)] string name)
+    public async Task<ActionResult<Conversation>> FindByName([FromQuery][Required][MinLength(1)] string name)
     {
-        var conversation = await repository.FindGroupConversationsByNameAsync(name);
+        var conversation = await repository.FindConversationsByNameAsync(name);
         if (conversation is null)
         {
             return NotFound();
@@ -104,8 +104,8 @@ public class GroupConversationController : ControllerBase
     }
 
     [HttpGet("find-by-user-id")]
-    public async Task<ActionResult<GroupConversation[]>> FindByUserId([FromQuery][Required][RequiredGuidStronglyId] UserId userId)
+    public async Task<ActionResult<Conversation[]>> FindByUserId([FromQuery][Required][RequiredGuidStronglyId] UserId userId)
     {
-        return await repository.FindGroupConversationsByUserIdAsync(userId);
+        return await repository.FindConversationsByUserIdAsync(userId);
     }
 }

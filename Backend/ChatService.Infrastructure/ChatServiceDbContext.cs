@@ -12,11 +12,9 @@ public class ChatServiceDbContext : BaseDbContext
     {
     }
 
-    public DbSet<GroupConversation> GroupConversations { get; private set; }
-    public DbSet<GroupConversationMember> GroupConversationMembers { get; private set; }
-    public DbSet<GroupMessage> GroupMessages { get; private set; }
-    public DbSet<PersonalConversation> PersonalConversations { get; private set; }
-    public DbSet<PersonalMessage> PersonalMessages { get; private set; }
+    public DbSet<Conversation> GroupConversations { get; private set; }
+    public DbSet<Participant> GroupConversationMembers { get; private set; }
+    public DbSet<ConversationMessage> GroupMessages { get; private set; }
     public DbSet<ReplyMessage> ReplyMessages { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

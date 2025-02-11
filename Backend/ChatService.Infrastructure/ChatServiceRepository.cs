@@ -14,100 +14,73 @@ public class ChatServiceRepository : IChatServiceRepository
         this.dbContext = dbContext;
     }
 
-    #region GroupConversation
+    #region Conversation
 
-    public async Task<GroupConversation?> FindGroupConversationByIdAsync(GroupConversationId id)
+    public async Task<Conversation?> FindConversationByIdAsync(ConversationId id)
     {
-        return await dbContext.FindAsync<GroupConversation>(id);
+        return await dbContext.FindAsync<Conversation>(id);
     }
 
-    public async Task<GroupConversation[]> FindGroupConversationsByUserIdAsync(UserId id)
-    {
-        return await dbContext.GroupConversations
-                    .Join(
-                        dbContext.GroupConversationMembers.Where(gm => gm.UserId == id),
-                        gc => gc.Id,
-                        gm => gm.GroupConversationId,
-                        (gc, gm) => gc
-                    )
-                    .ToArrayAsync();
-    }
-
-    public async Task<GroupConversation?> FindGroupConversationsByNameAsync(string name)
+    public async Task<Conversation?> FindConversationsByNameAsync(string name)
     {
         return await dbContext.GroupConversations
                     .FirstOrDefaultAsync(g => g.Name == name);
     }
 
-    #endregion GroupConversation
+    public async Task<Conversation[]> FindConversationsByUserIdAsync(UserId id)
+    {
+        return await dbContext.GroupConversations
+                    .Join(
+                        dbContext.GroupConversationMembers.Where(gm => gm.UserId == id),
+                        gc => gc.Id,
+                        gm => gm.ConversationId,
+                        (gc, gm) => gc
+                    )
+                    .ToArrayAsync();
+    }
 
-    #region GroupConversationMember
+    #endregion Conversation
 
-    public async Task<GroupConversationMember[]> FindGroupConversationMemberByGroupConversationIdAsync(GroupConversationId id)
+    #region ConversationMember
+
+    public async Task<Participant[]> FindConversationParticipantByConversationIdAsync(ConversationId id)
     {
         return await dbContext
                   .GroupConversationMembers
-                  .Where(g => g.GroupConversationId == id)
+                  .Where(g => g.ConversationId == id)
                   .ToArrayAsync();
     }
 
-    public async Task<GroupConversationMember?> FindGroupConversationMemberByIdAsync(GroupConversationMemberId id)
+    public async Task<Participant?> FindConversationParticipantByIdAsync(ParticipantId id)
     {
-        return await dbContext.FindAsync<GroupConversationMember>(id);
-    }
-    #endregion GroupConversationMember
-
-    #region GroupMessage
-
-    public async Task<GroupMessage?> FindGroupMessageByIdAsync(MessageId id)
-    {
-        return await dbContext.FindAsync<GroupMessage>(id);
+        return await dbContext.FindAsync<Participant>(id);
     }
 
-    public async Task<GroupMessage[]> FindGroupMessagesByGroupConversationIdAsync(GroupConversationId id)
+    #endregion ConversationMember
+
+    #region ConversationMessage
+
+    public async Task<ConversationMessage?> FindConversationMessageByIdAsync(MessageId id)
+    {
+        return await dbContext.FindAsync<ConversationMessage>(id);
+    }
+
+    public async Task<ConversationMessage[]> FindConversationMessagesByConversationIdAsync(ConversationId id)
     {
         return await dbContext
                      .GroupMessages
-                     .Where(g => g.GroupConversationId == id)
+                     .Where(g => g.ConversationId == id)
                      .ToArrayAsync();
     }
-    #endregion GroupMessage
 
-    #region PersonalConversation
+    #endregion ConversationMessage
 
-    public async Task<PersonalConversation?> FindPersonalConversationByIdAsync(PersonalConversationId id)
-    {
-        return await dbContext.FindAsync<PersonalConversation>(id);
-    }
-    public async Task<PersonalConversation?> FindPersonalConversationByUserIdAsync(UserId userId)
-    {
-        return await dbContext.PersonalConversations.FirstOrDefaultAsync(x => x.User1Id == userId || x.User2Id == userId);
-    }
-
-
-    #endregion PersonalConversation
-
-    #region PersonalMessage
-    public async Task<PersonalMessage?> FindPersonalMessageByIdAsync(MessageId id)
-    {
-        return await dbContext.FindAsync<PersonalMessage>(id);
-    }
-    public async Task<PersonalMessage[]> FindPersonalMessagesByPersonalConversationIdAsync(PersonalConversationId id)
-    {
-        return await dbContext
-                     .PersonalMessages
-                     .Where(g => g.PersonalConversationId == id)
-                     .ToArrayAsync();
-    }
+    #region ReplyMessage
 
     public async Task<ReplyMessage?> FindReplyMessageByIdAsync(MessageId id)
     {
         return await dbContext.FindAsync<ReplyMessage>(id);
     }
-
-    #endregion PersonalMessage
-
-    #region ReplyMessage
 
     public async Task<ReplyMessage[]> FindReplyMessagesByMessageIdAsync(MessageId id)
     {

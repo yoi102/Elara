@@ -10,16 +10,14 @@ namespace DomainCommons.EntityStronglyIds;
 public partial struct ContactId;
 
 [Strongly]
-public partial struct GroupConversationId;
+public partial struct ConversationId;
 
 [Strongly]
-public partial struct GroupConversationMemberId;
+public partial struct ParticipantId;
 
 [Strongly]
 public partial struct MessageId;
 
-[Strongly]
-public partial struct PersonalConversationId;
 [Strongly]
 public partial struct ProfileId;
 

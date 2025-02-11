@@ -4,19 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ChatService.Infrastructure.Configs;
 
-internal class PersonalMessageConfig : IEntityTypeConfiguration<PersonalMessage>
+internal class ConversationMessageConfig : IEntityTypeConfiguration<ConversationMessage>
 {
-    public void Configure(EntityTypeBuilder<PersonalMessage> builder)
+    public void Configure(EntityTypeBuilder<ConversationMessage> builder)
     {
-        builder.ToTable("T_PersonalMessages");
+        builder.ToTable("T_ConversationMessages");
         builder.HasKey(e => e.Id);
 
         builder.Navigation(e => e.Attachments)
                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.HasOne<PersonalConversation>()
+        builder.HasOne<Conversation>()
                .WithMany()
-               .HasForeignKey(e => e.PersonalConversationId)
+               .HasForeignKey(e => e.ConversationId)
                .OnDelete(DeleteBehavior.Cascade);
     }
 }

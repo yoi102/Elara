@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace ChatService.WebAPI.Controllers.GroupConversationController.Requests;
 
-public record GroupConversationAddMemberRequest(UserId UserId, string Role);
+public record ConversationAddMemberRequest(UserId UserId, string Role);
 
-public class GroupConversationAddMemberRequestValidator : AbstractValidator<GroupConversationAddMemberRequest>
+public class ConversationAddMemberRequestValidator : AbstractValidator<ConversationAddMemberRequest>
 {
-    public GroupConversationAddMemberRequestValidator()
+    public ConversationAddMemberRequestValidator()
     {
         RuleFor(e => e.UserId.Value).NotEmpty();
         RuleFor(e => e.Role).NotNull().NotEmpty();
