@@ -11,8 +11,9 @@ public class PersonalSpaceDbContext : BaseDbContext
     {
     }
 
-    public DbSet<Contact> Contacts { get; private set; } = null!;
-    public DbSet<Profile> Profiles { get; private set; } = null!;
+    public DbSet<Contact> Contacts { get; private set; }
+    public DbSet<Profile> Profiles { get; private set; }
+    public DbSet<ContactRequest> ContactRequests { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

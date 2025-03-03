@@ -13,7 +13,7 @@ namespace ChatService.WebAPI.Controllers.ConversationController;
 
 [Authorize]
 [ApiController]
-[Route("api/group-conversation")]
+[Route("api/group-conversations")]
 public class ConversationController : ControllerBase
 {
     private readonly ChatServiceDbContext dbContext;

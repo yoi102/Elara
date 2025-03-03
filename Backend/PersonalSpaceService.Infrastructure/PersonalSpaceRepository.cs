@@ -94,4 +94,29 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
     }
 
     #endregion Profile
+
+    #region ContactRequest
+
+    public async Task<ContactRequest> CreateContactRequestAsync(UserId senderId, UserId receiverId)
+    {
+        var contactRequest = new ContactRequest(senderId, receiverId);
+        var entityEntry = await dbContext.ContactRequests.AddAsync(contactRequest);
+        return entityEntry.Entity;
+    }
+
+    public async Task<ContactRequest?> FindContactRequestByIdAsync(ContactRequestId contactRequestId)
+    {
+        return await dbContext.ContactRequests.FindAsync(contactRequestId);
+    }
+
+    public async Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, ContactRequestStatus status)
+    {
+        var contactRequest = await dbContext.ContactRequests.FindAsync(contactRequestId);
+        if (contactRequest == null)
+            return null;
+        contactRequest.UpdateStatus(status);
+        return contactRequest;
+    }
+
+    #endregion ContactRequest
 }

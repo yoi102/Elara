@@ -32,4 +32,14 @@ public interface IPersonalSpaceRepository
     Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, Uri avatar);
 
     #endregion Profile
+
+    #region ContactRequest
+
+    Task<ContactRequest> CreateContactRequestAsync(UserId senderId, UserId receiverId);
+
+    Task<ContactRequest?> FindContactRequestByIdAsync(ContactRequestId contactRequestId);
+
+    Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, ContactRequestStatus status);
+
+    #endregion ContactRequest
 }

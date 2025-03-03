@@ -42,5 +42,4 @@ public record Profile : AggregateRootEntity<ProfileId>
         base.SoftDelete();
         this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
     }
-
 }

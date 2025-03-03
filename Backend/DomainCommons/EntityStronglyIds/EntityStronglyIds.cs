@@ -10,7 +10,11 @@ namespace DomainCommons.EntityStronglyIds;
 public partial struct ContactId;
 
 [Strongly]
+public partial struct ContactRequestId;
+
+[Strongly]
 public partial struct ConversationId;
+
 [Strongly]
 public partial struct UserConversationId;
 

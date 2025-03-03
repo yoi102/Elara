@@ -13,6 +13,5 @@ internal class ContactConfig : IEntityTypeConfiguration<Contact>
 
         builder.Property(c => c.OwnerId)
                .IsRequired();
-
     }
 }

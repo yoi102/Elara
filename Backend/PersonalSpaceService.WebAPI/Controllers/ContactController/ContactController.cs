@@ -12,7 +12,7 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController;
 
 [Authorize]
 [ApiController]
-[Route("api/contact")]
+[Route("api/contacts")]
 public class ContactController : ControllerBase
 {
     private readonly Identifier.IdentifierClient identifierClient;
@@ -41,7 +41,7 @@ public class ContactController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Contact>> AddContact([RequiredGuidStronglyId] UserId contactUserId)
     {
-        var userInfoRequest = new Identity.UserInfoRequest() { Id = contactUserId.ToString() };
+        var userInfoRequest = new UserInfoRequest() { Id = contactUserId.ToString() };
         var reply = await identifierClient.GetUserInfoAsync(userInfoRequest);
         if (reply?.UserName is null)
         {
