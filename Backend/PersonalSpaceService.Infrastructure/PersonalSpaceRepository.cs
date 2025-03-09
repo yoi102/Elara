@@ -97,6 +97,11 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
 
     #region ContactRequest
 
+    public async Task<ContactRequest[]> AllContactRequestByReceiverIdAsync(UserId receiverId)
+    {
+        return await dbContext.ContactRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
+    }
+
     public async Task<ContactRequest> CreateContactRequestAsync(UserId senderId, UserId receiverId)
     {
         var contactRequest = new ContactRequest(senderId, receiverId);
@@ -109,6 +114,16 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
         return await dbContext.ContactRequests.FindAsync(contactRequestId);
     }
 
+    public async Task<ContactRequest?> FindContactRequestByUserIdAsync(UserId senderId, UserId receiverId)
+    {
+        return await dbContext.ContactRequests.SingleOrDefaultAsync(c => c.SenderId == senderId && c.ReceiverId == receiverId);
+    }
+
+    public async Task<ContactRequest[]> GetPendingContactRequestByReceiverIdAsync(UserId receiverId)
+    {
+        return await dbContext.ContactRequests.Where(c => c.ReceiverId == receiverId && c.Status == ContactRequestStatus.Pending).ToArrayAsync();
+    }
+
     public async Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, ContactRequestStatus status)
     {
         var contactRequest = await dbContext.ContactRequests.FindAsync(contactRequestId);
@@ -117,6 +132,5 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
         contactRequest.UpdateStatus(status);
         return contactRequest;
     }
-
     #endregion ContactRequest
 }

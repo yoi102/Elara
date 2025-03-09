@@ -35,9 +35,14 @@ public interface IPersonalSpaceRepository
 
     #region ContactRequest
 
+    Task<ContactRequest[]> AllContactRequestByReceiverIdAsync(UserId receiverId);
+
     Task<ContactRequest> CreateContactRequestAsync(UserId senderId, UserId receiverId);
 
     Task<ContactRequest?> FindContactRequestByIdAsync(ContactRequestId contactRequestId);
+
+    Task<ContactRequest?> FindContactRequestByUserIdAsync(UserId senderId, UserId receiverId);
+    Task<ContactRequest[]> GetPendingContactRequestByReceiverIdAsync(UserId receiverId);
 
     Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, ContactRequestStatus status);
 

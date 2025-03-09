@@ -11,6 +11,9 @@ internal class ContactRequestConfig : IEntityTypeConfiguration<ContactRequest>
         builder.ToTable("T_ContactRequests");
         builder.HasKey(c => c.Id);
 
+        builder.HasIndex(c => new { c.SenderId, c.ReceiverId })
+               .IsUnique(); 
+
         builder.Property(c => c.ReceiverId)
                .IsRequired();
         builder.Property(c => c.SenderId)
