@@ -15,18 +15,15 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController;
 [Route("api/contacts")]
 public class ContactController : ControllerBase
 {
-    private readonly Identifier.IdentifierClient identifierClient;
     private readonly ILogger<ContactController> logger;
     private readonly IPersonalSpaceRepository repository;
     private readonly UserId userId;
 
     public ContactController(ILogger<ContactController> logger,
-        IPersonalSpaceRepository repository,
-        Identifier.IdentifierClient identifierClient)
+        IPersonalSpaceRepository repository)
     {
         this.logger = logger;
         this.repository = repository;
-        this.identifierClient = identifierClient;
         var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(stringUserId))
         {
@@ -36,20 +33,6 @@ public class ContactController : ControllerBase
         {
             throw new UnauthorizedAccessException();
         }
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<Contact>> AddContact([RequiredGuidStronglyId] UserId contactUserId)
-    {
-        var userInfoRequest = new UserInfoRequest() { Id = contactUserId.ToString() };
-        var reply = await identifierClient.GetUserInfoAsync(userInfoRequest);
-        if (reply?.UserName is null)
-        {
-            return NotFound();
-        }
-        var contact = await repository.AddContactAsync(userId, contactUserId, reply.UserName);
-
-        return Ok(contact);
     }
 
     [HttpGet]
