@@ -16,13 +16,13 @@ public partial struct ContactRequestId;
 public partial struct ConversationId;
 
 [Strongly]
-public partial struct UserConversationId;
-
-[Strongly]
 public partial struct ParticipantId;
 
 [Strongly]
 public partial struct MessageId;
+
+[Strongly]
+public partial struct ReplyMessageId;
 
 [Strongly]
 public partial struct ProfileId;
@@ -38,5 +38,11 @@ public partial struct WorkspaceId;
 
 [Strongly]
 public partial struct WorkspaceMemberId;
+
+[Strongly]
+public partial struct UserUnreadMessageId;
+
+[Strongly]
+public partial struct MessageAttachmentId;
 
 // Add more strongly typed IDs as needed

@@ -1,21 +1,21 @@
 ﻿namespace DomainCommons;
 
-public abstract record AggregateRootEntity<T> : Entity<T>, IAggregateRoot, ISoftDelete, IHasCreationTime, IHasDeletionTime, IHasModificationTime
+public abstract record AggregateRootEntity<T> : Entity<T>, IAggregateRoot, ISoftDelete, ICreationAuditable, IDeletionAuditable, IModificationAuditable
     where T : struct
 {
     public bool IsDeleted { get; private set; }
-    public DateTimeOffset CreationTime { get; private set; } = DateTimeOffset.Now;
-    public DateTimeOffset? DeletionTime { get; private set; }
-    public DateTimeOffset? LastModificationTime { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.Now;
+    public DateTimeOffset? DeletedAt { get; private set; }
+    public DateTimeOffset? UpdatedAt { get; private set; }
 
     public virtual void SoftDelete()
     {
         IsDeleted = true;
-        DeletionTime = DateTimeOffset.Now;
+        DeletedAt = DateTimeOffset.Now;
     }
 
     public void NotifyModified()
     {
-        LastModificationTime = DateTimeOffset.Now;
+        UpdatedAt = DateTimeOffset.Now;
     }
 }

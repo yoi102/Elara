@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ChatService.Infrastructure.Configs;
 
-internal class MessageConfig : IEntityTypeConfiguration<Message>
+internal class MessageAttachmentConfig : IEntityTypeConfiguration<MessageAttachment>
 {
-    public void Configure(EntityTypeBuilder<Message> builder)
+    public void Configure(EntityTypeBuilder<MessageAttachment> builder)
     {
-        builder.ToTable("T_Messages");
+        builder.ToTable("T_MessageAttachments");
         builder.HasKey(e => e.Id);
 
-        builder.HasOne<Conversation>()
+        builder.HasOne<Message>()
                .WithMany()
-               .HasForeignKey(e => e.ConversationId)
+               .HasForeignKey(e => e.MessageId)
                .OnDelete(DeleteBehavior.Cascade);// 联级删除
     }
 }

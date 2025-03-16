@@ -9,16 +9,17 @@ public interface IChatServiceRepository
 
     Task<Conversation?> FindConversationByIdAsync(ConversationId id);
 
-    Task<Conversation?> FindConversationsByNameAsync(string name);
+    Task<Conversation?> FindGroupConversationsByNameAsync(string name);
 
-    Task<Conversation[]> FindConversationsByUserIdAsync(UserId id);
+    Task<Conversation[]> GetConversationsByUserIdAsync(UserId id);
+
     #endregion Conversation
 
     #region Participant
 
     Task<Participant?> FindParticipantByIdAsync(ParticipantId id);
 
-    Task<Participant[]> FindParticipantsByConversationIdAsync(ConversationId id);
+    Task<Participant[]> GetConversationAllParticipantsAsync(ConversationId id);
 
     #endregion Participant
 
@@ -26,7 +27,7 @@ public interface IChatServiceRepository
 
     Task<Message?> FindMessageByIdAsync(MessageId id);
 
-    Task<Message[]> FindMessagesByConversationIdAsync(ConversationId id);
+    Task<Message[]> GetConversationAllMessagesAsync(ConversationId id);
 
     #endregion Message
 
@@ -34,7 +35,7 @@ public interface IChatServiceRepository
 
     Task<ReplyMessage?> FindReplyMessageByIdAsync(MessageId id);
 
-    Task<ReplyMessage[]> FindReplyMessagesByMessageIdAsync(MessageId id);
+    Task<ReplyMessage[]> MessageAllReplyMessagesAsync(MessageId id);
 
     #endregion ReplyMessage
 }

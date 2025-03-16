@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ChatService.Infrastructure.Configs;
 
-internal class UserConversationConfig : IEntityTypeConfiguration<UserConversation>
+internal class UserUnreadMessageConfig : IEntityTypeConfiguration<UserUnreadMessage>
 {
-    public void Configure(EntityTypeBuilder<UserConversation> builder)
+    public void Configure(EntityTypeBuilder<UserUnreadMessage> builder)
     {
-        builder.ToTable("T_UserConversations");
+        builder.ToTable("T_UserUnreadMessages");
         builder.HasKey(e => e.Id);
 
-        builder.HasOne<Conversation>()
+        builder.HasOne<Message>()
                .WithMany()
-               .HasForeignKey(uc => uc.ConversationId)
+               .HasForeignKey(e => e.MessageId)
                .OnDelete(DeleteBehavior.Cascade);// 联级删除
     }
 }

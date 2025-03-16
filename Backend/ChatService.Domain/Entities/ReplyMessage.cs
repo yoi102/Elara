@@ -1,16 +1,22 @@
-﻿using DomainCommons.EntityStronglyIds;
+﻿using ChatService.Domain.Events;
+using DomainCommons;
+using DomainCommons.EntityStronglyIds;
 
 namespace ChatService.Domain.Entities;
 
-public record ReplyMessage : BaseMessage
+public record ReplyMessage : AggregateRootEntity<ReplyMessageId>
 {
-    public ReplyMessage(UserId senderId, MessageId messageId,
-                    string content, Uri[] attachments) : base(senderId, content, attachments)
+    public ReplyMessage(MessageId repliedMessageId, MessageId originalMessageId)
     {
-        MessageId = messageId;
+        RepliedMessageId = repliedMessageId;
+        OriginalMessageId = originalMessageId;
+        Id = ReplyMessageId.New();
+        AddDomainEventIfAbsent(new ReplyMessageCreatedEvent(this));
     }
     private ReplyMessage()
     {
     }
-    public MessageId MessageId { get; private set; }
+    public MessageId RepliedMessageId { get; private set; }
+    public MessageId OriginalMessageId { get; private set; }
+    public override ReplyMessageId Id { get; protected set; }
 }

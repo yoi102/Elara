@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IdentityService.Domain.Entities;
 
-public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDeletionTime, IDomainEvents
+public class User : IdentityUser<UserId>, ISoftDelete, ICreationAuditable, IDeletionAuditable, IDomainEvents
 {
     [NotMapped]
     private readonly List<INotification> domainEvents = [];
@@ -17,7 +17,7 @@ public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDel
         Id = UserId.New();
         Email = email;
         UserName = name;
-        CreationTime = DateTimeOffset.Now;
+        CreatedAt = DateTimeOffset.Now;
         AddDomainEvent(new UserCreatedEvent(this));
     }
 
@@ -41,8 +41,8 @@ public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDel
         }
     }
 
-    public DateTimeOffset CreationTime { get; private set; }
-    public DateTimeOffset? DeletionTime { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset? DeletedAt { get; private set; }
     public bool IsDeleted { get; private set; }
 
     public void AddDomainEvent(INotification eventItem)
@@ -71,7 +71,7 @@ public class User : IdentityUser<UserId>, ISoftDelete, IHasCreationTime, IHasDel
     public void SoftDelete()
     {
         IsDeleted = true;
-        DeletionTime = DateTimeOffset.Now;
+        DeletedAt = DateTimeOffset.Now;
         AddDomainEventIfAbsent(new UserDeletedEvent(this));
     }
 }

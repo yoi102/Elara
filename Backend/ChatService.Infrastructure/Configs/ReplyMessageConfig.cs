@@ -11,12 +11,15 @@ internal class ReplyMessageConfig : IEntityTypeConfiguration<ReplyMessage>
         builder.ToTable("T_ReplyMessages");
         builder.HasKey(e => e.Id);
 
-        builder.Navigation(e => e.Attachments)
-               .UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.HasOne<Message>()
+               .WithMany() 
+               .HasForeignKey(r => r.RepliedMessageId)
+               .OnDelete(DeleteBehavior.Cascade); 
 
         builder.HasOne<Message>()
-               .WithMany()
-               .HasForeignKey(e => e.MessageId)
-               .OnDelete(DeleteBehavior.Cascade);// 联级删除
+               .WithOne() 
+               .HasForeignKey<ReplyMessage>(r => r.OriginalMessageId)
+               .OnDelete(DeleteBehavior.Cascade); 
+
     }
 }

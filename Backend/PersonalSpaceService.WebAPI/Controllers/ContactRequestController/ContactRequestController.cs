@@ -62,7 +62,7 @@ public class ContactRequestController : ControllerBase
         }
 
         await repository.AddContactAsync(request.SenderId, userId, receiverInfo.UserName);
-        //todo:notify
+        //todo:notify front-end
 
         request.UpdateStatus(ContactRequestStatus.Accepted);
         return Ok(request);
@@ -86,7 +86,7 @@ public class ContactRequestController : ControllerBase
         }
 
         request.UpdateStatus(ContactRequestStatus.Rejected);
-        //todo:notify
+        //todo:notify sender's front-end
         return Ok(request);
     }
 
@@ -99,7 +99,7 @@ public class ContactRequestController : ControllerBase
         {
             request = await repository.CreateContactRequestAsync(userId, receiverId);
         }
-        //todo:notify
+        //todo:notify sender's front-end
         return Ok(request);
     }
 }

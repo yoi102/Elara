@@ -88,7 +88,7 @@ public class UserController : ControllerBase
         {
             throw new ArgumentNullException(nameof(user.UserName), "UserName cannot be null");
         }
-        return new GetUserInfoResponse(user.Id, user.UserName, user.Email, user.PhoneNumber, user.CreationTime);
+        return new GetUserInfoResponse(user.Id, user.UserName, user.Email, user.PhoneNumber, user.CreatedAt);
     }
 
     [AllowAnonymous]

@@ -1,5 +1,4 @@
 ﻿using ChatService.Domain.Entities;
-using DomainCommons.EntityStronglyIds;
 using Infrastructure.EFCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +12,12 @@ public class ChatServiceDbContext : BaseDbContext
     {
     }
 
-    public DbSet<UserConversation> UserConversations { get; private set; }
-    public DbSet<Conversation> GroupConversations { get; private set; }
-    public DbSet<Participant> GroupConversationMembers { get; private set; }
-    public DbSet<Message> GroupMessages { get; private set; }
+    public DbSet<Conversation> Conversations { get; private set; }
+    public DbSet<Participant> Participants { get; private set; }
+    public DbSet<Message> Messages { get; private set; }
     public DbSet<ReplyMessage> ReplyMessages { get; private set; }
+    public DbSet<MessageAttachment> MessageAttachments { get; private set; }
+    public DbSet<UserUnreadMessage> UserUnreadMessages { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

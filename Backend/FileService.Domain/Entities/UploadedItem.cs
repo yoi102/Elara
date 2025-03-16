@@ -3,7 +3,7 @@ using DomainCommons.EntityStronglyIds;
 
 namespace FileService.Domain.Entities;
 
-public record UploadedItem : Entity<UploadedItemId>, IHasCreationTime
+public record UploadedItem : Entity<UploadedItemId>, ICreationAuditable
 {
     private UploadedItem()
     {
@@ -12,7 +12,7 @@ public record UploadedItem : Entity<UploadedItemId>, IHasCreationTime
     public UploadedItem(long fileSizeInBytes, string filename, string fileType, string fileSHA256Hash, Uri backupUrl, Uri remoteUrl)
     {
         Id = UploadedItemId.New();
-        CreationTime = DateTime.Now;
+        CreatedAt = DateTime.Now;
         Filename = filename;
         FileType = fileType;
         FileSHA256Hash = fileSHA256Hash;
@@ -22,7 +22,7 @@ public record UploadedItem : Entity<UploadedItemId>, IHasCreationTime
     }
     public override UploadedItemId Id { get; protected set; }
 
-    public DateTimeOffset CreationTime { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public long FileSizeInBytes { get; private set; }
 

@@ -55,7 +55,7 @@ public class ConversationController : ControllerBase
                                              [RequiredGuidStronglyId] ConversationId id,
                                              [Required][MinLength(1)] string name)
     {
-        if (await dbContext.GroupConversations.AnyAsync(g => g.Name == name))
+        if (await dbContext.Conversations.AnyAsync(g => g.Name == name))
         {
             return Conflict();
         }
@@ -73,7 +73,7 @@ public class ConversationController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Conversation>> Create(ConversationCreateRequest request)
     {
-        if (await dbContext.GroupConversations.AnyAsync(g => g.Name == request.Name))
+        if (await dbContext.Conversations.AnyAsync(g => g.Name == request.Name))
         {
             return Conflict();
         }
@@ -94,7 +94,7 @@ public class ConversationController : ControllerBase
     [HttpGet("find-by-name")]
     public async Task<ActionResult<Conversation>> FindByName([FromQuery][Required][MinLength(1)] string name)
     {
-        var conversation = await repository.FindConversationsByNameAsync(name);
+        var conversation = await repository.FindGroupConversationsByNameAsync(name);
         if (conversation is null)
         {
             return NotFound();
@@ -106,6 +106,6 @@ public class ConversationController : ControllerBase
     [HttpGet("find-by-user-id")]
     public async Task<ActionResult<Conversation[]>> FindByUserId([FromQuery][Required][RequiredGuidStronglyId] UserId userId)
     {
-        return await repository.FindConversationsByUserIdAsync(userId);
+        return await repository.GetConversationsByUserIdAsync(userId);
     }
 }
