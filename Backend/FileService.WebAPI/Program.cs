@@ -1,4 +1,5 @@
 ﻿using FileService.Infrastructure.Services;
+using FileService.WebAPI.Services;
 using Initializer;
 using Scalar.AspNetCore;
 
@@ -11,10 +12,13 @@ builder.ConfigureCommonServices(new InitializerOptions
 });
 builder.Services.AddOpenApi();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddGrpc();
 
 builder.Services.Configure<SMBStorageOptions>(builder.Configuration.GetSection("FileService:SMB"));
 
 var app = builder.Build();
+
+app.MapGrpcService<UploadedItemService>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,13 +1,17 @@
 ﻿using Commons.Helpers;
+using DomainCommons.EntityStronglyIds;
 using FileService.Domain.Entities;
 
 namespace FileService.Domain;
 
 public class FileServiceDomainService
 {
+    private readonly IStorageClient backupStorage;
+    //备份服务器
+    private readonly IStorageClient remoteStorage;
+
     private readonly IFileServiceRepository repository;
-    private readonly IStorageClient backupStorage;//备份服务器
-    private readonly IStorageClient remoteStorage;//文件存储服务器
+    //文件存储服务器
 
     public FileServiceDomainService(IFileServiceRepository repository,
         IEnumerable<IStorageClient> storageClients)
@@ -16,6 +20,13 @@ public class FileServiceDomainService
 
         this.backupStorage = storageClients.First(c => c.StorageType == StorageType.Backup);
         this.remoteStorage = storageClients.First(c => c.StorageType == StorageType.Public);
+    }
+
+    public async Task<string[]> GetFilesAsync(UploadedItemId[] ids)
+    {
+        var items = await repository.GetUploadedItemsAsync(ids);
+
+        return items.Select(x => x.RemoteUrl.AbsolutePath).ToArray();
     }
 
     public async Task<UploadedItemResult> UploadAsync(Stream stream, string filename, string fileType, CancellationToken cancellationToken)
@@ -37,6 +48,5 @@ public class FileServiceDomainService
         Uri remoteUrl = await remoteStorage.SaveAsync(partialPath, stream, cancellationToken);//保存到生产的存储系统
         stream.Position = 0;
         return new UploadedItemResult(false, new UploadedItem(fileSize, filename, fileType, hash, backupUrl, remoteUrl));
-
     }
 }

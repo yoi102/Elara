@@ -17,4 +17,6 @@ message UserInfoRequest {
 
 message UserInfoReply {
   string user_name = 1;
+  string email = 2;
+  string phone_number = 3;
 }

@@ -1,4 +1,5 @@
-﻿using FileService.Domain;
+﻿using DomainCommons.EntityStronglyIds;
+using FileService.Domain;
 using FileService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +14,14 @@ internal class FileServiceRepository : IFileServiceRepository
         this.dbContext = dbContext;
     }
 
-    public Task<UploadedItem?> FindFileAsync(long fileSize, string sha256Hash)
+    public async Task<UploadedItem?> FindFileAsync(long fileSize, string sha256Hash)
     {
-        return dbContext.UploadItems.FirstOrDefaultAsync(u => u.FileSizeInBytes == fileSize
+        return await dbContext.UploadItems.FirstOrDefaultAsync(u => u.FileSizeInBytes == fileSize
         && u.FileSHA256Hash == sha256Hash);
+    }
+
+    public async Task<UploadedItem[]> GetUploadedItemsAsync(UploadedItemId[] ids)
+    {
+        return await dbContext.UploadItems.Where(u => ids.Contains(u.Id)).ToArrayAsync();
     }
 }

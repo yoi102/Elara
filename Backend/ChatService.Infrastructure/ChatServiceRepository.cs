@@ -29,10 +29,9 @@ public class ChatServiceRepository : IChatServiceRepository
 
     public async Task<Conversation[]> GetConversationsByUserIdAsync(UserId id)
     {
-        var conversationIds = await dbContext.Participants
+        var conversationIds =  dbContext.Participants
          .Where(p => p.UserId == id)
-         .Select(p => p.ConversationId)
-         .ToListAsync();
+         .Select(p => p.ConversationId);
 
         return await dbContext.Conversations
             .Where(c => conversationIds.Contains(c.Id) && c.IsGroup)

@@ -17,7 +17,7 @@ public record Profile : AggregateRootEntity<ProfileId>
     {
     }
 
-    public Uri? Avatar { get; private set; }
+    public UploadedItemId Avatar { get; private set; }
     public string DisplayName { get; private set; } = null!;
     public override ProfileId Id { get; protected set; }
     public UserId UserId { get; private set; }
@@ -30,7 +30,7 @@ public record Profile : AggregateRootEntity<ProfileId>
         NotifyModified();
     }
 
-    public void ChangeAvatar(Uri avatar)
+    public void ChangeAvatar(UploadedItemId avatar)
     {
         if (Avatar == avatar) return;
         Avatar = avatar;
@@ -39,6 +39,7 @@ public record Profile : AggregateRootEntity<ProfileId>
     }
     public override void SoftDelete()
     {
+        if (IsDeleted) return;
         base.SoftDelete();
         this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
     }

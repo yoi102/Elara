@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
-
 namespace PersonalSpaceService.Infrastructure;
 
 internal class PersonalSpaceRepository : IPersonalSpaceRepository
@@ -83,7 +82,7 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
         return await dbContext.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
     }
 
-    public async Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, Uri avatar)
+    public async Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, UploadedItemId avatar)
     {
         var profile = await dbContext.Profiles.FindAsync(profileId);
         if (profile == null)

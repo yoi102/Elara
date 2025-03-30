@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+package profile;
+
+
+service profiler {
+
+  rpc GetProfileInfo (ProfileRequest) returns (ProfileReply);
+}
+
+
+message ProfileRequest {
+  string user_id = 1;
+}
+
+
+message ProfileReply {
+  string display_name = 1;
+  string avatar_id = 2;
+}

@@ -29,7 +29,7 @@ public interface IPersonalSpaceRepository
 
     Task<Profile?> FindProfileByUserIdAsync(UserId userId);
 
-    Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, Uri avatar);
+    Task<Profile?> UpdateProfileAsync(ProfileId profileId, string displayName, UploadedItemId avatar);
 
     #endregion Profile
 

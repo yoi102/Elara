@@ -12,7 +12,7 @@ public record Participant : Entity<ParticipantId>
         ConversationId = conversationId;
         UserId = user;
         Role = role;
-        this.AddDomainEventIfAbsent(new ParticipantCreatedEvent(this));
+        AddDomainEventIfAbsent(new ParticipantCreatedEvent(this));
     }
     private Participant()
     {

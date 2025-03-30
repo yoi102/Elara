@@ -1,9 +1,10 @@
 ﻿using ASPNETCore;
+using DomainCommons.EntityStronglyIds;
 using FluentValidation;
 
 namespace PersonalSpaceService.WebAPI.Controllers.ProfileController.Requsets;
 
-public record class UpdateProfileRequest(string DisplayName, Uri Avatar);
+public record class UpdateProfileRequest(string DisplayName, UploadedItemId Avatar);
 
 
 
@@ -12,6 +13,6 @@ public class LoginByEmailAndPasswordRequestValidator : AbstractValidator<UpdateP
     public LoginByEmailAndPasswordRequestValidator()
     {
         RuleFor(e => e.DisplayName).NotNull().NotEmpty();
-        RuleFor(e => e.Avatar).Length(5, 500);//Avatar允许为空
+        RuleFor(e => e.Avatar).NotEmpty();
     }
 }

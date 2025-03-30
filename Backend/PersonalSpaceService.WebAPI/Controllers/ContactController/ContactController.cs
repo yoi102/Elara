@@ -1,6 +1,5 @@
 ﻿using ASPNETCore;
 using DomainCommons.EntityStronglyIds;
-using Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PersonalSpaceService.Domain.Entities;

@@ -27,6 +27,6 @@ public class IdentifierService : Identifier.IdentifierBase
 
         if (user == null) return new UserInfoReply();
 
-        return new UserInfoReply { UserName = user.UserName };
+        return new UserInfoReply { UserName = user.UserName, Email = user.Email, PhoneNumber = user.PhoneNumber };
     }
 }

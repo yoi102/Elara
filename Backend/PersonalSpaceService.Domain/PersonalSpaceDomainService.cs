@@ -13,7 +13,7 @@ public class PersonalSpaceDomainService
         this.personalSpaceRepository = personalSpaceRepository;
     }
 
-    public async Task<Profile?> UpdateProfileAsync(UserId userId, string displayName, Uri avatar)
+    public async Task<Profile?> UpdateProfileAsync(UserId userId, string displayName, UploadedItemId avatar)
     {
         var profile = await personalSpaceRepository.FindProfileByUserIdAsync(userId);
         if (profile == null)
