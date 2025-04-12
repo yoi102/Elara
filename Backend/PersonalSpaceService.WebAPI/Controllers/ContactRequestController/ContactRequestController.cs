@@ -1,23 +1,21 @@
-﻿using DomainCommons.EntityStronglyIds;
+﻿using ASPNETCore;
+using DomainCommons.EntityStronglyIds;
 using DomainCommons.Enums;
 using Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
-using System.Security.Claims;
 
 namespace PersonalSpaceService.WebAPI.Controllers.ContactRequestController;
 
 [Authorize]
 [Route("api/contact-requests")]
 [ApiController]
-public class ContactRequestController : ControllerBase
+public class ContactRequestController : AuthorizedUserController
 {
+    private readonly Identifier.IdentifierClient identifierClient;
     private readonly ILogger<ContactRequestController> logger;
     private readonly IPersonalSpaceRepository repository;
-    private readonly Identifier.IdentifierClient identifierClient;
-    private readonly UserId userId;
 
     public ContactRequestController(ILogger<ContactRequestController> logger,
         IPersonalSpaceRepository repository,
@@ -26,15 +24,6 @@ public class ContactRequestController : ControllerBase
         this.logger = logger;
         this.repository = repository;
         this.identifierClient = identifierClient;
-        var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(stringUserId))
-        {
-            throw new UnauthorizedAccessException();
-        }
-        if (!UserId.TryParse(stringUserId, out userId))
-        {
-            throw new UnauthorizedAccessException();
-        }
     }
 
     [HttpPatch("accept")]
@@ -55,15 +44,14 @@ public class ContactRequestController : ControllerBase
         {
             return NotFound();
         }
-        await repository.AddContactAsync(userId, request.SenderId, senderInfo.UserName);
+        await repository.AddContactAsync(GetCurrentUserId(), request.SenderId, senderInfo.UserName);
 
         if (receiverInfo?.UserName is null)
         {
             return NotFound();
         }
 
-        await repository.AddContactAsync(request.SenderId, userId, receiverInfo.UserName);
-        //todo:notify front-end
+        await repository.AddContactAsync(request.SenderId, GetCurrentUserId(), receiverInfo.UserName);
 
         request.UpdateStatus(RequestStatus.Accepted);
         return Ok(request);
@@ -72,7 +60,7 @@ public class ContactRequestController : ControllerBase
     [HttpGet()]
     public async Task<IActionResult> GetContactRequests()
     {
-        var result = await repository.AllContactRequestByReceiverIdAsync(userId);
+        var result = await repository.AllContactRequestByReceiverIdAsync(GetCurrentUserId());
         return Ok(result);
     }
 
@@ -87,15 +75,13 @@ public class ContactRequestController : ControllerBase
         }
 
         request.UpdateStatus(RequestStatus.Rejected);
-        //todo:notify sender's front-end
         return Ok(request);
     }
 
     [HttpPost()]
     public async Task<IActionResult> SendContactRequest(UserId receiverId)
     {
-        var request = await repository.CreateContactRequestAsync(userId, receiverId);
-        //todo:notify sender's front-end
+        var request = await repository.CreateContactRequestAsync(GetCurrentUserId(), receiverId);
         return Ok(request);
     }
 }

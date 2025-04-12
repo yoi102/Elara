@@ -16,6 +16,7 @@ public record ContactRequest : AggregateRootEntity<ContactRequestId>
         SenderId = senderId;
         ReceiverId = receiverId;
         Status = RequestStatus.Pending;
+        this.AddDomainEventIfAbsent(new ContactRequestCreatedEvent(this));
     }
 
     public override ContactRequestId Id { get; protected set; }
@@ -26,6 +27,6 @@ public record ContactRequest : AggregateRootEntity<ContactRequestId>
     public void UpdateStatus(RequestStatus value)
     {
         Status = value;
-        this.AddDomainEventIfAbsent(new ContactRequestUpdateEvent(this));
+        this.AddDomainEventIfAbsent(new ContactRequestUpdatedEvent(this));
     }
 }

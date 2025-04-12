@@ -8,7 +8,7 @@ internal class ModuleInitializer : IBackendModuleInitializer
 {
     public void Initialize(IServiceCollection services)
     {
-        services.AddScoped<DomainService>();
+        services.AddScoped<ChatDomainService>();
         services.AddScoped<IChatServiceRepository, ChatServiceRepository>();
     }
 }

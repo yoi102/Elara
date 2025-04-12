@@ -12,32 +12,22 @@ namespace PersonalSpaceService.WebAPI.Controllers.ContactController;
 [Authorize]
 [ApiController]
 [Route("api/contacts")]
-public class ContactController : ControllerBase
+public class ContactController : AuthorizedUserController
 {
     private readonly ILogger<ContactController> logger;
     private readonly IPersonalSpaceRepository repository;
-    private readonly UserId userId;
 
     public ContactController(ILogger<ContactController> logger,
         IPersonalSpaceRepository repository)
     {
         this.logger = logger;
         this.repository = repository;
-        var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(stringUserId))
-        {
-            throw new UnauthorizedAccessException();
-        }
-        if (!UserId.TryParse(stringUserId, out userId))
-        {
-            throw new UnauthorizedAccessException();
-        }
     }
 
     [HttpGet]
     public async Task<ActionResult<Contact[]>> AllContacts()
     {
-        var contacts = await repository.AllUserContactsAsync(userId);
+        var contacts = await repository.AllUserContactsAsync(GetCurrentUserId());
         return Ok(contacts);
     }
 

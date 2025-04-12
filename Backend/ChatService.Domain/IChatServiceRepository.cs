@@ -28,6 +28,8 @@ public interface IChatServiceRepository
 
     Task<Message[]> GetConversationAllMessagesAsync(ConversationId id);
 
+    Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments);
+
     #endregion Message
 
     #region ReplyMessage
@@ -51,15 +53,4 @@ public interface IChatServiceRepository
     Task<ConversationRequest?> UpdateConversationRequestAsync(ConversationRequestId conversationRequestId, RequestStatus status);
 
     #endregion ConversationRequest
-
-    Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments);
-
-
-
-
-
-
-
-
-
 }

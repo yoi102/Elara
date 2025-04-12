@@ -67,6 +67,28 @@ public class ChatServiceRepository : IChatServiceRepository
                      .ToArrayAsync();
     }
 
+    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments)
+    {
+        var message = await FindMessageByIdAsync(messageId);
+
+        if (message is null)
+            return null;
+
+        dbContext.MessageAttachments.RemoveRange(dbContext.MessageAttachments.Where(x => x.MessageId == messageId));
+
+        var messageAttachments = new List<MessageAttachment>();
+        foreach (var attachment in attachments)
+        {
+            var messageAttachment = new MessageAttachment(messageId, attachment);
+            messageAttachments.Add(messageAttachment);
+        }
+
+        await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
+
+        message?.ChangeContent(content);
+        return message;
+    }
+
     #endregion Message
 
     #region ReplyMessage
@@ -124,26 +146,4 @@ public class ChatServiceRepository : IChatServiceRepository
     }
 
     #endregion ConversationRequest
-
-    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments)
-    {
-        var message = await FindMessageByIdAsync(messageId);
-
-        if (message is null)
-            return null;
-
-        dbContext.MessageAttachments.RemoveRange(dbContext.MessageAttachments.Where(x => x.MessageId == messageId));
-
-        var messageAttachments = new List<MessageAttachment>();
-        foreach (var attachment in attachments)
-        {
-            var messageAttachment = new MessageAttachment(messageId, attachment);
-            messageAttachments.Add(messageAttachment);
-        }
-
-        await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
-
-        message?.ChangeContent(content);
-        return message;
-    }
 }

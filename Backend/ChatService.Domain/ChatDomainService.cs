@@ -3,11 +3,11 @@ using DomainCommons.EntityStronglyIds;
 
 namespace ChatService.Domain;
 
-public class DomainService
+public class ChatDomainService
 {
     private readonly IChatServiceRepository chatServiceRepository;
 
-    public DomainService(IChatServiceRepository chatServiceRepository)
+    public ChatDomainService(IChatServiceRepository chatServiceRepository)
     {
         this.chatServiceRepository = chatServiceRepository;
     }

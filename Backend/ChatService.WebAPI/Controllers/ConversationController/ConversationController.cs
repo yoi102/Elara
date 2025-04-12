@@ -17,12 +17,12 @@ namespace ChatService.WebAPI.Controllers.ConversationController;
 public class ConversationController : ControllerBase
 {
     private readonly ChatServiceDbContext dbContext;
-    private readonly DomainService domainService;
+    private readonly ChatDomainService domainService;
     private readonly IChatServiceRepository repository;
 
     public ConversationController(ChatServiceDbContext dbContext,
-                                       IChatServiceRepository repository,
-                                       DomainService domainService)
+                                  IChatServiceRepository repository,
+                                  ChatDomainService domainService)
     {
         this.dbContext = dbContext;
         this.repository = repository;

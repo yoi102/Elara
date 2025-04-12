@@ -17,6 +17,7 @@ public record ConversationRequest : AggregateRootEntity<ConversationRequestId>
         ReceiverId = receiverId;
         ConversationId = conversationId;
         Status = RequestStatus.Pending;
+        this.AddDomainEventIfAbsent(new ConversationRequestCreatedEvent(this));
     }
 
     public override ConversationRequestId Id { get; protected set; }
@@ -28,6 +29,6 @@ public record ConversationRequest : AggregateRootEntity<ConversationRequestId>
     public void UpdateStatus(RequestStatus value)
     {
         Status = value;
-        this.AddDomainEventIfAbsent(new ConversationRequestUpdateEvent(this));
+        this.AddDomainEventIfAbsent(new ConversationRequestUpdatedEvent(this));
     }
 }

@@ -1,4 +1,5 @@
-﻿using DomainCommons.EntityStronglyIds;
+﻿using ASPNETCore;
+using DomainCommons.EntityStronglyIds;
 using Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +14,13 @@ namespace PersonalSpaceService.WebAPI.Controllers.ProfileController;
 [ApiController]
 [Authorize]
 [Route("api/profile")]
-public class ProfileController : ControllerBase
+public class ProfileController : AuthorizedUserController
 {
     private readonly PersonalSpaceDomainService domainService;
     private readonly Identifier.IdentifierClient identifierClient;
     private readonly UploadedItem.UploadedItem.UploadedItemClient uploadedItemClient;
     private readonly ILogger<ProfileController> logger;
     private readonly IPersonalSpaceRepository repository;
-    private readonly UserId userId;
 
     public ProfileController(ILogger<ProfileController> logger,
         IPersonalSpaceRepository repository,
@@ -34,20 +34,12 @@ public class ProfileController : ControllerBase
         this.identifierClient = identifierClient;
         this.uploadedItemClient = uploadedItemClient;
         var stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(stringUserId))
-        {
-            throw new UnauthorizedAccessException();
-        }
-        if (!UserId.TryParse(stringUserId, out userId))
-        {
-            throw new UnauthorizedAccessException();
-        }
     }
 
     [HttpPatch]
     public async Task<ActionResult> UserUpdateProfile(UpdateProfileRequest request)
     {
-        var profile = await domainService.UpdateProfileAsync(userId, request.DisplayName, request.Avatar);
+        var profile = await domainService.UpdateProfileAsync(GetCurrentUserId(), request.DisplayName, request.Avatar);
 
         if (profile is null)
         {
