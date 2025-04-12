@@ -1,4 +1,5 @@
 ﻿using DomainCommons.EntityStronglyIds;
+using DomainCommons.Enums;
 using PersonalSpaceService.Domain.Entities;
 
 namespace PersonalSpaceService.Domain.Interfaces;
@@ -41,10 +42,9 @@ public interface IPersonalSpaceRepository
 
     Task<ContactRequest?> FindContactRequestByIdAsync(ContactRequestId contactRequestId);
 
-    Task<ContactRequest?> FindContactRequestByUserIdAsync(UserId senderId, UserId receiverId);
     Task<ContactRequest[]> GetPendingContactRequestByReceiverIdAsync(UserId receiverId);
 
-    Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, ContactRequestStatus status);
+    Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, RequestStatus status);
 
     #endregion ContactRequest
 }

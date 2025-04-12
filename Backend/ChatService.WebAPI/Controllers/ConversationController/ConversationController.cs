@@ -29,28 +29,6 @@ public class ConversationController : ControllerBase
         this.domainService = domainService;
     }
 
-    [HttpPost("{id}")]
-    public async Task<ActionResult> AddMember(
-                                    [RequiredGuidStronglyId] ConversationId id,
-                                    [FromBody] ConversationAddMemberRequest[] request)
-    {
-        throw new NotImplementedException();
-        //var groupConversation = await repository.FindConversationByIdAsync(id);
-
-        //if (groupConversation is null)
-        //{
-        //    return NotFound();
-        //}
-        //List<Participant> members = [];
-        //foreach (var item in request)
-        //{
-        //    members.Add(new Participant(id, item.UserId, item.Role));
-        //}
-        //await dbContext.AddAsync(members);
-
-        //return Ok();
-    }
-
     [HttpPatch("{id}")]
     public async Task<ActionResult<Conversation>> ChangeName(
                                              [RequiredGuidStronglyId] ConversationId id,
@@ -74,35 +52,19 @@ public class ConversationController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Conversation>> Create(ConversationCreateRequest request)
     {
-        throw new NotImplementedException();
-        //if (await dbContext.Conversations.AnyAsync(g => g.Name == request.Name))
-        //{
-        //    return Conflict();
-        //}
-
-        //Conversation newGroupConversation = new(request.Name, true);
-        //await dbContext.AddAsync(newGroupConversation);
-
-        //List<Participant> members = [];
-        //foreach (var item in request.Member)
-        //{
-        //    members.Add(new Participant(newGroupConversation.Id, item.UserId, item.Role));
-        //}
-        //await dbContext.AddAsync(members);
-
-        //return Created();
-    }
-
-    [HttpGet("find-by-name")]
-    public async Task<ActionResult<Conversation>> FindByName([FromQuery][Required][MinLength(1)] string name)
-    {
-        var conversation = await repository.FindGroupConversationsByNameAsync(name);
-        if (conversation is null)
+        if (await dbContext.Conversations.AnyAsync(g => g.Name == request.Name))
         {
-            return NotFound();
+            return Conflict();
         }
 
-        return conversation;
+        Conversation newGroupConversation = new(request.Name, true);
+        await dbContext.AddAsync(newGroupConversation);
+
+        var members = request.Member.Select(item => new Participant(newGroupConversation.Id, item.UserId, item.Role));
+
+        await dbContext.AddAsync(members);
+
+        return Created();
     }
 
     [HttpGet("find-by-user-id")]

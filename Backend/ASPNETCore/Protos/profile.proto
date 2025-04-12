@@ -3,7 +3,7 @@
 package profile;
 
 
-service profiler {
+service Profiler {
 
   rpc GetProfileInfo (ProfileRequest) returns (ProfileReply);
 }

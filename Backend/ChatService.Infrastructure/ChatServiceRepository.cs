@@ -1,6 +1,7 @@
 ﻿using ChatService.Domain;
 using ChatService.Domain.Entities;
 using DomainCommons.EntityStronglyIds;
+using DomainCommons.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatService.Infrastructure;
@@ -21,15 +22,9 @@ public class ChatServiceRepository : IChatServiceRepository
         return await dbContext.FindAsync<Conversation>(id);
     }
 
-    public async Task<Conversation?> FindGroupConversationsByNameAsync(string name)
-    {
-        return await dbContext.Conversations
-                    .FirstOrDefaultAsync(g => g.Name == name);
-    }
-
     public async Task<Conversation[]> GetConversationsByUserIdAsync(UserId id)
     {
-        var conversationIds =  dbContext.Participants
+        var conversationIds = dbContext.Participants
          .Where(p => p.UserId == id)
          .Select(p => p.ConversationId);
 
@@ -90,4 +85,65 @@ public class ChatServiceRepository : IChatServiceRepository
     }
 
     #endregion ReplyMessage
+
+    #region ConversationRequest
+
+    public async Task<ConversationRequest[]> AllConversationRequestByReceiverIdAsync(UserId receiverId)
+    {
+        return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
+    }
+
+    public async Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId)
+    {
+        var request = await dbContext.ConversationRequests.SingleOrDefaultAsync(c => c.SenderId == senderId && c.ReceiverId == receiverId);
+        if (request is not null)
+            return request;
+
+        var conversationRequest = new ConversationRequest(senderId, receiverId, conversationId);
+        var entityEntry = await dbContext.ConversationRequests.AddAsync(conversationRequest);
+        return entityEntry.Entity;
+    }
+
+    public async Task<ConversationRequest?> FindConversationRequestByIdAsync(ConversationRequestId conversationRequestId)
+    {
+        return await dbContext.ConversationRequests.FindAsync(conversationRequestId);
+    }
+
+    public async Task<ConversationRequest[]> GetPendingConversationRequestByReceiverIdAsync(UserId receiverId)
+    {
+        return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId && c.Status == RequestStatus.Pending).ToArrayAsync();
+    }
+
+    public async Task<ConversationRequest?> UpdateConversationRequestAsync(ConversationRequestId conversationRequestId, RequestStatus status)
+    {
+        var conversationRequest = await dbContext.ConversationRequests.FindAsync(conversationRequestId);
+        if (conversationRequest == null)
+            return null;
+        conversationRequest.UpdateStatus(status);
+        return conversationRequest;
+    }
+
+    #endregion ConversationRequest
+
+    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments)
+    {
+        var message = await FindMessageByIdAsync(messageId);
+
+        if (message is null)
+            return null;
+
+        dbContext.MessageAttachments.RemoveRange(dbContext.MessageAttachments.Where(x => x.MessageId == messageId));
+
+        var messageAttachments = new List<MessageAttachment>();
+        foreach (var attachment in attachments)
+        {
+            var messageAttachment = new MessageAttachment(messageId, attachment);
+            messageAttachments.Add(messageAttachment);
+        }
+
+        await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
+
+        message?.ChangeContent(content);
+        return message;
+    }
 }

@@ -14,6 +14,8 @@ public partial struct ContactRequestId;
 
 [Strongly]
 public partial struct ConversationId;
+[Strongly]
+public partial struct ConversationRequestId;
 
 [Strongly]
 public partial struct ParticipantId;

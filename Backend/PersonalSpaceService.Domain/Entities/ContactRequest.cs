@@ -1,15 +1,9 @@
 ﻿using DomainCommons;
 using DomainCommons.EntityStronglyIds;
+using DomainCommons.Enums;
 using PersonalSpaceService.Domain.Events;
 
 namespace PersonalSpaceService.Domain.Entities;
-
-public enum ContactRequestStatus
-{
-    Pending,
-    Accepted,
-    Rejected
-}
 
 public record ContactRequest : AggregateRootEntity<ContactRequestId>
 {
@@ -21,15 +15,15 @@ public record ContactRequest : AggregateRootEntity<ContactRequestId>
         Id = ContactRequestId.New();
         SenderId = senderId;
         ReceiverId = receiverId;
-        Status = ContactRequestStatus.Pending;
+        Status = RequestStatus.Pending;
     }
 
     public override ContactRequestId Id { get; protected set; }
     public UserId SenderId { get; }
     public UserId ReceiverId { get; }
-    public ContactRequestStatus Status { get; private set; }
+    public RequestStatus Status { get; private set; }
 
-    public void UpdateStatus(ContactRequestStatus value)
+    public void UpdateStatus(RequestStatus value)
     {
         Status = value;
         this.AddDomainEventIfAbsent(new ContactRequestUpdateEvent(this));

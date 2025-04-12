@@ -1,7 +1,9 @@
 ﻿using DomainCommons.EntityStronglyIds;
+using DomainCommons.Enums;
 using Microsoft.EntityFrameworkCore;
 using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
+
 namespace PersonalSpaceService.Infrastructure;
 
 internal class PersonalSpaceRepository : IPersonalSpaceRepository
@@ -103,6 +105,10 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
 
     public async Task<ContactRequest> CreateContactRequestAsync(UserId senderId, UserId receiverId)
     {
+        var request = await dbContext.ContactRequests.SingleOrDefaultAsync(c => c.SenderId == senderId && c.ReceiverId == receiverId);
+        if (request is not null)
+            return request;
+
         var contactRequest = new ContactRequest(senderId, receiverId);
         var entityEntry = await dbContext.ContactRequests.AddAsync(contactRequest);
         return entityEntry.Entity;
@@ -113,17 +119,12 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
         return await dbContext.ContactRequests.FindAsync(contactRequestId);
     }
 
-    public async Task<ContactRequest?> FindContactRequestByUserIdAsync(UserId senderId, UserId receiverId)
-    {
-        return await dbContext.ContactRequests.SingleOrDefaultAsync(c => c.SenderId == senderId && c.ReceiverId == receiverId);
-    }
-
     public async Task<ContactRequest[]> GetPendingContactRequestByReceiverIdAsync(UserId receiverId)
     {
-        return await dbContext.ContactRequests.Where(c => c.ReceiverId == receiverId && c.Status == ContactRequestStatus.Pending).ToArrayAsync();
+        return await dbContext.ContactRequests.Where(c => c.ReceiverId == receiverId && c.Status == RequestStatus.Pending).ToArrayAsync();
     }
 
-    public async Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, ContactRequestStatus status)
+    public async Task<ContactRequest?> UpdateContactRequestAsync(ContactRequestId contactRequestId, RequestStatus status)
     {
         var contactRequest = await dbContext.ContactRequests.FindAsync(contactRequestId);
         if (contactRequest == null)
@@ -131,5 +132,6 @@ internal class PersonalSpaceRepository : IPersonalSpaceRepository
         contactRequest.UpdateStatus(status);
         return contactRequest;
     }
+
     #endregion ContactRequest
 }

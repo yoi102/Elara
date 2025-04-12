@@ -1,4 +1,5 @@
 ﻿using DomainCommons.EntityStronglyIds;
+using DomainCommons.Enums;
 using Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -64,7 +65,7 @@ public class ContactRequestController : ControllerBase
         await repository.AddContactAsync(request.SenderId, userId, receiverInfo.UserName);
         //todo:notify front-end
 
-        request.UpdateStatus(ContactRequestStatus.Accepted);
+        request.UpdateStatus(RequestStatus.Accepted);
         return Ok(request);
     }
 
@@ -85,7 +86,7 @@ public class ContactRequestController : ControllerBase
             return NotFound();
         }
 
-        request.UpdateStatus(ContactRequestStatus.Rejected);
+        request.UpdateStatus(RequestStatus.Rejected);
         //todo:notify sender's front-end
         return Ok(request);
     }
@@ -93,12 +94,7 @@ public class ContactRequestController : ControllerBase
     [HttpPost()]
     public async Task<IActionResult> SendContactRequest(UserId receiverId)
     {
-        var request = await repository.FindContactRequestByUserIdAsync(userId, receiverId);
-
-        if (request is not null)
-        {
-            request = await repository.CreateContactRequestAsync(userId, receiverId);
-        }
+        var request = await repository.CreateContactRequestAsync(userId, receiverId);
         //todo:notify sender's front-end
         return Ok(request);
     }

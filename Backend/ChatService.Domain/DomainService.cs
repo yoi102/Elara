@@ -19,22 +19,4 @@ public class DomainService
 
         return conversation;
     }
-
-    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, Uri[] attachments)
-    {
-        var message = await chatServiceRepository.FindMessageByIdAsync(messageId);
-
-        message?.ChangeContent(content);
-        message?.ChangeAttachments(attachments);
-        return message;
-    }
-
-    public async Task<ReplyMessage?> UpdateReplyMessageAsync(MessageId messageId, string content, Uri[] attachments)
-    {
-        var message = await chatServiceRepository.FindReplyMessageByIdAsync(messageId);
-
-        message?.ChangeContent(content);
-        message?.ChangeAttachments(attachments);
-        return message;
-    }
 }

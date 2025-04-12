@@ -18,6 +18,7 @@ public class ChatServiceDbContext : BaseDbContext
     public DbSet<ReplyMessage> ReplyMessages { get; private set; }
     public DbSet<MessageAttachment> MessageAttachments { get; private set; }
     public DbSet<UserUnreadMessage> UserUnreadMessages { get; private set; }
+    public DbSet<ConversationRequest> ConversationRequests { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

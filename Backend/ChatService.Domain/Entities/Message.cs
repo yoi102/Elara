@@ -28,12 +28,6 @@ public record Message : AggregateRootEntity<MessageId>
     public override MessageId Id { get; protected set; }
     public UserId SenderId { get; protected set; }
 
-    public void ChangeAttachments(Uri[] value)
-    {
-        this.AddDomainEventIfAbsent(new MessageUpdatedEvent(this));
-        NotifyModified();
-    }
-
     public void ChangeContent(string value)
     {
         if (Content == value)

@@ -1,5 +1,6 @@
 ﻿using ChatService.Domain.Entities;
 using DomainCommons.EntityStronglyIds;
+using DomainCommons.Enums;
 
 namespace ChatService.Domain;
 
@@ -8,8 +9,6 @@ public interface IChatServiceRepository
     #region Conversation
 
     Task<Conversation?> FindConversationByIdAsync(ConversationId id);
-
-    Task<Conversation?> FindGroupConversationsByNameAsync(string name);
 
     Task<Conversation[]> GetConversationsByUserIdAsync(UserId id);
 
@@ -38,4 +37,29 @@ public interface IChatServiceRepository
     Task<ReplyMessage[]> MessageAllReplyMessagesAsync(MessageId id);
 
     #endregion ReplyMessage
+
+    #region ConversationRequest
+
+    Task<ConversationRequest[]> AllConversationRequestByReceiverIdAsync(UserId receiverId);
+
+    Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId);
+
+    Task<ConversationRequest?> FindConversationRequestByIdAsync(ConversationRequestId conversationRequestId);
+
+    Task<ConversationRequest[]> GetPendingConversationRequestByReceiverIdAsync(UserId receiverId);
+
+    Task<ConversationRequest?> UpdateConversationRequestAsync(ConversationRequestId conversationRequestId, RequestStatus status);
+
+    #endregion ConversationRequest
+
+    Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments);
+
+
+
+
+
+
+
+
+
 }
