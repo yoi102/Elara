@@ -67,7 +67,7 @@ public class ChatServiceRepository : IChatServiceRepository
                      .ToArrayAsync();
     }
 
-    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments)
+    public async Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments, MessageId? quoteMessage)
     {
         var message = await FindMessageByIdAsync(messageId);
 
@@ -86,6 +86,7 @@ public class ChatServiceRepository : IChatServiceRepository
         await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
 
         message?.ChangeContent(content);
+        message?.ChangeQuote(quoteMessage);
         return message;
     }
 
@@ -110,7 +111,7 @@ public class ChatServiceRepository : IChatServiceRepository
 
     #region ConversationRequest
 
-    public async Task<ConversationRequest[]> AllConversationRequestByReceiverIdAsync(UserId receiverId)
+    public async Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId)
     {
         return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
     }
@@ -146,4 +147,18 @@ public class ChatServiceRepository : IChatServiceRepository
     }
 
     #endregion ConversationRequest
+
+
+
+    #region MessageAttachment
+
+    public async Task<MessageAttachment[]> GetMessageAllMessageAttachmentsAsync(MessageId id)
+    {
+        return await dbContext
+                     .MessageAttachments
+                     .Where(g => g.MessageId == id)
+                     .ToArrayAsync();
+    }
+
+    #endregion MessageAttachment
 }

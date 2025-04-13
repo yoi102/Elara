@@ -28,9 +28,15 @@ public interface IChatServiceRepository
 
     Task<Message[]> GetConversationAllMessagesAsync(ConversationId id);
 
-    Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments);
+    Task<Message?> UpdateMessageAsync(MessageId messageId, string content, UploadedItemId[] attachments, MessageId? quoteMessage);
 
     #endregion Message
+
+    #region MessageAttachment
+
+    Task<MessageAttachment[]> GetMessageAllMessageAttachmentsAsync(MessageId id);
+
+    #endregion MessageAttachment
 
     #region ReplyMessage
 
@@ -42,7 +48,7 @@ public interface IChatServiceRepository
 
     #region ConversationRequest
 
-    Task<ConversationRequest[]> AllConversationRequestByReceiverIdAsync(UserId receiverId);
+    Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId);
 
     Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId);
 

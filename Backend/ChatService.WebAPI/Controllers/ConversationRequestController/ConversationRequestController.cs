@@ -13,14 +13,17 @@ namespace ChatService.WebAPI.Controllers.ConversationRequestController;
 [Route("api/conversation-request")]
 public class ConversationRequestController : AuthorizedUserController
 {
+    private readonly ILogger<ConversationRequestController> logger;
     private readonly ChatServiceDbContext dbContext;
     private readonly ChatDomainService domainService;
     private readonly IChatServiceRepository repository;
 
-    public ConversationRequestController(ChatServiceDbContext dbContext,
+    public ConversationRequestController(ILogger<ConversationRequestController> logger, 
+                                         ChatServiceDbContext dbContext,
                                          IChatServiceRepository repository,
                                          ChatDomainService domainService)
     {
+        this.logger = logger;
         this.dbContext = dbContext;
         this.repository = repository;
         this.domainService = domainService;
@@ -43,7 +46,7 @@ public class ConversationRequestController : AuthorizedUserController
     [HttpGet()]
     public async Task<IActionResult> GetConversationRequests()
     {
-        var result = await repository.AllConversationRequestByReceiverIdAsync(GetCurrentUserId());
+        var result = await repository.GetAllReceiverConversationRequestAsync(GetCurrentUserId());
         return Ok(result);
     }
 

@@ -36,6 +36,14 @@ public record Message : AggregateRootEntity<MessageId>
         this.AddDomainEventIfAbsent(new MessageUpdatedEvent(this));
         NotifyModified();
     }
+    public void ChangeQuote(MessageId? value)
+    {
+        if (QuoteMessageId == value)
+            return;
+        QuoteMessageId = value;
+        this.AddDomainEventIfAbsent(new MessageUpdatedEvent(this));
+        NotifyModified();
+    }
 
     public override void SoftDelete()
     {

@@ -14,23 +14,26 @@ namespace ChatService.WebAPI.Controllers.ConversationController;
 [Authorize]
 [ApiController]
 [Route("api/group-conversations")]
-public class ConversationController : ControllerBase
+public class ConversationController : AuthorizedUserController
 {
+    private readonly ILogger<ConversationController> logger;
     private readonly ChatServiceDbContext dbContext;
     private readonly ChatDomainService domainService;
     private readonly IChatServiceRepository repository;
 
-    public ConversationController(ChatServiceDbContext dbContext,
+    public ConversationController(ILogger<ConversationController> logger,
+                                  ChatServiceDbContext dbContext,
                                   IChatServiceRepository repository,
                                   ChatDomainService domainService)
     {
+        this.logger = logger;
         this.dbContext = dbContext;
         this.repository = repository;
         this.domainService = domainService;
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult<Conversation>> ChangeName(
+    public async Task<IActionResult> ChangeName(
                                              [RequiredGuidStronglyId] ConversationId id,
                                              [Required][MinLength(1)] string name)
     {
@@ -50,7 +53,7 @@ public class ConversationController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Conversation>> Create(ConversationCreateRequest request)
+    public async Task<IActionResult> Create(ConversationCreateRequest request)
     {
         if (await dbContext.Conversations.AnyAsync(g => g.Name == request.Name))
         {
@@ -62,7 +65,8 @@ public class ConversationController : ControllerBase
 
         var members = request.Member.Select(item => new Participant(newGroupConversation.Id, item.UserId, item.Role));
 
-        await dbContext.AddAsync(members);
+        await dbContext.Participants.AddRangeAsync(members);
+        await dbContext.Participants.AddAsync(new Participant(newGroupConversation.Id, GetCurrentUserId(), Roles.Owner));
 
         return Created();
     }
