@@ -4,10 +4,12 @@ namespace ChatService.WebAPI.Controllers.MessageController.Responses;
 
 public record MessageResponse
 {
-    public MessageId Id { get; set; }
-    public ConversationId ConversationId { get; set; }
-    public MessageId? QuoteMessages { get; set; }
+    public required MessageId Id { get; set; }
+    public required ConversationId ConversationId { get; set; }
+    public required MessageId? QuoteMessages { get; set; }
     public required string Content { get; set; }
-    public UserId SenderId { get; set; }
+    public required UserId SenderId { get; set; }
     public required UploadedItemId[] UploadedItemIds { get; set; }
+    public required DateTimeOffset CreatedAt { get; set; }
+    public required DateTimeOffset? UpdatedAt { get; set; }
 }

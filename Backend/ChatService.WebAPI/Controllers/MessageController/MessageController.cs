@@ -7,6 +7,7 @@ using ChatService.WebAPI.Controllers.MessageController.Responses;
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace ChatService.WebAPI.Controllers.MessageController;
 
@@ -37,13 +38,16 @@ public class MessageController : AuthorizedUserController
         var conversation = await repository.FindConversationByIdAsync(request.ConversationId);
         if (conversation is null)
             return NotFound();
-        var userId = GetCurrentUserId();
-        var message = new Message(userId, request.ConversationId, request.Content, request.QuoteMessage);
+        var senderId = GetCurrentUserId();
+        var message = new Message(senderId, request.ConversationId, request.Content, request.QuoteMessage);
         await dbContext.Messages.AddAsync(message);
 
-        var messageAttachments = request.MessageAttachment.Select(m => new MessageAttachment(message.Id, m));
-
+        var messageAttachments = request.UploadedItemIds.Select(m => new MessageAttachment(message.Id, m));
         await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
+
+        var participants = await repository.GetConversationAllParticipantsAsync(request.ConversationId);
+        var unreadMessages = participants.Where(x => x.UserId != senderId).Select(x => new UserUnreadMessage(x.UserId, message.Id));
+        await dbContext.UserUnreadMessages.AddRangeAsync(unreadMessages);
 
         return Ok();
     }
@@ -58,23 +62,22 @@ public class MessageController : AuthorizedUserController
         if (message is null)
             return NotFound();
 
-        var userId = GetCurrentUserId();
-
-        var sendMessage = new Message(userId, request.ConversationId, request.Content, request.QuoteMessage);
-
+        var senderId = GetCurrentUserId();
+        var sendMessage = new Message(senderId, request.ConversationId, request.Content, request.QuoteMessage);
         var replyMessage = new ReplyMessage(request.MessageId, sendMessage.Id);
-
         await dbContext.Messages.AddAsync(sendMessage);
         await dbContext.ReplyMessages.AddAsync(replyMessage);
 
         var messageAttachments = request.MessageAttachment.Select(m => new MessageAttachment(sendMessage.Id, m));
-
         await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
+        //todo：应该判断是否有@、、、、
+
+        await dbContext.UserUnreadMessages.AddRangeAsync(new UserUnreadMessage(message.SenderId, message.Id));
 
         return Ok();
     }
 
-    [HttpPatch()]
+    [HttpPatch("update")]
     public async Task<IActionResult> UpdateMessage(UpdateMessageRequest request)
     {
         var message = await repository.UpdateMessageAsync(request.MessageId, request.Content, request.MessageAttachment, request.QuoteMessage);
@@ -84,11 +87,11 @@ public class MessageController : AuthorizedUserController
         return Ok(message);
     }
 
-    [HttpGet("all-conversation-messages")]
-    public async Task<ActionResult<MessageResponse[]>> AllConversationMessages([RequiredGuidStronglyId] ConversationId id)
+    [HttpGet("conversation-messages")]
+    public async Task<IActionResult> AllConversationMessages([RequiredGuidStronglyId] ConversationId id)
     {
         var messages = await repository.GetConversationAllMessagesAsync(id);
-        var messageResponses = new List<MessageResponse>();
+        var messagesResponse = new List<MessageResponse>();
         foreach (var message in messages)
         {
             var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(message.Id);
@@ -101,15 +104,17 @@ public class MessageController : AuthorizedUserController
                 QuoteMessages = message.QuoteMessageId,
                 Content = message.Content,
                 SenderId = message.SenderId,
-                UploadedItemIds = [.. uploadedItemIds]
+                UploadedItemIds = [.. uploadedItemIds],
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
             };
-            messageResponses.Add(messageResponse);
+            messagesResponse.Add(messageResponse);
         }
 
-        return Ok(messageResponses);
+        return Ok(messagesResponse);
     }
 
-    [HttpGet()]
+    [HttpGet("message")]
     public async Task<IActionResult> FindMessage([RequiredGuidStronglyId] MessageId id)
     {
         var message = await repository.FindMessageByIdAsync(id);
@@ -125,8 +130,43 @@ public class MessageController : AuthorizedUserController
             QuoteMessages = message.QuoteMessageId,
             Content = message.Content,
             SenderId = message.SenderId,
-            UploadedItemIds = [.. uploadedItemIds]
+            UploadedItemIds = [.. uploadedItemIds],
+            CreatedAt = message.CreatedAt,
+            UpdatedAt = message.UpdatedAt
         };
         return Ok(messageResponse);
+    }
+
+    [HttpGet("reply-messages")]
+    public async Task<IActionResult> AddReplyMessage([RequiredGuidStronglyId] MessageId id)
+    {
+        var message = await repository.FindMessageByIdAsync(id);
+        if (message is null)
+            return NotFound();
+
+        var messagesResponse = new List<MessageResponse>();
+
+        var replyMessages = await repository.MessageAllReplyMessagesAsync(id);
+
+        foreach (var replyMessage in replyMessages)
+        {
+            var replyMessageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(id);
+            var uploadedItemIds = replyMessageAttachments.Select(x => x.UploadedItemId);
+
+            var messageResponse = new MessageResponse()
+            {
+                Id = message.Id,
+                ConversationId = message.ConversationId,
+                QuoteMessages = message.QuoteMessageId,
+                Content = message.Content,
+                SenderId = message.SenderId,
+                UploadedItemIds = [.. uploadedItemIds],
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+            messagesResponse.Add(messageResponse);
+        }
+
+        return Ok(messagesResponse);
     }
 }

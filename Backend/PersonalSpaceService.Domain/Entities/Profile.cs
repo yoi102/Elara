@@ -17,23 +17,23 @@ public record Profile : AggregateRootEntity<ProfileId>
     {
     }
 
-    public UploadedItemId Avatar { get; private set; }
+    public UploadedItemId AvatarItemId { get; private set; }
     public string DisplayName { get; private set; } = null!;
     public override ProfileId Id { get; protected set; }
     public UserId UserId { get; private set; }
 
-    public void ChangeDisplayName(string displayName)
+    public void ChangeDisplayName(string value)
     {
-        if (DisplayName == displayName) return;
-        DisplayName = displayName;
+        if (DisplayName == value) return;
+        DisplayName = value;
         this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
         NotifyModified();
     }
 
-    public void ChangeAvatar(UploadedItemId avatar)
+    public void ChangeAvatar(UploadedItemId value)
     {
-        if (Avatar == avatar) return;
-        Avatar = avatar;
+        if (AvatarItemId == value) return;
+        AvatarItemId = value;
         this.AddDomainEventIfAbsent(new ProfileUpdatedEvent(this));
         NotifyModified();
     }

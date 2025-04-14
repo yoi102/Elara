@@ -1,7 +1,7 @@
 ﻿using Strongly;
 
 [assembly: StronglyDefaults(converters: StronglyConverter.EfValueConverter |
-             StronglyConverter.SystemTextJson |
+             StronglyConverter.SystemTextJson | 
              StronglyConverter.TypeConverter)]
 
 namespace DomainCommons.EntityStronglyIds;
@@ -14,6 +14,7 @@ public partial struct ContactRequestId;
 
 [Strongly]
 public partial struct ConversationId;
+
 [Strongly]
 public partial struct ConversationRequestId;
 

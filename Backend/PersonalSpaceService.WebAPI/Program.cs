@@ -21,12 +21,6 @@ builder.Services.AddGrpcClient<Identifier.IdentifierClient>("IdentifierClient", 
     //options.Address = new Uri("https://localhost:7135");
     options.Address = new Uri("https://localhost:8080/Elara/IdentityService");//Nginx
 });
-builder.Services.AddGrpcClient<UploadedItem.UploadedItem.UploadedItemClient>("UploadedItemClient", options =>
-{
-    //options.Address = new Uri("https://localhost:7176");
-    options.Address = new Uri("https://localhost:8080/Elara/FileService");//Nginx
-});
-
 
 var app = builder.Build();
 

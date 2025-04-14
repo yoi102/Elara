@@ -31,7 +31,7 @@ public class ProfilerService : Profiler.ProfilerBase
         }
 
         reply.DisplayName = profile.DisplayName;
-        reply.AvatarId = profile.Avatar.ToString();
+        reply.AvatarId = profile.AvatarItemId.ToString();
         return reply;
     }
 }

@@ -18,7 +18,7 @@ public class ConversationRequestController : AuthorizedUserController
     private readonly ChatDomainService domainService;
     private readonly IChatServiceRepository repository;
 
-    public ConversationRequestController(ILogger<ConversationRequestController> logger, 
+    public ConversationRequestController(ILogger<ConversationRequestController> logger,
                                          ChatServiceDbContext dbContext,
                                          IChatServiceRepository repository,
                                          ChatDomainService domainService)
@@ -67,6 +67,9 @@ public class ConversationRequestController : AuthorizedUserController
     [HttpPost()]
     public async Task<IActionResult> SendConversationRequest(UserId receiverId, ConversationId conversationId)
     {
+        if (dbContext.Participants.Any(x => x.ConversationId == conversationId && x.UserId == GetCurrentUserId()))
+            return BadRequest();
+
         var request = await repository.CreateConversationRequestAsync(GetCurrentUserId(), receiverId, conversationId);
         return Ok(request);
     }
