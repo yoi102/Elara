@@ -31,6 +31,8 @@ public class ParticipantController : AuthorizedUserController
     [HttpPatch()]
     public async Task<IActionResult> UpdateParticipantRole(ParticipantId participantId, string role)
     {
+        //todo:权限.....
+
         var participant = await repository.FindParticipantByIdAsync(participantId);
 
         if (participant is null)

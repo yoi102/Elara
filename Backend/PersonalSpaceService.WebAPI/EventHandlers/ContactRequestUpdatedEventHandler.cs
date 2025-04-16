@@ -8,6 +8,6 @@ public class ContactRequestUpdatedEventHandler : INotificationHandler<ContactReq
     public Task Handle(ContactRequestUpdatedEvent notification, CancellationToken cancellationToken)
     {
         //todo
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

@@ -13,9 +13,9 @@ namespace ChatService.WebAPI.Controllers.ConversationRequestController;
 [Route("api/conversation-request")]
 public class ConversationRequestController : AuthorizedUserController
 {
-    private readonly ILogger<ConversationRequestController> logger;
     private readonly ChatServiceDbContext dbContext;
     private readonly ChatDomainService domainService;
+    private readonly ILogger<ConversationRequestController> logger;
     private readonly IChatServiceRepository repository;
 
     public ConversationRequestController(ILogger<ConversationRequestController> logger,

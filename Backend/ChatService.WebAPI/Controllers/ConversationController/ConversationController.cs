@@ -3,6 +3,7 @@ using ChatService.Domain;
 using ChatService.Domain.Entities;
 using ChatService.Infrastructure;
 using ChatService.WebAPI.Controllers.ConversationController.Requests;
+using ChatService.WebAPI.Controllers.Responses;
 using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,12 @@ namespace ChatService.WebAPI.Controllers.ConversationController;
 
 [Authorize]
 [ApiController]
-[Route("api/group-conversations")]
+[Route("api/conversation")]
 public class ConversationController : AuthorizedUserController
 {
-    private readonly ILogger<ConversationController> logger;
     private readonly ChatServiceDbContext dbContext;
     private readonly ChatDomainService domainService;
+    private readonly ILogger<ConversationController> logger;
     private readonly IChatServiceRepository repository;
 
     public ConversationController(ILogger<ConversationController> logger,
@@ -30,6 +31,33 @@ public class ConversationController : AuthorizedUserController
         this.dbContext = dbContext;
         this.repository = repository;
         this.domainService = domainService;
+    }
+
+    [HttpGet("messages")]
+    public async Task<IActionResult> AllConversationMessages([RequiredGuidStronglyId] ConversationId id)
+    {
+        var messages = await repository.GetConversationAllMessagesAsync(id);
+        var messagesResponse = new List<MessageResponse>();
+        foreach (var message in messages)
+        {
+            var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(message.Id);
+            var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId);
+
+            var messageResponse = new MessageResponse()
+            {
+                Id = message.Id,
+                ConversationId = message.ConversationId,
+                QuoteMessages = message.QuoteMessageId,
+                Content = message.Content,
+                SenderId = message.SenderId,
+                UploadedItemIds = [.. uploadedItemIds],
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+            messagesResponse.Add(messageResponse);
+        }
+
+        return Ok(messagesResponse);
     }
 
     [HttpPatch("{id}")]

@@ -8,6 +8,6 @@ public class ConversationRequestUpdatedEventHandler : INotificationHandler<Conve
     public Task Handle(ConversationRequestUpdatedEvent notification, CancellationToken cancellationToken)
     {
         //todo
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

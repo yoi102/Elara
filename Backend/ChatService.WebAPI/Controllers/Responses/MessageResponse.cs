@@ -1,6 +1,6 @@
 ﻿using DomainCommons.EntityStronglyIds;
 
-namespace ChatService.WebAPI.Controllers.MessageController.Responses;
+namespace ChatService.WebAPI.Controllers.Responses;
 
 public record MessageResponse
 {

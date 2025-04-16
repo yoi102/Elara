@@ -7,6 +7,6 @@ public class UserUnreadMessageUpdatedEventHandler : INotificationHandler<UserUnr
 {
     public Task Handle(UserUnreadMessageUpdatedEvent notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

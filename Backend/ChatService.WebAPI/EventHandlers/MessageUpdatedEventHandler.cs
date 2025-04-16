@@ -7,6 +7,6 @@ public class MessageUpdatedEventHandler : INotificationHandler<MessageUpdatedEve
 {
     public Task Handle(MessageUpdatedEvent notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }
