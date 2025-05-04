@@ -26,7 +26,7 @@ public class ContactRequestController : AuthorizedUserController
         this.identifierClient = identifierClient;
     }
 
-    [HttpPatch("accept")]
+    [HttpPatch("{id}/accept")]
     public async Task<IActionResult> AcceptContactRequest(ContactRequestId id)
     {
         var request = await repository.FindContactRequestByIdAsync(id);
@@ -64,7 +64,7 @@ public class ContactRequestController : AuthorizedUserController
         return Ok(result);
     }
 
-    [HttpPatch("reject")]
+    [HttpPatch("{id}/reject")]
     public async Task<IActionResult> RejectContactRequest(ContactRequestId id)
     {
         var request = await repository.FindContactRequestByIdAsync(id);
@@ -78,7 +78,7 @@ public class ContactRequestController : AuthorizedUserController
         return Ok(request);
     }
 
-    [HttpPost()]
+    [HttpPost("{receiverId}")]
     public async Task<IActionResult> SendContactRequest(UserId receiverId)
     {
         var request = await repository.CreateContactRequestAsync(GetCurrentUserId(), receiverId);

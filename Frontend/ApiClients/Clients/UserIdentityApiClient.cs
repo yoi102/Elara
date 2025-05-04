@@ -37,7 +37,7 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
 
-        var responseData = JsonSerializer.Deserialize<UserTokenData>(restResponse.Content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        var responseData = JsonUtils.DeserializeInsensitive<UserTokenData>(restResponse.Content);
         if (responseData is null)
             throw new ApiResponseException();
 
@@ -67,7 +67,7 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
 
-        var responseData = JsonSerializer.Deserialize<ResetCodeData>(restResponse.Content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        var responseData = JsonUtils.DeserializeInsensitive<ResetCodeData>(restResponse.Content);
         if (responseData is null)
             throw new ApiResponseException();
 
@@ -96,7 +96,7 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
 
-        var responseData = JsonSerializer.Deserialize<UserTokenData>(restResponse.Content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        var responseData = JsonUtils.DeserializeInsensitive<UserTokenData>(restResponse.Content);
 
         if (responseData is null)
             throw new ApiResponseException();
@@ -132,7 +132,7 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
 
-        var responseData = JsonSerializer.Deserialize<UserTokenData>(restResponse.Content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        var responseData = JsonUtils.DeserializeInsensitive<UserTokenData>(restResponse.Content);
 
         if (responseData is null)
             throw new ApiResponseException();

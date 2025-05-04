@@ -1,6 +1,6 @@
 ﻿using ApiClients.Abstractions.ChatApiClient;
 using ApiClients.Abstractions.FileApiClient;
-using ApiClients.Abstractions.PersonalSpaceApiClient;
+using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
 using ApiClients.Abstractions.UserApiClient;
 using ApiClients.Abstractions.UserIdentityApiClient;
 using ApiClients.Clients;
@@ -21,7 +21,7 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddSingleton<ITokenRefreshingRestClient, TokenRefreshingRestClient>();
         services.AddTransient<IUserApiClient, UserApiClient>();
         services.AddTransient<IUserIdentityApiClient, UserIdentityApiClient>();
-        services.AddTransient<IPersonalSpaceApiClient, PersonalSpaceApiClient>();
+        services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
         services.AddTransient<IFileApiClient, FileApiClient>();
         services.AddTransient<IChatApiClient, ChatApiClient>();
     }

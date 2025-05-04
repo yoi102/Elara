@@ -94,7 +94,7 @@ public partial class ResetPasswordViewModel : ObservableValidator, IHasCredentia
         if (response.IsSuccessful)
         {
             CanSendResetCode = false;
-            snackbarService.Enqueue(SnackBarHostIdentifiers.LoginWindow, $"(本不应该于此展示的)Reset Code：{response.ResultData.ResetCode}", TimeSpan.FromSeconds(3));
+            snackbarService.Enqueue(SnackBarHostIdentifiers.LoginWindow, $"(Email Message:)Reset Code：{response.ResultData.ResetCode}", TimeSpan.FromSeconds(3));
             ResetCode = response.ResultData.ResetCode;
         }
         else

@@ -22,7 +22,7 @@ public class TokenRefreshingRestClient : ITokenRefreshingRestClient
 
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
-            var accessToken = await userIdentityService.RefreshCurrentUserTokenAsync();
+            var accessToken = await userIdentityService.RefreshCurrentUserTokenAsync(cancellationToken);
 
             if (!accessToken.IsSuccessful)
                 throw new ForceLogoutException();

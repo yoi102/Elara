@@ -23,8 +23,7 @@ public partial class LoginWindowViewModel : ObservableValidator
     [ObservableProperty]
     private int currentCultureLCID;
 
-    [ObservableProperty]
-    private bool isLeftDrawerOpen = false;
+    private bool isDarkTheme;
 
     [Required]
     [NotifyDataErrorInfo]
@@ -50,9 +49,10 @@ public partial class LoginWindowViewModel : ObservableValidator
         this.cultureSettingService = cultureSettingService;
         this.themeSettingService = themeSettingService;
         currentCultureLCID = System.Globalization.CultureInfo.CurrentCulture.LCID;
+        isDarkTheme = themeSettingService.IsDarkTheme;
     }
 
-    public IHasCredentialsSubmitted? CreateOrReset
+    public IHasCredentialsSubmitted? SignUpOrResetViewModel
     {
         get { return createOrReset; }
         set
@@ -69,6 +69,17 @@ public partial class LoginWindowViewModel : ObservableValidator
         }
     }
 
+    public bool IsDarkTheme
+    {
+        get { return isDarkTheme; }
+        set
+        {
+            if (SetProperty(ref isDarkTheme, value))
+            {
+                themeSettingService.ApplyThemeLightDark(value);
+            }
+        }
+    }
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -88,8 +99,7 @@ public partial class LoginWindowViewModel : ObservableValidator
     [RelayCommand]
     private void Back()
     {
-        CreateOrReset = null;
-        IsLeftDrawerOpen = false;
+        SignUpOrResetViewModel = null;
     }
 
     [RelayCommand]
@@ -102,17 +112,9 @@ public partial class LoginWindowViewModel : ObservableValidator
     }
 
     [RelayCommand]
-    private void ChangeThemeLightDark()
+    private void SignUp()
     {
-        themeSettingService.ChangeThemeLightDark();
-    }
-
-    [RelayCommand]
-    private void Create()
-    {
-        CreateOrReset = serviceProvider.GetService<CreateAccountViewModel>();
-
-        IsLeftDrawerOpen = true;
+        SignUpOrResetViewModel = serviceProvider.GetService<SignUpViewModel>();
     }
 
     [RelayCommand]
@@ -143,8 +145,7 @@ public partial class LoginWindowViewModel : ObservableValidator
 
     private void OnCreateOrResetCompleted(object? sender, AccountCredentialsEventArgs accountEventArgs)
     {
-        CreateOrReset = null;
-        IsLeftDrawerOpen = false;
+        SignUpOrResetViewModel = null;
         NameEmail = accountEventArgs.NameOrEmail;
         Password = accountEventArgs.Password;
     }
@@ -152,8 +153,6 @@ public partial class LoginWindowViewModel : ObservableValidator
     [RelayCommand]
     private void Reset()
     {
-        CreateOrReset = serviceProvider.GetService<ResetPasswordViewModel>();
-
-        IsLeftDrawerOpen = true;
+        SignUpOrResetViewModel = serviceProvider.GetService<ResetPasswordViewModel>();
     }
 }

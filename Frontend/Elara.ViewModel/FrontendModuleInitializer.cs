@@ -10,7 +10,7 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
     {
         services.AddTransient<LoginWindowViewModel>();
         services.AddTransient<ResetPasswordViewModel>();
-        services.AddTransient<CreateAccountViewModel>();
+        services.AddTransient<SignUpViewModel>();
         services.AddTransient<MainWindowViewModel>();
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
 using PersonalSpaceService.WebAPI.Controllers.ContactController.Requests;
-using System.Security.Claims;
 
 namespace PersonalSpaceService.WebAPI.Controllers.ContactController;
 
@@ -31,7 +30,7 @@ public class ContactController : AuthorizedUserController
         return Ok(contacts);
     }
 
-    [HttpDelete]
+    [HttpDelete("{contactId}")]
     public async Task<ActionResult> DeleteContact([RequiredGuidStronglyId] ContactId contactId)
     {
         await repository.DeleteContactAsync(contactId);
@@ -39,7 +38,7 @@ public class ContactController : AuthorizedUserController
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet("{contactId}")]
     public async Task<ActionResult<Contact>> GetContact([RequiredGuidStronglyId] ContactId contactId)
     {
         var contact = await repository.FindContactByContactIdAsync(contactId);
@@ -49,7 +48,7 @@ public class ContactController : AuthorizedUserController
         return Ok(contact);
     }
 
-    [HttpPatch]
+    [HttpPatch("{contactId}")]
     public async Task<ActionResult<Contact>> UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
     {
         var contact = await repository.UpdateContactInfoAsync(contactId, request.Remark);

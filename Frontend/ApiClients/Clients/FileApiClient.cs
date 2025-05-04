@@ -67,7 +67,7 @@ public class FileApiClient : IFileApiClient
         if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
             throw new ApiResponseException();
 
-        var fileNameResponse = JsonSerializer.Deserialize<FileItemResponse>(response.Content) ?? throw new Exception("获取下载地址失败");
+        var fileNameResponse = JsonUtils.DeserializeInsensitive<FileItemResponse>(response.Content) ?? throw new Exception("获取下载地址失败");
 
         return fileNameResponse;
     }

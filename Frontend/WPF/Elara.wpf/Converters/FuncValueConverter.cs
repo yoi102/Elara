@@ -13,7 +13,7 @@ public sealed class FuncValueConverter<TIn, TOut> : IValueConverter
         _convert = convert;
     }
 
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not TIn t)
         {
@@ -24,7 +24,7 @@ public sealed class FuncValueConverter<TIn, TOut> : IValueConverter
 
             if (TypeDescriptor.GetConverter(typeof(TIn)).CanConvertFrom(value.GetType()))
             {
-                t = (TIn)TypeDescriptor.GetConverter(typeof(TIn)).ConvertFrom(value);
+                t = (TIn)TypeDescriptor.GetConverter(typeof(TIn)).ConvertFrom(value)!;
             }
             else
             {
@@ -35,7 +35,7 @@ public sealed class FuncValueConverter<TIn, TOut> : IValueConverter
         return _convert(t);
     }
 
-    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return Binding.DoNothing;
     }

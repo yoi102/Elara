@@ -2,9 +2,9 @@
 using DomainCommons.EntityStronglyIds;
 using FluentValidation;
 
-namespace PersonalSpaceService.WebAPI.Controllers.ProfileController.Requsets;
+namespace PersonalSpaceService.WebAPI.Controllers.ProfileController.Requests;
 
-public record class UpdateProfileRequest(string DisplayName, UploadedItemId Avatar);
+public record class UpdateProfileRequest(string DisplayName, UploadedItemId AvatarItemId);
 
 
 
@@ -13,6 +13,6 @@ public class LoginByEmailAndPasswordRequestValidator : AbstractValidator<UpdateP
     public LoginByEmailAndPasswordRequestValidator()
     {
         RuleFor(e => e.DisplayName).NotNull().NotEmpty();
-        RuleFor(e => e.Avatar).NotEmpty();
+        RuleFor(e => e.AvatarItemId).NotEmpty();
     }
 }

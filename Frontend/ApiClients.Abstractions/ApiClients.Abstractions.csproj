@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="ChatApiClient\Responses\" />
-    <Folder Include="PersonalSpaceApiClient\Responses\" />
   </ItemGroup>
 
 </Project>

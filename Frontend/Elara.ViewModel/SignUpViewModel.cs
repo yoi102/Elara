@@ -9,7 +9,7 @@ using InteractionServices.Abstractions;
 
 namespace Elara.wpf.ViewModel;
 
-public partial class CreateAccountViewModel : ObservableValidator, IHasCredentialsSubmitted
+public partial class SignUpViewModel : ObservableValidator, IHasCredentialsSubmitted
 {
     private readonly IUserIdentityService userIdentityService;
     private readonly IDialogService dialogService;
@@ -34,7 +34,7 @@ public partial class CreateAccountViewModel : ObservableValidator, IHasCredentia
     [ObservableProperty]
     private string password = string.Empty;
 
-    public CreateAccountViewModel(IUserIdentityService userIdentityService, IDialogService dialogService, ISnackbarService snackbarService)
+    public SignUpViewModel(IUserIdentityService userIdentityService, IDialogService dialogService, ISnackbarService snackbarService)
     {
         this.userIdentityService = userIdentityService;
         this.dialogService = dialogService;
@@ -56,9 +56,9 @@ public partial class CreateAccountViewModel : ObservableValidator, IHasCredentia
             return;
 
         using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
-        await Task.Delay(1000);//Simulate
 
         var response = await userIdentityService.SignUpAsync(Name, Email, Password);
+        await Task.Delay(1000);//Simulate
 
         if (response.IsSuccessful)
         {

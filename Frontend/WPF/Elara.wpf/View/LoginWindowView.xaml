@@ -8,6 +8,7 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:r="clr-namespace:Resources;assembly=Resources"
         xmlns:yr="https://github.com/yoi102/xaml/controls"
+        xmlns:converter="clr-namespace:Elara.wpf.Converters"
         xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel;assembly=Elara.ViewModel"
         d:DataContext="{d:DesignInstance Type=viewmodel:LoginWindowViewModel}"
         Title="LoginWindowView"
@@ -91,9 +92,8 @@
 
             <md:DialogHost Margin="10"
                            Identifier="{x:Static identifiers:DialogHostIdentifiers.LoginRootDialog}">
-                <md:DrawerHost Name="LoginNavDrawer"
-                               IsLeftDrawerOpen="{Binding IsLeftDrawerOpen}"
-                               OpenMode="Modal">
+                <md:DrawerHost IsLeftDrawerOpen="{Binding SignUpOrResetViewModel, Converter={x:Static converter:NullToBooleanConverter.TrueInstance}}"
+                               OpenMode="Standard">
                     <md:DrawerHost.LeftDrawerContent>
 
                         <Grid Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
@@ -109,12 +109,12 @@
                                     Command="{Binding BackCommand}"
                                     Content="{md:PackIcon Kind=ChevronDoubleLeft,
                                                           Size=24}"
-                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
                                     Style="{StaticResource MaterialDesignToolButton}" />
                             <ContentControl Grid.Row="1"
-                                            Content="{Binding CreateOrReset}">
+                                            Content="{Binding SignUpOrResetViewModel}">
                                 <ContentControl.Resources>
-                                    <DataTemplate DataType="{x:Type viewmodel:CreateAccountViewModel}">
+                                    <DataTemplate DataType="{x:Type viewmodel:SignUpViewModel}">
                                         <local:CreateAccountView />
                                     </DataTemplate>
                                     <DataTemplate DataType="{x:Type viewmodel:ResetPasswordViewModel}">
@@ -134,11 +134,12 @@
                             <StackPanel HorizontalAlignment="Right"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
-                                <Button md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
-                                        Content="{md:PackIcon Kind=ThemeLightDark,Size=24}"
-                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
-                                        Style="{StaticResource MaterialDesignToolButton}"
-                                        Command="{Binding ChangeThemeLightDarkCommand}" />
+                                <ToggleButton Content="{md:PackIcon Kind=WhiteBalanceSunny,Size=24}"
+                                              md:ToggleButtonAssist.OnContent="{md:PackIcon Kind=WeatherNight}"
+                                              IsChecked="{Binding IsDarkTheme}"
+                                              Background="{DynamicResource MaterialDesign.Brush.Primary.Background}"
+                                              Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
+                                              Style="{StaticResource MaterialDesignActionSecondaryToggleButton}" />
 
                                 <Menu HorizontalAlignment="Right"
                                       Margin="0 0 10 0"
@@ -159,7 +160,7 @@
                                 <Button md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
                                         Click="CloseButton_Click"
                                         Content="{md:PackIcon Kind=Close,Size=24}"
-                                        Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
                                         Style="{StaticResource MaterialDesignToolButton}"
                                         ToolTip="{I18N {x:Static r:LangKeys.Close}}" />
                             </StackPanel>
@@ -187,10 +188,8 @@
                                         </Grid.ColumnDefinitions>
                                         <md:PackIcon Grid.Column="0"
                                                      Margin="5"
-                                                     Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}"
                                                      Kind="Account" />
-                                        <TextBox Name="NameTextBox"
-                                                 Grid.Column="1"
+                                        <TextBox Grid.Column="1"
                                                  Width="200"
                                                  md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.NameOrEmail}}"
                                                  md:HintAssist.Hint="{I18N {x:Static r:LangKeys.NameOrEmail}}"
@@ -208,10 +207,8 @@
                                         </Grid.ColumnDefinitions>
                                         <md:PackIcon Grid.Column="0"
                                                      Margin="5"
-                                                     Foreground="{Binding ElementName=PasswordTextBox, Path=BorderBrush}"
                                                      Kind="Key" />
-                                        <PasswordBox Name="PasswordTextBox"
-                                                     Grid.Column="1"
+                                        <PasswordBox Grid.Column="1"
                                                      Width="200"
                                                      InputMethod.IsInputMethodEnabled="False"
                                                      InputMethod.InputScope="AlphanumericHalfWidth"
@@ -232,7 +229,7 @@
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <Button Command="{Binding CreateCommand}"
+                                        <Button Command="{Binding SignUpCommand}"
                                                 Content="{I18N {x:Static r:LangKeys.SignUp}}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}" />
                                         <Button Grid.Column="1"

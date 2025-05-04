@@ -2,5 +2,7 @@
 
 public interface IThemeSettingService
 {
-    void ChangeThemeLightDark();
+    bool IsDarkTheme { get; }
+    void ToggleThemeLightDark();
+    void ApplyThemeLightDark(bool isDarkTheme);
 }

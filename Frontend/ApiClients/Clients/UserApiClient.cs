@@ -48,7 +48,7 @@ public class UserApiClient : IUserApiClient
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
 
-        var userInfo = JsonSerializer.Deserialize<UserInfo>(restResponse.Content);
+        var userInfo = JsonUtils.DeserializeInsensitive<UserInfo>(restResponse.Content);
 
         if (userInfo is null)
             throw new ApiResponseException();

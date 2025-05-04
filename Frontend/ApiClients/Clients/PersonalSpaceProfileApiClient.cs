@@ -1,0 +1,58 @@
+﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
+using ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
+using Frontend.Shared.Exceptions;
+using RestSharp;
+
+namespace ApiClients.Clients;
+
+public class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
+{
+    private const string serviceUri = "/PersonalSpaceService/api/profile";
+    private readonly ITokenRefreshingRestClient client;
+    public PersonalSpaceProfileApiClient(ITokenRefreshingRestClient tokenRefreshingRestClient)
+    {
+        this.client = tokenRefreshingRestClient;
+    }
+
+    public async Task<UserProfileResponse> GetUserProfileAsync(CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri,
+            Method = Method.Get
+        };
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new UserProfileResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<UserProfileData>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new UserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+
+    public async Task<UpdateUserProfileResponse> UpdateUserProfileAsync(UserProfileData userProfileData, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri,
+            Method = Method.Patch
+        };
+        request.AddBody(userProfileData);
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new UpdateUserProfileResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        return new UpdateUserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+    }
+}
