@@ -66,16 +66,15 @@ public class ConversationController : AuthorizedUserController
         return Ok(messagesResponse);
     }
 
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> ChangeName([RequiredGuidStronglyId] ConversationId id,
-                                                [Required][MinLength(1)] string name)
+    [HttpPatch()]
+    public async Task<IActionResult> ChangeName(ChangeGroupConversationNameRequest request)
     {
-        if (await dbContext.Conversations.AnyAsync(g => g.Name == name))
+        if (await dbContext.Conversations.AnyAsync(g => g.Name == request.NewName))
         {
             return Conflict();
         }
 
-        var groupConversation = await domainService.ChangeConversationNameAsync(id, name);
+        var groupConversation = await domainService.ChangeConversationNameAsync(request.Id, request.NewName);
 
         if (groupConversation is null)
         {

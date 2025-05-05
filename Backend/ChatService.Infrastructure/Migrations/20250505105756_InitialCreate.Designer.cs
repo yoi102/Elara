@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatService.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatServiceDbContext))]
-    [Migration("20250420150058_InitialCreate")]
+    [Migration("20250505105756_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

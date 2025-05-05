@@ -12,14 +12,14 @@ internal class ReplyMessageConfig : IEntityTypeConfiguration<ReplyMessage>
         builder.HasKey(e => e.Id);
 
         builder.HasOne<Message>()
-               .WithMany() 
+               .WithMany()
                .HasForeignKey(r => r.RepliedMessageId)
-               .OnDelete(DeleteBehavior.Cascade); 
+               .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<Message>()
-               .WithOne() 
+               .WithOne()
                .HasForeignKey<ReplyMessage>(r => r.OriginalMessageId)
-               .OnDelete(DeleteBehavior.Cascade); 
+               .OnDelete(DeleteBehavior.Cascade);
 
     }
 }

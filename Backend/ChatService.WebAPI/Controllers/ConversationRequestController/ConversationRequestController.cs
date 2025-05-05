@@ -30,7 +30,7 @@ public class ConversationRequestController : AuthorizedUserController
         this.domainService = domainService;
     }
 
-    [HttpPatch("accept")]
+    [HttpPatch("{id}/accept")]
     public async Task<IActionResult> AcceptConversationRequest(ConversationRequestId id)
     {
         var request = await repository.FindConversationRequestByIdAsync(id);
@@ -61,7 +61,7 @@ public class ConversationRequestController : AuthorizedUserController
         return Ok(result);
     }
 
-    [HttpPatch("reject")]
+    [HttpPatch("{id}/reject")]
     public async Task<IActionResult> RejectConversationRequest(ConversationRequestId id)
     {
         var request = await repository.FindConversationRequestByIdAsync(id);

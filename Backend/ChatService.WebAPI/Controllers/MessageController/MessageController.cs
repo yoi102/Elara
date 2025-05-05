@@ -31,8 +31,20 @@ public class MessageController : AuthorizedUserController
         this.domainService = domainService;
     }
 
-    [HttpGet()]
-    public async Task<IActionResult> FindMessage([RequiredGuidStronglyId] MessageId id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMessageById([RequiredGuidStronglyId] MessageId id)
+    {
+        var message = await repository.FindMessageByIdAsync(id);
+        if (message is null)
+            return Ok();
+
+        dbContext.Messages.Remove(message);
+
+        return Ok();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> FindMessageById([RequiredGuidStronglyId] MessageId id)
     {
         var message = await repository.FindMessageByIdAsync(id);
         if (message is null)
@@ -54,6 +66,39 @@ public class MessageController : AuthorizedUserController
         return Ok(messageResponse);
     }
 
+    [HttpGet("{id}/reply-messages")]
+    public async Task<IActionResult> GetReplyMessagesId([RequiredGuidStronglyId] MessageId id)
+    {
+        var message = await repository.FindMessageByIdAsync(id);
+        if (message is null)
+            return NotFound();
+
+        var messagesResponse = new List<MessageResponse>();
+
+        var replyMessages = await repository.MessageAllReplyMessagesAsync(id);
+
+        foreach (var replyMessage in replyMessages)
+        {
+            var replyMessageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(id);
+            var uploadedItemIds = replyMessageAttachments.Select(x => x.UploadedItemId);
+
+            var messageResponse = new MessageResponse()
+            {
+                MessageId = message.Id,
+                ConversationId = message.ConversationId,
+                QuoteMessageId = message.QuoteMessageId,
+                Content = message.Content,
+                SenderId = message.SenderId,
+                UploadedItemIds = [.. uploadedItemIds],
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+            messagesResponse.Add(messageResponse);
+        }
+
+        return Ok(messagesResponse);
+    }
+
     [HttpPost()]
     public async Task<IActionResult> SendMessage(SendMessageRequest request)
     {
@@ -64,7 +109,7 @@ public class MessageController : AuthorizedUserController
         var message = new Message(senderId, request.ConversationId, request.Content, request.QuoteMessage);
         await dbContext.Messages.AddAsync(message);
 
-        var messageAttachments = request.UploadedItemIds.Select(m => new MessageAttachment(message.Id, m));
+        var messageAttachments = request.MessageAttachmentIds.Select(m => new MessageAttachment(message.Id, m));
         await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
 
         var participants = await repository.GetConversationAllParticipantsAsync(request.ConversationId);
@@ -77,7 +122,7 @@ public class MessageController : AuthorizedUserController
     [HttpPatch()]
     public async Task<IActionResult> UpdateMessage(UpdateMessageRequest request)
     {
-        var message = await repository.UpdateMessageAsync(request.MessageId, request.Content, request.MessageAttachment, request.QuoteMessage);
+        var message = await repository.UpdateMessageAsync(request.MessageId, request.Content, request.MessageAttachmentIds, request.QuoteMessage);
         if (message is null)
             return NotFound();
 

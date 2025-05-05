@@ -3,7 +3,7 @@ using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
-namespace ApiClients.Clients;
+namespace ApiClients.Clients.PersonalSpaceApiClient;
 
 public class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactRequestApiClient
 {

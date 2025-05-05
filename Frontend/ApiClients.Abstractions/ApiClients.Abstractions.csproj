@@ -6,10 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="ChatApiClient\Message\Responses\" />
-    <Folder Include="ChatApiClient\Participant\Responses\" />
-    <Folder Include="ChatApiClient\ReplyMessage\Responses\" />
-  </ItemGroup>
-
 </Project>

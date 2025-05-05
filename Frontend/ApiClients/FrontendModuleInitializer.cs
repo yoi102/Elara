@@ -9,6 +9,8 @@ using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
 using ApiClients.Abstractions.UserApiClient;
 using ApiClients.Abstractions.UserIdentityApiClient;
 using ApiClients.Clients;
+using ApiClients.Clients.ChatApiClient;
+using ApiClients.Clients.PersonalSpaceApiClient;
 using Commons.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using RestSharp;

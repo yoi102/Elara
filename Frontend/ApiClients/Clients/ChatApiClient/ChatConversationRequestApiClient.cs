@@ -3,7 +3,7 @@ using ApiClients.Abstractions.ChatApiClient.ConversationRequest.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
-namespace ApiClients.Clients;
+namespace ApiClients.Clients.ChatApiClient;
 
 public class ChatConversationRequestApiClient : IChatConversationRequestApiClient
 {

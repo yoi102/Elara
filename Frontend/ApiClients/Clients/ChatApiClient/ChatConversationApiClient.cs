@@ -4,7 +4,7 @@ using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
-namespace ApiClients.Clients;
+namespace ApiClients.Clients.ChatApiClient;
 
 public class ChatConversationApiClient : IChatConversationApiClient
 {
@@ -16,13 +16,19 @@ public class ChatConversationApiClient : IChatConversationApiClient
         this.client = client;
     }
 
-    public async Task<ChangeConversationNameResponse> ChangeNameAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public async Task<ChangeConversationNameResponse> ChangeNameAsync(Guid id, string newName, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
-            Resource = serviceUri + $"/{conversationId}",
+            Resource = serviceUri,
             Method = Method.Patch
         };
+        request.AddBody(new
+        {
+            Id = id,
+            NewName = newName
+        });
+
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
@@ -132,7 +138,7 @@ public class ChatConversationApiClient : IChatConversationApiClient
         return new ConversationsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<GetAllConversationMessagesResponse> GetAllConversationMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public async Task<MessagesResponse> GetAllConversationMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -142,16 +148,16 @@ public class ChatConversationApiClient : IChatConversationApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new GetAllConversationMessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new MessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
 
-        var data = JsonUtils.DeserializeInsensitive<ConversationMessageData[]>(response.Content);
+        var data = JsonUtils.DeserializeInsensitive<MessageData[]>(response.Content);
 
         if (data is null)
             throw new ApiResponseException();
 
-        return new GetAllConversationMessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 }

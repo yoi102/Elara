@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace ChatService.WebAPI.Controllers.MessageController.Requests;
 
-public record ReplyMessageRequest(MessageId MessageId, ConversationId ConversationId, string Content, UploadedItemId[] MessageAttachment, MessageId? QuoteMessage);
+public record ReplyMessageRequest(MessageId MessageId, ConversationId ConversationId, string Content, UploadedItemId[] MessageAttachmentIds, MessageId? QuoteMessage);
 
 public class ReplyMessageRequestValidator : AbstractValidator<ReplyMessageRequest>
 {
@@ -12,6 +12,6 @@ public class ReplyMessageRequestValidator : AbstractValidator<ReplyMessageReques
         RuleFor(e => e.MessageId.Value).NotNull().NotEmpty();
         RuleFor(e => e.ConversationId.Value).NotNull().NotEmpty();
         RuleFor(e => e.Content).NotNull();
-        RuleFor(e => e.MessageAttachment).NotNull();
+        RuleFor(e => e.MessageAttachmentIds).NotNull();
     }
 }
