@@ -50,7 +50,7 @@ public interface IChatServiceRepository
 
     Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId);
 
-    Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId);
+    Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId, string role);
 
     Task<ConversationRequest?> FindConversationRequestByIdAsync(ConversationRequestId conversationRequestId);
 

@@ -10,9 +10,9 @@ public class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactRequest
     private const string serviceUri = "/PersonalSpaceService/api/contact-requests";
     private readonly ITokenRefreshingRestClient client;
 
-    public PersonalSpaceContactRequestApiClient(ITokenRefreshingRestClient tokenRefreshingRestClient)
+    public PersonalSpaceContactRequestApiClient(ITokenRefreshingRestClient client)
     {
-        this.client = tokenRefreshingRestClient;
+        this.client = client;
     }
 
     public async Task<AcceptContactRequestResponse> AcceptContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
@@ -27,13 +27,10 @@ public class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactRequest
         if (!response.IsSuccessful)
             return new AcceptContactRequestResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        if (string.IsNullOrEmpty(response.Content))
-            throw new ApiResponseException();
-
         return new AcceptContactRequestResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<GetContactRequestsResponse> GetContactRequestsAsync(CancellationToken cancellationToken = default)
+    public async Task<GetContactRequestsResponse> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -68,9 +65,6 @@ public class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactRequest
         if (!response.IsSuccessful)
             return new RejectContactRequestResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        if (string.IsNullOrEmpty(response.Content))
-            throw new ApiResponseException();
-
         return new RejectContactRequestResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
@@ -86,8 +80,6 @@ public class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactRequest
         if (!response.IsSuccessful)
             return new SendContactRequestResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        if (string.IsNullOrEmpty(response.Content))
-            throw new ApiResponseException();
 
         return new SendContactRequestResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }

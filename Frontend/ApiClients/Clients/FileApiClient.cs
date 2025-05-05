@@ -2,7 +2,6 @@
 using ApiClients.Abstractions.FileApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
-using System.Text.Json;
 
 namespace ApiClients.Clients;
 
@@ -11,9 +10,9 @@ public class FileApiClient : IFileApiClient
     private const string serviceUri = "/FileApiClient/api/uploader";
     private readonly ITokenRefreshingRestClient client;
 
-    public FileApiClient(ITokenRefreshingRestClient restClient)
+    public FileApiClient(ITokenRefreshingRestClient client)
     {
-        client = restClient;
+        this.client = client;
     }
 
     public async Task UploadFileAsync(params string[] filePaths)
@@ -74,7 +73,7 @@ public class FileApiClient : IFileApiClient
 
     public async Task DownloadFileAsync(FileItemResponse fileItem, string path)
     {
-        //此处会创建 restClient 进行下载、不会阻塞
+        //此处会创建 client 进行下载、不会阻塞
         using var client = new RestClient();
         var fileDownloadRequest = new RestRequest(fileItem.RemoteUrl, Method.Get);
         var downloadResponse = await client.ExecuteAsync(fileDownloadRequest);

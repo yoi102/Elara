@@ -3,7 +3,6 @@ using ApiClients.Abstractions.UserApiClient.Responses;
 using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
-using System.Text.Json;
 
 namespace ApiClients.Clients;
 

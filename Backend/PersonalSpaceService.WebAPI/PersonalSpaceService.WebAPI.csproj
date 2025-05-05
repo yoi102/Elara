@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <Protobuf Include="..\ASPNETCore\Protos\identity.proto" GrpcServices="Client" Link="Protos\identity.proto" />
-    <Protobuf Include="..\ASPNETCore\Protos\profile.proto" GrpcServices="Server" Link="Protos\profile.proto" />
   </ItemGroup>
 
   <ItemGroup>

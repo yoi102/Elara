@@ -92,7 +92,7 @@
 
             <md:DialogHost Margin="10"
                            Identifier="{x:Static identifiers:DialogHostIdentifiers.LoginRootDialog}">
-                <md:DrawerHost IsLeftDrawerOpen="{Binding SignUpOrResetViewModel, Converter={x:Static converter:NullToBooleanConverter.TrueInstance}}"
+                <md:DrawerHost IsLeftDrawerOpen="{Binding SignUpOrResetViewModel, Converter={x:Static converter:DefaultToBooleanConverter.TrueInstance}}"
                                OpenMode="Standard">
                     <md:DrawerHost.LeftDrawerContent>
 

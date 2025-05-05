@@ -2,7 +2,6 @@
 using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
-using System.Text.Json;
 
 namespace ApiClients.Clients;
 
@@ -164,7 +163,7 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         return new ResetPasswordResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
     }
 
-    public async Task<CreateResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
+    public async Task<SignUpResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -176,8 +175,8 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.PostAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new CreateResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
+            return new SignUpResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
 
-        return new CreateResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
+        return new SignUpResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
     }
 }

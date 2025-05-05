@@ -9,9 +9,9 @@ public class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
 {
     private const string serviceUri = "/PersonalSpaceService/api/profile";
     private readonly ITokenRefreshingRestClient client;
-    public PersonalSpaceProfileApiClient(ITokenRefreshingRestClient tokenRefreshingRestClient)
+    public PersonalSpaceProfileApiClient(ITokenRefreshingRestClient client)
     {
-        this.client = tokenRefreshingRestClient;
+        this.client = client;
     }
 
     public async Task<UserProfileResponse> GetUserProfileAsync(CancellationToken cancellationToken = default)

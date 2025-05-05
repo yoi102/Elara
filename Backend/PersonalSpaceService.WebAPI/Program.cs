@@ -18,7 +18,6 @@ builder.Services.AddDataProtection();
 builder.Services.AddGrpc();
 builder.Services.AddGrpcClient<Identifier.IdentifierClient>("IdentifierClient", options =>
 {
-    //options.Address = new Uri("https://localhost:7135");
     options.Address = new Uri("https://localhost:8080/Elara/IdentityService");//Nginx
 });
 

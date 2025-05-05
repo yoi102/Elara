@@ -5,14 +5,14 @@ using RestSharp;
 
 namespace ApiClients.Clients;
 
-public class PersonalSpaceContactApiClient : IIPersonalSpaceContactApiClient
+public class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
 {
     private const string serviceUri = "/PersonalSpaceService/api/contacts";
     private readonly ITokenRefreshingRestClient client;
 
-    public PersonalSpaceContactApiClient(ITokenRefreshingRestClient tokenRefreshingRestClient)
+    public PersonalSpaceContactApiClient(ITokenRefreshingRestClient client)
     {
-        this.client = tokenRefreshingRestClient;
+        this.client = client;
     }
 
     public async Task<DeleteContactResponse> DeleteContactAsync(Guid contactId, CancellationToken cancellationToken = default)
@@ -27,13 +27,11 @@ public class PersonalSpaceContactApiClient : IIPersonalSpaceContactApiClient
         if (!response.IsSuccessful)
             return new DeleteContactResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        if (string.IsNullOrEmpty(response.Content))
-            throw new ApiResponseException();
 
         return new DeleteContactResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<GetAllContactsResponse> GetAllContactsAsync(CancellationToken cancellationToken = default)
+    public async Task<GetAllContactsResponse> GetContactsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -68,8 +66,6 @@ public class PersonalSpaceContactApiClient : IIPersonalSpaceContactApiClient
         if (!response.IsSuccessful)
             return new UpdateContactInfoResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        if (string.IsNullOrEmpty(response.Content))
-            throw new ApiResponseException();
 
         return new UpdateContactInfoResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }

@@ -10,12 +10,13 @@ public record ConversationRequest : AggregateRootEntity<ConversationRequestId>
     private ConversationRequest()
     {
     }
-    public ConversationRequest(UserId senderId, UserId receiverId, ConversationId conversationId)
+    public ConversationRequest(UserId senderId, UserId receiverId, ConversationId conversationId, string role)
     {
         Id = ConversationRequestId.New();
         SenderId = senderId;
         ReceiverId = receiverId;
         ConversationId = conversationId;
+        Role = role;
         Status = RequestStatus.Pending;
         this.AddDomainEventIfAbsent(new ConversationRequestCreatedEvent(this));
     }
@@ -24,6 +25,7 @@ public record ConversationRequest : AggregateRootEntity<ConversationRequestId>
     public ConversationId ConversationId { get; }
     public UserId SenderId { get; }
     public UserId ReceiverId { get; }
+    public string Role { get; } = null!;
     public RequestStatus Status { get; private set; }
 
     public void UpdateStatus(RequestStatus value)

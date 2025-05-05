@@ -1,5 +1,10 @@
-﻿using ApiClients.Abstractions.ChatApiClient;
+﻿using ApiClients.Abstractions.ChatApiClient.Conversation;
+using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
+using ApiClients.Abstractions.ChatApiClient.Message;
+using ApiClients.Abstractions.ChatApiClient.Participant;
+using ApiClients.Abstractions.ChatApiClient.ReplyMessage;
 using ApiClients.Abstractions.FileApiClient;
+using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest;
 using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
 using ApiClients.Abstractions.UserApiClient;
 using ApiClients.Abstractions.UserIdentityApiClient;
@@ -19,10 +24,16 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
 
         services.AddSingleton<IRestClient>(client);
         services.AddSingleton<ITokenRefreshingRestClient, TokenRefreshingRestClient>();
+        services.AddTransient<IChatConversationApiClient, ChatConversationApiClient>();
+        services.AddTransient<IChatConversationRequestApiClient, ChatConversationRequestApiClient>();
+        services.AddTransient<IChatMessageApiClient, ChatMessageApiClient>();
+        services.AddTransient<IChatParticipantApiClient, ChatParticipantApiClient>();
+        services.AddTransient<IChatReplyMessageApiClient, ChatReplyMessageApiClient>();
+        services.AddTransient<IFileApiClient, FileApiClient>();
+        services.AddTransient<IPersonalSpaceContactRequestApiClient, PersonalSpaceContactRequestApiClient>();
+        services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
+        services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
         services.AddTransient<IUserApiClient, UserApiClient>();
         services.AddTransient<IUserIdentityApiClient, UserIdentityApiClient>();
-        services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
-        services.AddTransient<IFileApiClient, FileApiClient>();
-        services.AddTransient<IChatApiClient, ChatApiClient>();
     }
 }

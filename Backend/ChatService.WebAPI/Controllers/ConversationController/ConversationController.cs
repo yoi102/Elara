@@ -33,7 +33,13 @@ public class ConversationController : AuthorizedUserController
         this.domainService = domainService;
     }
 
-    [HttpGet("messages")]
+    [HttpGet("all-conversation")]
+    public async Task<ActionResult<Conversation[]>> AllConversation()
+    {
+        return await repository.GetConversationsByUserIdAsync(GetCurrentUserId());
+    }
+
+    [HttpGet("{id}/messages")]
     public async Task<IActionResult> AllConversationMessages([RequiredGuidStronglyId] ConversationId id)
     {
         var messages = await repository.GetConversationAllMessagesAsync(id);
@@ -45,9 +51,9 @@ public class ConversationController : AuthorizedUserController
 
             var messageResponse = new MessageResponse()
             {
-                Id = message.Id,
+                MessageId = message.Id,
                 ConversationId = message.ConversationId,
-                QuoteMessages = message.QuoteMessageId,
+                QuoteMessageId = message.QuoteMessageId,
                 Content = message.Content,
                 SenderId = message.SenderId,
                 UploadedItemIds = [.. uploadedItemIds],
@@ -61,9 +67,8 @@ public class ConversationController : AuthorizedUserController
     }
 
     [HttpPatch("{id}")]
-    public async Task<IActionResult> ChangeName(
-                                             [RequiredGuidStronglyId] ConversationId id,
-                                             [Required][MinLength(1)] string name)
+    public async Task<IActionResult> ChangeName([RequiredGuidStronglyId] ConversationId id,
+                                                [Required][MinLength(1)] string name)
     {
         if (await dbContext.Conversations.AnyAsync(g => g.Name == name))
         {
@@ -80,8 +85,20 @@ public class ConversationController : AuthorizedUserController
         return Ok(groupConversation);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(ConversationCreateRequest request)
+    [HttpPost("{targetUserId}/create-conversation")]
+    public async Task<IActionResult> CreateConversation(UserId targetUserId)
+    {
+        Conversation newConversation = new("", false);
+        await dbContext.AddAsync(newConversation);
+
+        await dbContext.Participants.AddAsync(new Participant(newConversation.Id, targetUserId, Roles.Owner));
+        await dbContext.Participants.AddAsync(new Participant(newConversation.Id, GetCurrentUserId(), Roles.Owner));
+
+        return Created(nameof(FindById), newConversation);
+    }
+
+    [HttpPost("create-group-conversation")]
+    public async Task<IActionResult> CreateGroupConversation(ConversationCreateRequest request)
     {
         if (await dbContext.Conversations.AnyAsync(g => g.Name == request.Name))
         {
@@ -91,17 +108,22 @@ public class ConversationController : AuthorizedUserController
         Conversation newGroupConversation = new(request.Name, true);
         await dbContext.AddAsync(newGroupConversation);
 
-        var members = request.Member.Select(item => new Participant(newGroupConversation.Id, item.UserId, item.Role));
+        var conversationRequests = request.Member.Select(item => new ConversationRequest(GetCurrentUserId(), item.UserId, newGroupConversation.Id, item.Role));
 
-        await dbContext.Participants.AddRangeAsync(members);
+        await dbContext.ConversationRequests.AddRangeAsync(conversationRequests);
+
         await dbContext.Participants.AddAsync(new Participant(newGroupConversation.Id, GetCurrentUserId(), Roles.Owner));
 
-        return Created();
+        return Created(nameof(FindById), newGroupConversation);
     }
 
-    [HttpGet("find-by-user-id")]
-    public async Task<ActionResult<Conversation[]>> FindByUserId([FromQuery][Required][RequiredGuidStronglyId] UserId userId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> FindById([RequiredGuidStronglyId] ConversationId id)
     {
-        return await repository.GetConversationsByUserIdAsync(userId);
+        var conversation = await repository.FindConversationByIdAsync(id);
+
+        if (conversation is null) NotFound();
+
+        return Ok(conversation);
     }
 }

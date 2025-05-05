@@ -42,9 +42,9 @@ public class MessageController : AuthorizedUserController
         var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId);
         var messageResponse = new MessageResponse()
         {
-            Id = message.Id,
+            MessageId = message.Id,
             ConversationId = message.ConversationId,
-            QuoteMessages = message.QuoteMessageId,
+            QuoteMessageId = message.QuoteMessageId,
             Content = message.Content,
             SenderId = message.SenderId,
             UploadedItemIds = [.. uploadedItemIds],

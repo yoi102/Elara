@@ -74,9 +74,9 @@ public class ReplyMessageController : AuthorizedUserController
 
             var messageResponse = new MessageResponse()
             {
-                Id = message.Id,
+                MessageId = message.Id,
                 ConversationId = message.ConversationId,
-                QuoteMessages = message.QuoteMessageId,
+                QuoteMessageId = message.QuoteMessageId,
                 Content = message.Content,
                 SenderId = message.SenderId,
                 UploadedItemIds = [.. uploadedItemIds],

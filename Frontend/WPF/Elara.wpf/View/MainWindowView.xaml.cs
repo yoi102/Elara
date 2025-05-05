@@ -23,5 +23,4 @@ public partial class MainWindowView : MetroWindow
             this.DragMove();
         }
     }
-
 }

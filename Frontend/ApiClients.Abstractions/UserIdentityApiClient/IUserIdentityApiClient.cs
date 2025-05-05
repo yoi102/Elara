@@ -12,7 +12,7 @@ public interface IUserIdentityApiClient
 
     Task<ResetPasswordResponse> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default);
 
-    Task<CreateResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default);
+    Task<SignUpResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default);
 
     Task<RefreshTokenResponse> RefreshTokenAsync(Guid userId, string refreshToken, string userAgent, CancellationToken cancellationToken = default);
 }

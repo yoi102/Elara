@@ -3,13 +3,13 @@ using System.Windows.Data;
 
 namespace Elara.wpf.Converters;
 
-public class NullConverter<T>(T trueValue, T falseValue) : IValueConverter
+public class DefaultConverter<T>(T defaultValue, T nonDefaultValue) : IValueConverter
 {
-    public T TrueValue { get; set; } = trueValue;
-    public T FalseValue { get; set; } = falseValue;
+    public T DefaultValue { get; set; } = defaultValue;
+    public T NonDefaultValue { get; set; } = nonDefaultValue;
 
     public virtual object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => value is null ? TrueValue : FalseValue;
+        => value == default ? DefaultValue : NonDefaultValue;
 
     public virtual object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => Binding.DoNothing;

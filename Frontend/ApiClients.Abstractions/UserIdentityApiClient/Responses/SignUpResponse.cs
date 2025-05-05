@@ -1,6 +1,6 @@
 ﻿namespace ApiClients.Abstractions.UserIdentityApiClient.Responses;
 
-public record CreateResponse : ApiResponse
+public record SignUpResponse : ApiResponse
 {
 
 }

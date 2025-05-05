@@ -38,8 +38,8 @@ public class ContactRequestController : AuthorizedUserController
 
         var sender = new UserInfoRequest() { Id = request.SenderId.ToString() };
         var receiver = new UserInfoRequest() { Id = request.SenderId.ToString() };
-        var senderInfo = await identifierClient.GetUserInfoAsync(sender);
-        var receiverInfo = await identifierClient.GetUserInfoAsync(receiver);
+        var senderInfo = await identifierClient.GetUserInfoAsync(sender);//也许不应该用GRPC的
+        var receiverInfo = await identifierClient.GetUserInfoAsync(receiver);//也许不应该用GRPC的
         if (senderInfo?.UserName is null)
         {
             return NotFound();
@@ -58,7 +58,7 @@ public class ContactRequestController : AuthorizedUserController
     }
 
     [HttpGet()]
-    public async Task<IActionResult> GetContactRequests()
+    public async Task<IActionResult> GetReceivedContactRequests()
     {
         var result = await repository.AllContactRequestByReceiverIdAsync(GetCurrentUserId());
         return Ok(result);

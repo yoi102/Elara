@@ -1,6 +1,7 @@
 ﻿using ASPNETCore;
 using ChatService.Domain;
 using ChatService.Infrastructure;
+using ChatService.WebAPI.Controllers.ConversationRequestController.Requests;
 using DomainCommons.EntityStronglyIds;
 using DomainCommons.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -43,6 +44,16 @@ public class ConversationRequestController : AuthorizedUserController
         return Ok(request);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> FindById(ConversationRequestId id)
+    {
+        var conversationRequest = await repository.FindConversationRequestByIdAsync(id);
+
+        if (conversationRequest is null) NotFound();
+
+        return Ok(conversationRequest);
+    }
+
     [HttpGet()]
     public async Task<IActionResult> GetConversationRequests()
     {
@@ -65,12 +76,12 @@ public class ConversationRequestController : AuthorizedUserController
     }
 
     [HttpPost()]
-    public async Task<IActionResult> SendConversationRequest(UserId receiverId, ConversationId conversationId)
+    public async Task<IActionResult> SendConversationRequest(ConversationRequestRequest request)
     {
-        if (dbContext.Participants.Any(x => x.ConversationId == conversationId && x.UserId == GetCurrentUserId()))
+        if (dbContext.Participants.Any(x => x.ConversationId == request.ConversationId && x.UserId == GetCurrentUserId()))
             return BadRequest();
 
-        var request = await repository.CreateConversationRequestAsync(GetCurrentUserId(), receiverId, conversationId);
-        return Ok(request);
+        var conversationRequest = await repository.CreateConversationRequestAsync(GetCurrentUserId(), request.ReceiverId, request.ConversationId, request.Role);
+        return Created(nameof(FindById), conversationRequest);
     }
 }

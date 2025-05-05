@@ -116,13 +116,13 @@ public class ChatServiceRepository : IChatServiceRepository
         return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
     }
 
-    public async Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId)
+    public async Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId, string role)
     {
         var request = await dbContext.ConversationRequests.SingleOrDefaultAsync(c => c.SenderId == senderId && c.ReceiverId == receiverId);
         if (request is not null)
             return request;
 
-        var conversationRequest = new ConversationRequest(senderId, receiverId, conversationId);
+        var conversationRequest = new ConversationRequest(senderId, receiverId, conversationId, role);
         var entityEntry = await dbContext.ConversationRequests.AddAsync(conversationRequest);
         return entityEntry.Entity;
     }

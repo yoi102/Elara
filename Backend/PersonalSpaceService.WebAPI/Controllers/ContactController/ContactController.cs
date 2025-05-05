@@ -24,7 +24,7 @@ public class ContactController : AuthorizedUserController
     }
 
     [HttpGet]
-    public async Task<ActionResult<Contact[]>> AllContacts()
+    public async Task<ActionResult<Contact[]>> GetContacts()
     {
         var contacts = await repository.AllUserContactsAsync(GetCurrentUserId());
         return Ok(contacts);
