@@ -7,5 +7,4 @@ public interface IUserApiClient
     Task<ApiResponse> DeleteAsync(CancellationToken cancellationToken = default);
 
     Task<UserInfoResponse> GetUserInfoAsync(CancellationToken cancellationToken = default);
-
 }

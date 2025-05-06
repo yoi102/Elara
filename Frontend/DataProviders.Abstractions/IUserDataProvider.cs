@@ -10,4 +10,5 @@ public interface IUserDataProvider
     void UpdateUser(Guid userId, string? userName, string refreshToken);
 
     void UpdateRefreshToken(string accessToken, string refreshToken);
+    void CleanUserData();
 }

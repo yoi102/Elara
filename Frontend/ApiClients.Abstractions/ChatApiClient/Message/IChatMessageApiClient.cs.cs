@@ -6,7 +6,7 @@ namespace ApiClients.Abstractions.ChatApiClient.Message;
 
 public interface IChatMessageApiClient
 {
-    Task<MessageResponse> DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ApiResponse> DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<MessageResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 

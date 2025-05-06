@@ -79,7 +79,7 @@ public class ConversationRequestController : AuthorizedUserController
     public async Task<IActionResult> SendConversationRequest(ConversationRequestRequest request)
     {
         if (dbContext.Participants.Any(x => x.ConversationId == request.ConversationId && x.UserId == GetCurrentUserId()))
-            return BadRequest();
+            return Conflict();
 
         var conversationRequest = await repository.CreateConversationRequestAsync(GetCurrentUserId(), request.ReceiverId, request.ConversationId, request.Role);
         return Created(nameof(FindById), conversationRequest);

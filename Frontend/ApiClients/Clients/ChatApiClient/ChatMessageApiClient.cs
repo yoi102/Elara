@@ -18,7 +18,7 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         this.client = client;
     }
 
-    public async Task<MessageResponse> DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -28,9 +28,9 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new MessageResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        return new MessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
     public async Task<MessageResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)

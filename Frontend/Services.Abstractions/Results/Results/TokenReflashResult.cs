@@ -1,5 +1,5 @@
 ﻿namespace Services.Abstractions.Results.Results;
 
-public record TokenReflashResult : ApiServiceResult<TokenReflashResultData>;
+public record TokenReflashResult : ApiServiceResult<UserTokenResultData>;
 
-public record TokenReflashResultData(string AccessToken, string RefreshToken);
+public record UserTokenResultData(Guid UserId, string UserName, string AccessToken, string RefreshToken);

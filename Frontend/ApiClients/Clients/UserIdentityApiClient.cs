@@ -41,7 +41,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         if (responseData is null)
             throw new ApiResponseException();
 
-        restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.Token);
+        restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.AccessToken);
 
         return new RefreshTokenResponse()
         {
@@ -101,7 +101,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         if (responseData is null)
             throw new ApiResponseException();
 
-        restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.Token);
+        restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.AccessToken);
 
         return new LoginResponse()
         {
@@ -137,7 +137,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         if (responseData is null)
             throw new ApiResponseException();
 
-        restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.Token);
+        restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.AccessToken);
 
         return new LoginResponse()
         {

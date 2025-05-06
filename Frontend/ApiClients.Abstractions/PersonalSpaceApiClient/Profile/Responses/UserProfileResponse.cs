@@ -2,4 +2,4 @@
 
 public record UserProfileResponse : ApiResponse<UserProfileData>;
 
-public record UserProfileData(Guid Id, string DisplayName, Guid AvatarItemId);
+public record UserProfileData(Guid Id, string DisplayName, Guid AvatarItemId, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt);

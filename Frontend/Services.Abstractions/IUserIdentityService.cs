@@ -9,9 +9,9 @@ public interface IUserIdentityService
 
     Task<ResetCodeResult> GetResetCodeByEmailAsync(string email, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default);
+    Task<LoginServiceResult> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default);
+    Task<LoginServiceResult> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default);
 
     Task<TokenReflashResult> RefreshCurrentUserTokenAsync(CancellationToken cancellationToken = default);
 

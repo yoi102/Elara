@@ -16,11 +16,11 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         this.client = client;
     }
 
-    public async Task<ApiResponse> DeleteContactAsync(Guid contactId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> DeleteContactAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
-            Resource = serviceUri + $"/{contactId}",
+            Resource = serviceUri + $"/{id}",
             Method = Method.Get
         };
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
@@ -32,7 +32,7 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<GetAllContactsResponse> GetContactsAsync(CancellationToken cancellationToken = default)
+    public async Task<ContactsResponse> GetContactsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -42,7 +42,7 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new GetAllContactsResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ContactsResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -52,14 +52,14 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         if (data is null)
             throw new ApiResponseException();
 
-        return new GetAllContactsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ContactsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<ApiResponse> UpdateContactInfoAsync(Guid contactId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> UpdateContactInfoAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
-            Resource = serviceUri + $"/{contactId}",
+            Resource = serviceUri + $"/{id}",
             Method = Method.Get
         };
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);

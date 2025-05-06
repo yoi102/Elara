@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="ChatApiClient\Participant\Requests\" />
     <Folder Include="ChatApiClient\Participant\Responses\" />
     <Folder Include="UserApiClient\Responses\" />
   </ItemGroup>

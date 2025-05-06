@@ -34,10 +34,10 @@ public class ReplyMessageController : AuthorizedUserController
     {
         var conversation = await repository.FindConversationByIdAsync(request.ConversationId);
         if (conversation is null)
-            return NotFound();
+            return NotFound("Conversation not found");
         var message = await repository.FindMessageByIdAsync(request.MessageId);
         if (message is null)
-            return NotFound();
+            return NotFound("Message not found");
 
         var senderId = GetCurrentUserId();
         var sendMessage = new Message(senderId, request.ConversationId, request.Content, request.QuoteMessage);

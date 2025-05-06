@@ -1,5 +1,6 @@
 ﻿using Commons.Extensions;
 using Commons.Helpers;
+using DataProviders.Abstractions;
 using Elara.wpf.View;
 using Frontend.Shared.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,8 @@ public partial class App : Application
 
             MainWindow.Close();
             MainWindow = null;
-
+            var userDataProvider = Services.GetService<IUserDataProvider>();
+            userDataProvider?.CleanUserData();
             LaunchApplicationFlow();
             e.Handled = true;
         }

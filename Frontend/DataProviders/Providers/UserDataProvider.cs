@@ -9,6 +9,14 @@ internal class UserDataProvider : IUserDataProvider
     public string? RefreshToken { get; private set; }
     public string? AccessToken { get; private set; }
 
+    public void CleanUserData()
+    {
+        UserId = default;
+        UserName = default;
+        RefreshToken = default;
+        AccessToken = default;
+    }
+
     public void UpdateRefreshToken(string accessToken, string refreshToken)
     {
         RefreshToken = refreshToken;

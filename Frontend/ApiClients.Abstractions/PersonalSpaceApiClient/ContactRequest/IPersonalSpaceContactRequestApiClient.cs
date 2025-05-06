@@ -6,7 +6,7 @@ public interface IPersonalSpaceContactRequestApiClient
 {
     Task<ApiResponse> AcceptContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<GetContactRequestsResponse> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default);
+    Task<ContactRequestsResponse> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default);
 
     Task<ApiResponse> RejectContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
 

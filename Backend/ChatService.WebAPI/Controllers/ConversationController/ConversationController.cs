@@ -87,11 +87,28 @@ public class ConversationController : AuthorizedUserController
     [HttpPost("{targetUserId}/create-conversation")]
     public async Task<IActionResult> CreateConversation(UserId targetUserId)
     {
+        var currentUserId = GetCurrentUserId();
+
+        var targetUserParticipant = dbContext.Participants.Where(x => !x.IsGroup && x.UserId == targetUserId);
+        var currentUserParticipant = dbContext.Participants.Where(x => !x.IsGroup && x.UserId == currentUserId);
+
+        var intersection = await dbContext.Participants.Where(p => !p.IsGroup && (p.UserId == currentUserId || p.UserId == targetUserId))
+                                                   .GroupBy(p => p.ConversationId)
+                                                   .Where(g => g.Count() == 2) // 两个用户都参与这个对话
+                                                   .Select(g => g.Key) // ConversationId
+                                                   .SingleOrDefaultAsync();
+        if (intersection != default)
+        {
+            var conversation = await dbContext.Conversations.FindAsync(intersection);
+            if (conversation is not null)
+                return Ok(conversation);
+        }
+
         Conversation newConversation = new("", false);
         await dbContext.AddAsync(newConversation);
 
-        await dbContext.Participants.AddAsync(new Participant(newConversation.Id, targetUserId, Roles.Owner));
-        await dbContext.Participants.AddAsync(new Participant(newConversation.Id, GetCurrentUserId(), Roles.Owner));
+        await dbContext.Participants.AddAsync(new Participant(newConversation.Id, targetUserId));
+        await dbContext.Participants.AddAsync(new Participant(newConversation.Id, currentUserId));
 
         return Created(nameof(FindById), newConversation);
     }
@@ -111,7 +128,7 @@ public class ConversationController : AuthorizedUserController
 
         await dbContext.ConversationRequests.AddRangeAsync(conversationRequests);
 
-        await dbContext.Participants.AddAsync(new Participant(newGroupConversation.Id, GetCurrentUserId(), Roles.Owner));
+        await dbContext.Participants.AddAsync(new Participant(newGroupConversation.Id, GetCurrentUserId(), Roles.Owner, true));
 
         return Created(nameof(FindById), newGroupConversation);
     }

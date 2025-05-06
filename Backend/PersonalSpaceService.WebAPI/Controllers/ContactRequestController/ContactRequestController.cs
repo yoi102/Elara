@@ -81,6 +81,12 @@ public class ContactRequestController : AuthorizedUserController
     [HttpPost("{receiverId}")]
     public async Task<IActionResult> SendContactRequest(UserId receiverId)
     {
+        var receiver = new UserInfoRequest() { Id = receiverId.ToString() };
+        var receiverInfo = await identifierClient.GetUserInfoAsync(receiver);//也许不应该用GRPC的
+        if (receiverInfo?.UserName is null)
+        {
+            return NotFound();
+        }
         var request = await repository.CreateContactRequestAsync(GetCurrentUserId(), receiverId);
         return Ok(request);
     }

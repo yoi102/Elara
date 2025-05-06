@@ -76,7 +76,8 @@ namespace ChatService.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ConversationId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Role = table.Column<string>(type: "TEXT", nullable: false)
+                    Role = table.Column<string>(type: "TEXT", nullable: false),
+                    IsGroup = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

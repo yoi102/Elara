@@ -1,8 +1,6 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Participant.Requests;
-
-namespace ApiClients.Abstractions.ChatApiClient.Participant;
+﻿namespace ApiClients.Abstractions.ChatApiClient.Participant;
 
 public interface IChatParticipantApiClient
 {
-    Task<ApiResponse> UpdateParticipantRoleAsync(UpdateParticipantRoleRequest updateRoleRequest, CancellationToken cancellationToken = default);
+    Task<ApiResponse> UpdateParticipantRoleAsync(Guid id, string role, CancellationToken cancellationToken = default);
 }

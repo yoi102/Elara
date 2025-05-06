@@ -134,6 +134,9 @@ namespace ChatService.Infrastructure.Migrations
                     b.Property<Guid>("ConversationId")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsGroup")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("TEXT");

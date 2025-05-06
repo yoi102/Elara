@@ -91,11 +91,11 @@ internal class ChatConversationApiClient : IChatConversationApiClient
         return new ConversationResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<ConversationResponse> FindByIdAsync(Guid conversationUserId, CancellationToken cancellationToken = default)
+    public async Task<ConversationResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
-            Resource = serviceUri + $"/{conversationUserId}",
+            Resource = serviceUri + $"/{id}",
             Method = Method.Get
         };
 
@@ -139,11 +139,11 @@ internal class ChatConversationApiClient : IChatConversationApiClient
         return new ConversationsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<MessagesResponse> GetAllConversationMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    public async Task<MessagesResponse> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
-            Resource = serviceUri + $"/{conversationId}/messages",
+            Resource = serviceUri + $"/{id}/messages",
             Method = Method.Get
         };
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
