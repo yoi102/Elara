@@ -39,7 +39,6 @@ public class DialogService : IDialogService
         {
             //await dialogSession.UpdateContent(messageDialog);//await 不了！！！！遗憾
             dialogSession.Close();//无奈之举，只能关闭后重开
-
         }
         //else
         {

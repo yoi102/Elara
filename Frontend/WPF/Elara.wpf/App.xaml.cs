@@ -24,6 +24,10 @@ public partial class App : Application
 
         Services = ConfigureServices();
         this.InitializeComponent();
+
+        //MainWindow = new MainWindowView();//暂时避开登录
+        //MainWindow.Show();
+
         LaunchApplicationFlow();
 
         // 注册全局异常处理器

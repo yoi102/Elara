@@ -6,11 +6,11 @@ namespace ChatService.Domain.Entities;
 
 public record Participant : Entity<ParticipantId>
 {
-    public Participant(ConversationId conversationId, UserId user, string role = "", bool isGroup = false)
+    public Participant(ConversationId conversationId, UserId userId, string role = "", bool isGroup = false)
     {
         Id = ParticipantId.New();
         ConversationId = conversationId;
-        UserId = user;
+        UserId = userId;
         Role = role;
         IsGroup = isGroup;
         AddDomainEventIfAbsent(new ParticipantCreatedEvent(this));

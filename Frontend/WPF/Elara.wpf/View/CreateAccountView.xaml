@@ -47,7 +47,6 @@
                          md:TextFieldAssist.HasClearButton="True"
                          md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.AccountName}}"
                          md:HintAssist.Hint="{I18N {x:Static r:LangKeys.AccountName}}">
-
                 </TextBox>
             </Grid>
             <Grid Grid.Row="2"
@@ -68,7 +67,6 @@
                          md:TextFieldAssist.HasClearButton="True"
                          md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.Email}}"
                          md:HintAssist.Hint="{I18N {x:Static r:LangKeys.Email}}">
-
                 </TextBox>
             </Grid>
             <Grid Grid.Row="3"
@@ -104,5 +102,4 @@
                      Content="{I18N {x:Static r:LangKeys.SignUp}}" />
         </StackPanel>
     </Grid>
-
 </UserControl>

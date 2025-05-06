@@ -6,6 +6,7 @@ using DomainCommons.EntityStronglyIds;
 using DomainCommons.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatService.WebAPI.Controllers.ConversationRequestController;
 
@@ -39,6 +40,13 @@ public class ConversationRequestController : AuthorizedUserController
         {
             return NotFound();
         }
+        var conversation = await repository.FindConversationByIdAsync(request.ConversationId);
+        if (conversation is null)
+        {
+            return NotFound();
+        }
+
+        await dbContext.Participants.AddAsync(new Domain.Entities.Participant(request.ConversationId, request.ReceiverId, request.Role));
 
         request.UpdateStatus(RequestStatus.Accepted);
         return Ok(request);

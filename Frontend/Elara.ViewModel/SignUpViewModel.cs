@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
+using Frontend.Shared.Identifiers;
+using InteractionServices.Abstractions;
+using Resources.Strings;
 using Services.Abstractions;
 using System.ComponentModel.DataAnnotations;
-using Frontend.Shared.Identifiers;
-using Resources.Strings;
-using InteractionServices.Abstractions;
 
 namespace Elara.wpf.ViewModel;
 

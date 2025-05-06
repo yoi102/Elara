@@ -5,22 +5,14 @@ namespace Elara.wpf.ViewModel;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-
-
-    public MainWindowViewModel( )
+    public MainWindowViewModel()
     {
-
     }
 
     [RelayCommand]
     private async Task TestAsync()
     {
-
         //Test
-
-
-
-
 
         await Task.CompletedTask;
     }

@@ -37,21 +37,21 @@ public class ContactRequestController : AuthorizedUserController
         }
 
         var sender = new UserInfoRequest() { Id = request.SenderId.ToString() };
-        var receiver = new UserInfoRequest() { Id = request.SenderId.ToString() };
+        var receiver = new UserInfoRequest() { Id = request.ReceiverId.ToString() };
         var senderInfo = await identifierClient.GetUserInfoAsync(sender);//也许不应该用GRPC的
         var receiverInfo = await identifierClient.GetUserInfoAsync(receiver);//也许不应该用GRPC的
         if (senderInfo?.UserName is null)
         {
             return NotFound();
         }
-        await repository.AddContactAsync(GetCurrentUserId(), request.SenderId, senderInfo.UserName);
+        await repository.AddContactAsync(request.ReceiverId, request.SenderId, senderInfo.UserName);
 
         if (receiverInfo?.UserName is null)
         {
             return NotFound();
         }
 
-        await repository.AddContactAsync(request.SenderId, GetCurrentUserId(), receiverInfo.UserName);
+        await repository.AddContactAsync(request.SenderId, request.ReceiverId, receiverInfo.UserName);
 
         request.UpdateStatus(RequestStatus.Accepted);
         return Ok(request);

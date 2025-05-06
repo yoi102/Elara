@@ -7,6 +7,6 @@ public interface IHasCredentialsSubmitted
 
 public class AccountCredentialsEventArgs : EventArgs
 {
-    public required string NameOrEmail { get; set; }
-    public required string Password { get; set; }
+    public string NameOrEmail { get; set; }
+    public string Password { get; set; }
 }

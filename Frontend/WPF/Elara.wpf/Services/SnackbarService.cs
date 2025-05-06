@@ -67,7 +67,7 @@ public class SnackbarService : ISnackbarService
     {
         if (!SnackbarIdentifierAssist.SnackbarGroups.TryGetValue(identifier, out var snackbars))
             return;
-        foreach (var snackbar  in snackbars)
+        foreach (var snackbar in snackbars)
             snackbar.MessageQueue?.Enqueue(content, actionContent, actionHandler, actionArgument, promote, neverConsiderToBeDuplicate, durationOverride);
     }
 }

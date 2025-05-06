@@ -246,13 +246,10 @@
                                             Content="{I18N {x:Static r:LangKeys.Login}}" />
                                 </StackPanel>
                             </Grid>
-
                         </Grid>
                     </Grid>
-
                 </md:DrawerHost>
             </md:DialogHost>
-
         </Border>
         <md:Snackbar Margin="10"
                      HorizontalAlignment="Left"

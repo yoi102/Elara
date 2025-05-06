@@ -7,6 +7,7 @@ public class ParticipantCreatedEventHandler : INotificationHandler<ParticipantCr
 {
     public Task Handle(ParticipantCreatedEvent notification, CancellationToken cancellationToken)
     {
+        //TODO:SignalR
         return Task.CompletedTask;
     }
 }

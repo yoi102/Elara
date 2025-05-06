@@ -7,6 +7,7 @@ public class ParticipantUpdatedEventHandler : INotificationHandler<ParticipantUp
 {
     public Task Handle(ParticipantUpdatedEvent notification, CancellationToken cancellationToken)
     {
+        //TODO:SignalR
         return Task.CompletedTask;
     }
 }

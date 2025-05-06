@@ -7,6 +7,7 @@ public class MessageCreatedEventHandler : INotificationHandler<MessageCreatedEve
 {
     public Task Handle(MessageCreatedEvent notification, CancellationToken cancellationToken)
     {
+        //TODO:SignalR
         return Task.CompletedTask;
     }
 }

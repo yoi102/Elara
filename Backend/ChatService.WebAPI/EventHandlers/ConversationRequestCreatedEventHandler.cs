@@ -7,7 +7,7 @@ public class ConversationRequestCreatedEventHandler : INotificationHandler<Conve
 {
     public Task Handle(ConversationRequestCreatedEvent notification, CancellationToken cancellationToken)
     {
-        //todo
+        //TODO:SignalR
         return Task.CompletedTask;
     }
 }

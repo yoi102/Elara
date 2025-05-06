@@ -80,6 +80,7 @@ public partial class LoginWindowViewModel : ObservableValidator
             }
         }
     }
+
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
