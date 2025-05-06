@@ -10,5 +10,5 @@ public interface IFileApiClient
 
     Task<FileItemResponse> GetFileItemAsync(Guid itemId);
 
-    Task DownloadFileAsync(FileItemResponse fileItem, string path);
+    Task DownloadFileAsync(FileItemData fileItem, string path);
 }

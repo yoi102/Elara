@@ -6,7 +6,7 @@ using RestSharp;
 
 namespace ApiClients.Clients.PersonalSpaceApiClient;
 
-public class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
+internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
 {
     private const string serviceUri = "/PersonalSpaceService/api/profile";
     private readonly ITokenRefreshingRestClient client;

@@ -5,7 +5,7 @@ using System.Net;
 
 namespace ApiClients;
 
-public class TokenRefreshingRestClient : ITokenRefreshingRestClient
+internal class TokenRefreshingRestClient : ITokenRefreshingRestClient
 {
     private readonly IRestClient client;
     private readonly IUserIdentityService userIdentityService;

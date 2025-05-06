@@ -6,7 +6,7 @@ using RestSharp;
 
 namespace ApiClients.Clients;
 
-public class UserIdentityApiClient : IUserIdentityApiClient
+internal class UserIdentityApiClient : IUserIdentityApiClient
 {
     private const string serviceUri = "/IdentityService/api/users";
     private readonly IRestClient restClient;

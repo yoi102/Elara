@@ -1,12 +1,11 @@
 ﻿using ApiClients.Abstractions.FileApiClient;
 using ApiClients.Abstractions.FileApiClient.Responses;
-using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
 namespace ApiClients.Clients;
 
-public class FileApiClient : IFileApiClient
+internal class FileApiClient : IFileApiClient
 {
     private const string serviceUri = "/FileApiClient/api/uploader";
     private readonly ITokenRefreshingRestClient client;

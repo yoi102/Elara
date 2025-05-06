@@ -6,7 +6,7 @@ using RestSharp;
 
 namespace ApiClients.Clients.ChatApiClient;
 
-public class ChatConversationRequestApiClient : IChatConversationRequestApiClient
+internal class ChatConversationRequestApiClient : IChatConversationRequestApiClient
 {
     private const string serviceUri = "/ChatService/api/conversation-request";
     private readonly ITokenRefreshingRestClient client;

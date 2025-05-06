@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace ApiClients.Clients.ChatApiClient;
 
-public class ChatParticipantApiClient : IChatParticipantApiClient
+internal class ChatParticipantApiClient : IChatParticipantApiClient
 {
     private const string serviceUri = "/ChatService/api/participant";
     private readonly ITokenRefreshingRestClient client;
