@@ -1,4 +1,5 @@
-﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Contact;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.PersonalSpaceApiClient.Contact;
 using ApiClients.Abstractions.PersonalSpaceApiClient.Contact.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
@@ -15,7 +16,7 @@ public class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         this.client = client;
     }
 
-    public async Task<DeleteContactResponse> DeleteContactAsync(Guid contactId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> DeleteContactAsync(Guid contactId, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -25,10 +26,10 @@ public class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new DeleteContactResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
 
-        return new DeleteContactResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
     public async Task<GetAllContactsResponse> GetContactsAsync(CancellationToken cancellationToken = default)
@@ -54,7 +55,7 @@ public class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         return new GetAllContactsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<UpdateContactInfoResponse> UpdateContactInfoAsync(Guid contactId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> UpdateContactInfoAsync(Guid contactId, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -64,9 +65,9 @@ public class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new UpdateContactInfoResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
 
-        return new UpdateContactInfoResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 }

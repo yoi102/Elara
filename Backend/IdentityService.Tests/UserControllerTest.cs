@@ -250,7 +250,7 @@ public class UserControllerTest
              ""
          );
 
-        var loginResult = new LoginResult
+        var loginResult = new ApiServiceResult
         {
             SignInResult = Microsoft.AspNetCore.Identity.SignInResult.LockedOut,
             Token = "some-jwt-token"
@@ -276,7 +276,7 @@ public class UserControllerTest
             "Password123",
             ""
         );
-        var loginResult = new LoginResult
+        var loginResult = new ApiServiceResult
         {
             SignInResult = Microsoft.AspNetCore.Identity.SignInResult.Success,
             Token = "some-jwt-token"
@@ -303,7 +303,7 @@ public class UserControllerTest
            ""
        );
 
-        var loginResult = new LoginResult
+        var loginResult = new ApiServiceResult
         {
             SignInResult = Microsoft.AspNetCore.Identity.SignInResult.Failed,
             Token = "some-jwt-token"
@@ -331,7 +331,7 @@ public class UserControllerTest
 
         );
 
-        var loginResult = new LoginResult
+        var loginResult = new ApiServiceResult
         {
             SignInResult = Microsoft.AspNetCore.Identity.SignInResult.LockedOut,
             Token = "some-jwt-token"
@@ -357,7 +357,7 @@ public class UserControllerTest
             "Password123",
             ""
         );
-        var loginResult = new LoginResult
+        var loginResult = new ApiServiceResult
         {
             SignInResult = Microsoft.AspNetCore.Identity.SignInResult.Success,
             Token = "some-jwt-token"
@@ -384,7 +384,7 @@ public class UserControllerTest
             ""
         );
 
-        var loginResult = new LoginResult
+        var loginResult = new ApiServiceResult
         {
             SignInResult = Microsoft.AspNetCore.Identity.SignInResult.Failed,
             Token = "some-jwt-token"

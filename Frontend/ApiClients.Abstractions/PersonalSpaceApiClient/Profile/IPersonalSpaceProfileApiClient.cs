@@ -6,5 +6,5 @@ public interface IPersonalSpaceProfileApiClient
 {
     Task<UserProfileResponse> GetUserProfileAsync(CancellationToken cancellationToken = default);
 
-    Task<UpdateUserProfileResponse> UpdateUserProfileAsync(UserProfileData userProfileData, CancellationToken cancellationToken = default);
+    Task<ApiResponse> UpdateUserProfileAsync(UserProfileData userProfileData, CancellationToken cancellationToken = default);
 }

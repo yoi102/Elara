@@ -1,4 +1,5 @@
-﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
 using ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
@@ -37,7 +38,7 @@ public class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         return new UserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<UpdateUserProfileResponse> UpdateUserProfileAsync(UserProfileData userProfileData, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> UpdateUserProfileAsync(UserProfileData userProfileData, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -48,11 +49,11 @@ public class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new UpdateUserProfileResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
 
-        return new UpdateUserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 }

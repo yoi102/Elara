@@ -1,6 +1,7 @@
 ﻿using ApiClients.Abstractions.UserApiClient;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions;
+using Services.Abstractions.Results;
 using Services.Abstractions.Results.Results;
 
 namespace Services;
@@ -14,14 +15,14 @@ public class UserService : IUserService
         this.userApiClient = userApiClient;
     }
 
-    public async Task<DeleteUserResult> DeleteAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult> DeleteAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             var response = await userApiClient.DeleteAsync(cancellationToken);
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new DeleteUserResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = true
             };
@@ -30,7 +31,7 @@ public class UserService : IUserService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new DeleteUserResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

@@ -5,7 +5,7 @@ namespace ApiClients.Abstractions.ChatApiClient.Conversation;
 
 public interface IChatConversationApiClient
 {
-    Task<ChangeConversationNameResponse> ChangeNameAsync(Guid conversationId, string name, CancellationToken cancellationToken = default);
+    Task<ApiResponse> ChangeNameAsync(Guid conversationId, string name, CancellationToken cancellationToken = default);
 
     Task<ConversationResponse> CreateConversationAsync(Guid targetUserId, CancellationToken cancellationToken = default);
 

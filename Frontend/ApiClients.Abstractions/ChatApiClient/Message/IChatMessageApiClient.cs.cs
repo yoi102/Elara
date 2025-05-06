@@ -12,7 +12,7 @@ public interface IChatMessageApiClient
 
     Task<MessagesResponse> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<SendMessageResponse> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
+    Task<ApiResponse> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
 
-    Task<UpdateMessageResponse> UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
+    Task<ApiResponse> UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
 }

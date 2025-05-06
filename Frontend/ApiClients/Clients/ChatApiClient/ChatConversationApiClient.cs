@@ -1,4 +1,5 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Conversation;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.ChatApiClient.Conversation;
 using ApiClients.Abstractions.ChatApiClient.Conversation.Requests;
 using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
 using Frontend.Shared.Exceptions;
@@ -16,7 +17,7 @@ public class ChatConversationApiClient : IChatConversationApiClient
         this.client = client;
     }
 
-    public async Task<ChangeConversationNameResponse> ChangeNameAsync(Guid id, string newName, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> ChangeNameAsync(Guid id, string newName, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -32,9 +33,9 @@ public class ChatConversationApiClient : IChatConversationApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new ChangeConversationNameResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        return new ChangeConversationNameResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
     public async Task<ConversationResponse> CreateConversationAsync(Guid targetUserId, CancellationToken cancellationToken = default)

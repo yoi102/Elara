@@ -1,5 +1,5 @@
-﻿using ApiClients.Abstractions.UserApiClient;
-using ApiClients.Abstractions.UserApiClient.Responses;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.UserApiClient;
 using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
@@ -16,7 +16,7 @@ public class UserApiClient : IUserApiClient
         this.client = client;
     }
 
-    public async Task<DeleteUserResponse> DeleteAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> DeleteAsync(CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -27,9 +27,9 @@ public class UserApiClient : IUserApiClient
         var restResponse = await client.ExecuteWithAutoRefreshAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new DeleteUserResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
 
-        return new DeleteUserResponse() { IsSuccessful = true, StatusCode = restResponse.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = restResponse.StatusCode };
     }
 
     public async Task<UserInfoResponse> GetUserInfoAsync(CancellationToken cancellationToken = default)

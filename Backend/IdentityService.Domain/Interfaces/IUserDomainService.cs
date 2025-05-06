@@ -9,9 +9,9 @@ public interface IUserDomainService
 {
     Task<GetEmailResetCodeResult> GetResetCodeByEmail(string email);
 
-    Task<LoginResult> LoginByEmailAndPasswordAsync(string email, string password,string userAgent);
+    Task<ApiServiceResult> LoginByEmailAndPasswordAsync(string email, string password,string userAgent);
 
-    Task<LoginResult> LoginByNameAndPasswordAsync(string name, string password,string userAgent);
+    Task<ApiServiceResult> LoginByNameAndPasswordAsync(string name, string password,string userAgent);
 
     Task<IdentityResult> ResetPasswordByResetCodeAsync(User user, string resetCode, string newPassword);
 

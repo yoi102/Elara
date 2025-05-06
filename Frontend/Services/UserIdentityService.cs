@@ -2,6 +2,7 @@
 using DataProviders.Abstractions;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions;
+using Services.Abstractions.Results;
 using Services.Abstractions.Results.Results;
 
 namespace Services;
@@ -19,14 +20,14 @@ public class UserIdentityService : IUserIdentityService
         this.userDataProvider = userDataProvider;
     }
 
-    public async Task<CreateResult> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
     {
         try
         {
             var response = await userIdentityApiClient.SignUpAsync(name, email, password, cancellationToken);
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new CreateResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = true,
             };
@@ -35,7 +36,7 @@ public class UserIdentityService : IUserIdentityService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new CreateResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -44,7 +45,7 @@ public class UserIdentityService : IUserIdentityService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                return new CreateResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "The username or email has already been taken.",
@@ -52,7 +53,7 @@ public class UserIdentityService : IUserIdentityService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return new CreateResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "Creation failed.",
@@ -101,14 +102,14 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<LoginResult> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         try
         {
             var response = await userIdentityApiClient.LoginByEmailAndPasswordAsync(email, password, userAgentProvider.GetUserAgent(), cancellationToken);
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new LoginResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = true,
             };
@@ -119,14 +120,14 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<LoginResult> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default)
     {
         try
         {
             var response = await userIdentityApiClient.LoginByNameAndPasswordAsync(name, password, userAgentProvider.GetUserAgent(), cancellationToken);
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new LoginResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = true,
             };
@@ -198,14 +199,14 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<ResetPasswordResult> ResetPasswordWithResetCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult> ResetPasswordWithResetCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default)
     {
         try
         {
             var response = await userIdentityApiClient.ResetPasswordWithEmailCodeAsync(email, newPassword, resetCode, cancellationToken);
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ResetPasswordResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = true,
             };
@@ -214,7 +215,7 @@ public class UserIdentityService : IUserIdentityService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ResetPasswordResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -223,7 +224,7 @@ public class UserIdentityService : IUserIdentityService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ResetPasswordResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "User does not exist.",
@@ -231,7 +232,7 @@ public class UserIdentityService : IUserIdentityService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return new ResetPasswordResult()
+                return new ApiServiceResult()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "Invalid verification code.",
@@ -242,11 +243,11 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    private LoginResult HandleLoginResponse(HttpRequestException ex)
+    private ApiServiceResult HandleLoginResponse(HttpRequestException ex)
     {
         if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
         {
-            return new LoginResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = false,
                 ErrorMessage = ex.Message,
@@ -256,7 +257,7 @@ public class UserIdentityService : IUserIdentityService
         else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound ||
             ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            return new LoginResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = false,
                 //ErrorMessage = ex.Message,//"密码账号错误"
@@ -265,7 +266,7 @@ public class UserIdentityService : IUserIdentityService
         }
         else if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
         {
-            return new LoginResult()
+            return new ApiServiceResult()
             {
                 IsSuccessful = false,
                 //ErrorMessage = ex.Message,

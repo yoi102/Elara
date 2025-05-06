@@ -4,9 +4,9 @@ namespace ApiClients.Abstractions.PersonalSpaceApiClient.Contact;
 
 public interface IPersonalSpaceContactApiClient
 {
-    Task<DeleteContactResponse> DeleteContactAsync(Guid contactId, CancellationToken cancellationToken = default);
+    Task<ApiResponse> DeleteContactAsync(Guid contactId, CancellationToken cancellationToken = default);
 
     Task<GetAllContactsResponse> GetContactsAsync(CancellationToken cancellationToken = default);
 
-    Task<UpdateContactInfoResponse> UpdateContactInfoAsync(Guid contactId, CancellationToken cancellationToken = default);
+    Task<ApiResponse> UpdateContactInfoAsync(Guid contactId, CancellationToken cancellationToken = default);
 }

@@ -10,9 +10,9 @@ public interface IUserIdentityApiClient
 
     Task<LoginResponse> LoginByNameAndPasswordAsync(string name, string password, string userAgent, CancellationToken cancellationToken = default);
 
-    Task<ResetPasswordResponse> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default);
+    Task<ApiResponse> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default);
 
-    Task<SignUpResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default);
+    Task<ApiResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default);
 
     Task<RefreshTokenResponse> RefreshTokenAsync(Guid userId, string refreshToken, string userAgent, CancellationToken cancellationToken = default);
 }

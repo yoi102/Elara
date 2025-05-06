@@ -1,5 +1,6 @@
 ﻿using ApiClients.Abstractions.FileApiClient;
 using ApiClients.Abstractions.FileApiClient.Responses;
+using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -55,23 +56,27 @@ public class FileApiClient : IFileApiClient
     {
         var request = new RestRequest
         {
-            Resource = serviceUri,
+            Resource = serviceUri + $"/{itemId}",
             Method = Method.Get
         };
 
-        request.AddParameter("fileId", itemId);
-
         var response = await client.ExecuteWithAutoRefreshAsync(request);
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
 
         if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
             throw new ApiResponseException();
 
-        var fileNameResponse = JsonUtils.DeserializeInsensitive<FileItemResponse>(response.Content) ?? throw new Exception("获取下载地址失败");
+        var data = JsonUtils.DeserializeInsensitive<FileItemData>(response.Content);
 
-        return fileNameResponse;
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new FileItemResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task DownloadFileAsync(FileItemResponse fileItem, string path)
+    public async Task DownloadFileAsync(FileItemData fileItem, string path)
     {
         //此处会创建 client 进行下载、不会阻塞
         using var client = new RestClient();

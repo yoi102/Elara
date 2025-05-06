@@ -1,4 +1,5 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
 using ApiClients.Abstractions.ChatApiClient.Message;
 using ApiClients.Abstractions.ChatApiClient.Message.Requests;
 using ApiClients.Abstractions.ChatApiClient.Message.Responses;
@@ -29,7 +30,7 @@ public class ChatMessageApiClient : IChatMessageApiClient
         if (!response.IsSuccessful)
             return new MessageResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        return new MessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new MessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
     public async Task<MessageResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -78,7 +79,7 @@ public class ChatMessageApiClient : IChatMessageApiClient
         return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<SendMessageResponse> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -89,12 +90,12 @@ public class ChatMessageApiClient : IChatMessageApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new SendMessageResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        return new SendMessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<UpdateMessageResponse> UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -105,8 +106,8 @@ public class ChatMessageApiClient : IChatMessageApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new UpdateMessageResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        return new UpdateMessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 }

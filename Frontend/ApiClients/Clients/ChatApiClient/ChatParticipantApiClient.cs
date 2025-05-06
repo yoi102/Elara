@@ -1,6 +1,6 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Participant;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.ChatApiClient.Participant;
 using ApiClients.Abstractions.ChatApiClient.Participant.Requests;
-using ApiClients.Abstractions.ChatApiClient.Participant.Responses;
 using RestSharp;
 
 namespace ApiClients.Clients.ChatApiClient;
@@ -15,7 +15,7 @@ public class ChatParticipantApiClient : IChatParticipantApiClient
         this.client = client;
     }
 
-    public async Task<UpdateParticipantRoleResponse> UpdateParticipantRoleAsync(UpdateParticipantRoleRequest updateRoleRequest, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> UpdateParticipantRoleAsync(UpdateParticipantRoleRequest updateRoleRequest, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -26,8 +26,8 @@ public class ChatParticipantApiClient : IChatParticipantApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new UpdateParticipantRoleResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-        return new UpdateParticipantRoleResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 }

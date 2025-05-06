@@ -46,13 +46,13 @@ public class UserDomainService : IUserDomainService
         return new GetEmailResetCodeResult(IdentityResult.Success, email, "Reset Code", resetCode);
     }
 
-    public async Task<LoginResult> LoginByEmailAndPasswordAsync(string email, string password, string userAgent)
+    public async Task<ApiServiceResult> LoginByEmailAndPasswordAsync(string email, string password, string userAgent)
     {
         (var checkResult, var user) = await CheckEmailAndPasswordAsync(email, password);
         return await LoginAsync(checkResult, user, userAgent);
     }
 
-    public async Task<LoginResult> LoginByNameAndPasswordAsync(string name, string password, string userAgent)
+    public async Task<ApiServiceResult> LoginByNameAndPasswordAsync(string name, string password, string userAgent)
     {
         (var checkResult, var user) = await CheckNameAndPasswordAsync(name, password);
         return await LoginAsync(checkResult, user, userAgent);
@@ -116,11 +116,11 @@ public class UserDomainService : IUserDomainService
         return (result, user);
     }
 
-    private async Task<LoginResult> LoginAsync(SignInResult checkResult, User? user, string userAgent)
+    private async Task<ApiServiceResult> LoginAsync(SignInResult checkResult, User? user, string userAgent)
     {
         if (!checkResult.Succeeded || user is null)
         {
-            return new LoginResult() { SignInResult = checkResult, };
+            return new ApiServiceResult() { SignInResult = checkResult, };
         }
         else
         {
@@ -128,7 +128,7 @@ public class UserDomainService : IUserDomainService
             var refreshToken = tokenService.GenerateRefreshToken();
             var newRefreshTokenData = new RefreshTokenData(user.Id, refreshToken, userAgent);
             await tokenCacheService.CacheRefreshTokenCacheAsync(newRefreshTokenData);
-            return new LoginResult() { SignInResult = checkResult, Token = token, RefreshToken = refreshToken, UserId = user.Id, UserName = user.UserName };
+            return new ApiServiceResult() { SignInResult = checkResult, Token = token, RefreshToken = refreshToken, UserId = user.Id, UserName = user.UserName };
         }
     }
 

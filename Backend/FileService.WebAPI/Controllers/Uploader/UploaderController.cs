@@ -71,8 +71,8 @@ public class UploaderController : ControllerBase
         return uris;
     }
 
-    [HttpGet()]
-    public async Task<IActionResult> Get([FromQuery] UploadedItemId fileId)
+    [HttpGet("{fileId}")]
+    public async Task<IActionResult> Get(UploadedItemId fileId)
     {
         var file = await repository.GetFileByIdAsync(fileId);
         if (file == null)

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace IdentityService.Domain.Results;
 
-public record class LoginResult
+public record class ApiServiceResult
 {
     public required SignInResult SignInResult { get; init; }
 

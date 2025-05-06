@@ -1,4 +1,5 @@
-﻿using ApiClients.Abstractions.UserIdentityApiClient;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.UserIdentityApiClient;
 using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
@@ -146,7 +147,7 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         };
     }
 
-    public async Task<ResetPasswordResponse> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> ResetPasswordWithEmailCodeAsync(string email, string newPassword, string resetCode, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -158,12 +159,12 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.PutAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new ResetPasswordResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
 
-        return new ResetPasswordResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
+        return new ApiResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
     }
 
-    public async Task<SignUpResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> SignUpAsync(string name, string email, string password, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -175,8 +176,8 @@ public class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.PostAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new SignUpResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
+            return new ApiResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
 
-        return new SignUpResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
+        return new ApiResponse { IsSuccessful = true, StatusCode = restResponse.StatusCode };
     }
 }
