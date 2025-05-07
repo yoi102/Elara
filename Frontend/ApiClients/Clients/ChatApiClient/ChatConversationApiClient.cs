@@ -4,6 +4,7 @@ using ApiClients.Abstractions.ChatApiClient.Conversation.Requests;
 using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
+using System.Threading;
 
 namespace ApiClients.Clients.ChatApiClient;
 
@@ -160,5 +161,48 @@ internal class ChatConversationApiClient : IChatConversationApiClient
             throw new ApiResponseException();
 
         return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+
+    public async Task<UnreadMessagesResponse> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"/{id}/unread-messages",
+            Method = Method.Post
+        };
+
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new UnreadMessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<UnreadMessageData[]>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new UnreadMessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+    public async Task<ApiResponse> MarkMessagesAsReadAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"/{id}/mark-as-read",
+            Method = Method.Delete
+        };
+        request.AddBody(new
+        {
+            Id = id,
+        });
+
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 }

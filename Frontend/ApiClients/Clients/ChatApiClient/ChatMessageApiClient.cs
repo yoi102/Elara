@@ -79,6 +79,22 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
+    public async Task<ApiResponse> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri,
+            Method = Method.Post
+        };
+        request.AddBody(replyMessageRequest);
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
+    }
+
     public async Task<ApiResponse> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatService.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatServiceDbContext))]
-    [Migration("20250506103106_InitialCreate")]
+    [Migration("20250507125705_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -193,11 +193,8 @@ namespace ChatService.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<Guid>("ConversationId")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("HasBeenRead")
-                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("MessageId")
                         .HasColumnType("TEXT");

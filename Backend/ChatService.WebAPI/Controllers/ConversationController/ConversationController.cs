@@ -142,4 +142,19 @@ public class ConversationController : AuthorizedUserController
 
         return Ok(conversation);
     }
+
+    [HttpDelete("{id}/mark-as-read")]
+    public async Task<IActionResult> MarkMessagesAsRead(ConversationId id)
+    {
+        var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
+        dbContext.RemoveRange(userUnreadMessages);
+        return Ok();
+    }
+
+    [HttpGet("{id}/unread-messages")]
+    public async Task<IActionResult> GetUnreadMessages(ConversationId id)
+    {
+        var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
+        return Ok(userUnreadMessages);
+    }
 }

@@ -13,10 +13,9 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
     public void Initialize(IServiceCollection services)
     {
         services.AddTransient<IChatConversationRequestService, ChatConversationRequestService>();
-        services.AddTransient<IChatConversationService, ChatConversationService>();
+        services.AddTransient<IChatConversationRequestService, ChatConversationRequestService>();
         services.AddTransient<IChatMessageService, ChatMessageService>();
         services.AddTransient<IChatParticipantService, ChatParticipantService>();
-        services.AddTransient<IChatReplyMessageService, ChatReplyMessageService>();
         services.AddTransient<IFileService, FileService>();
         services.AddTransient<IPersonalSpaceContactRequestService, PersonalSpaceContactRequestService>();
         services.AddTransient<IPersonalSpaceContactService, PersonalSpaceContactService>();

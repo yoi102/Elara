@@ -12,6 +12,8 @@ public interface IChatMessageService
 
     Task<MessagesResult> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
+    Task<ApiServiceResult> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);
+
     Task<ApiServiceResult> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
 
     Task<ApiServiceResult> UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);

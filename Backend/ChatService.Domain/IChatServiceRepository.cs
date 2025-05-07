@@ -12,6 +12,8 @@ public interface IChatServiceRepository
 
     Task<Conversation[]> GetConversationsByUserIdAsync(UserId id);
 
+    Task<UserUnreadMessage[]> GetUnReadMessagesAsync(UserId userId, ConversationId conversationId);
+
     #endregion Conversation
 
     #region Participant

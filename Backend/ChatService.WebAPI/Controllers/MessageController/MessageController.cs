@@ -113,7 +113,7 @@ public class MessageController : AuthorizedUserController
         await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
 
         var participants = await repository.GetConversationAllParticipantsAsync(request.ConversationId);
-        var unreadMessages = participants.Where(x => x.UserId != senderId).Select(x => new UserUnreadMessage(x.UserId, message.Id));
+        var unreadMessages = participants.Where(x => x.UserId != senderId).Select(x => new UserUnreadMessage(x.UserId, message.Id, request.ConversationId));
         await dbContext.UserUnreadMessages.AddRangeAsync(unreadMessages);
 
         return Ok();
@@ -127,5 +127,30 @@ public class MessageController : AuthorizedUserController
             return NotFound();
 
         return Ok(message);
+    }
+
+    [HttpPost("reply-messages")]
+    public async Task<IActionResult> ReplyMessage(ReplyMessageRequest request)
+    {
+        var conversation = await repository.FindConversationByIdAsync(request.ConversationId);
+        if (conversation is null)
+            return NotFound("Conversation not found");
+        var message = await repository.FindMessageByIdAsync(request.MessageId);
+        if (message is null)
+            return NotFound("Message not found");
+
+        var senderId = GetCurrentUserId();
+        var sendMessage = new Message(senderId, request.ConversationId, request.Content, request.QuoteMessage);
+        var replyMessage = new ReplyMessage(request.MessageId, sendMessage.Id);
+        await dbContext.Messages.AddAsync(sendMessage);
+        await dbContext.ReplyMessages.AddAsync(replyMessage);
+
+        var messageAttachments = request.MessageAttachmentIds.Select(m => new MessageAttachment(sendMessage.Id, m));
+        await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
+        //todo：应该判断是否有@、、、、
+
+        await dbContext.UserUnreadMessages.AddRangeAsync(new UserUnreadMessage(message.SenderId, message.Id, request.ConversationId));
+
+        return Ok();
     }
 }

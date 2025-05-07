@@ -33,6 +33,11 @@ public class ChatServiceRepository : IChatServiceRepository
             .ToArrayAsync();
     }
 
+    public async Task<UserUnreadMessage[]> GetUnReadMessagesAsync(UserId userId, ConversationId conversationId)
+    {
+        return await dbContext.UserUnreadMessages.Where(x => x.ConversationId == conversationId && x.UserId == userId).ToArrayAsync();
+    }
+
     #endregion Conversation
 
     #region Participant
@@ -147,8 +152,6 @@ public class ChatServiceRepository : IChatServiceRepository
     }
 
     #endregion ConversationRequest
-
-
 
     #region MessageAttachment
 

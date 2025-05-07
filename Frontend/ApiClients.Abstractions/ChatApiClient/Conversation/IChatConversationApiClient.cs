@@ -16,4 +16,7 @@ public interface IChatConversationApiClient
     Task<ConversationsResponse> GetAllConversationAsync(CancellationToken cancellationToken = default);
 
     Task<MessagesResponse> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<ApiResponse> MarkMessagesAsReadAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<UnreadMessagesResponse> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 }

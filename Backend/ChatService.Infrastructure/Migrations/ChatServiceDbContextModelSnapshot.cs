@@ -190,11 +190,8 @@ namespace ChatService.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<Guid>("ConversationId")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("HasBeenRead")
-                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("MessageId")
                         .HasColumnType("TEXT");

@@ -2,7 +2,6 @@
 using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
 using ApiClients.Abstractions.ChatApiClient.Message;
 using ApiClients.Abstractions.ChatApiClient.Participant;
-using ApiClients.Abstractions.ChatApiClient.ReplyMessage;
 using ApiClients.Abstractions.FileApiClient;
 using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest;
 using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
@@ -30,7 +29,6 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddTransient<IChatConversationRequestApiClient, ChatConversationRequestApiClient>();
         services.AddTransient<IChatMessageApiClient, ChatMessageApiClient>();
         services.AddTransient<IChatParticipantApiClient, ChatParticipantApiClient>();
-        services.AddTransient<IChatReplyMessageApiClient, ChatReplyMessageApiClient>();
         services.AddTransient<IFileApiClient, FileApiClient>();
         services.AddTransient<IPersonalSpaceContactRequestApiClient, PersonalSpaceContactRequestApiClient>();
         services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
