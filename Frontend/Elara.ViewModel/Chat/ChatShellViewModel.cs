@@ -1,21 +1,42 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class ChatShellViewModel : ObservableValidator, IHasNotificationNumber
+public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumber
 {
-    public int? NotificationNumber => throw new NotImplementedException();
+    [ObservableProperty]
+    private ObservableCollection<ConversationModel> conversations = [];
+
+    [ObservableProperty]
+    private ConversationModel? selectedConversation;
+
+    [ObservableProperty]
+    private ChatViewModel? chatViewModel;
+
+    public int? NotificationNumber
+    {
+        get
+        {
+            var unreadCount = Conversations.Select(c => c.UnreadMessages).Count();
+
+            if (unreadCount == 0)
+                return null;
+
+            return unreadCount;
+        }
+    }
 
 
 
 
+    [RelayCommand]
+    private void CreateGroupConversation()
+    {
 
-
-
-
-
-
+    }
 
 
 

@@ -1,19 +1,23 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Elara.ViewModel.Interfaces;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class ChatViewModel : ObservableValidator, IHasNotificationNumber
+public partial class ChatViewModel : ObservableValidator
 {
-    public int? NotificationNumber => throw new NotImplementedException();
+    private readonly ConversationModel conversationModel;
 
+    public ChatViewModel(ConversationModel conversationModel)
+    {
+        this.conversationModel = conversationModel;
+    }
 
+    [ObservableProperty]
+    private string messageContent = string.Empty;
 
-
-
-
-
-
-
-
+    [RelayCommand]
+    private async Task SendMessageAsync()
+    {
+        await Task.CompletedTask;
+    }
 }
