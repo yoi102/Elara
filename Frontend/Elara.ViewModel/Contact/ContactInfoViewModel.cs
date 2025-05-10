@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Contact;
 
-public partial class ContactInfoViewModel : ObservableValidator, IHasNotificationNumber
+public partial class ContactInfoViewModel : ObservableObject, IHasNotificationNumber
 {
     public int? NotificationNumber => throw new NotImplementedException();
 

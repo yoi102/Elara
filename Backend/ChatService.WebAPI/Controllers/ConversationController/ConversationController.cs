@@ -157,4 +157,25 @@ public class ConversationController : AuthorizedUserController
         var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
         return Ok(userUnreadMessages);
     }
+
+
+    [HttpGet("{id}/latest-message")]
+    public async Task<IActionResult> GetLatestMessage(ConversationId id)
+    {
+        //TODO
+        await Task.CompletedTask;
+        return BadRequest();
+    }
+
+    [HttpGet("{id}/latest-messages-before")]
+    public async Task<IActionResult> GetMessagesBefore(ConversationId id, DateTimeOffset before)
+    {
+        //TODO   获取某个时间前的信息（CreateAt）、根据配置获取固定的几条（可能固定十条）
+        await Task.CompletedTask;
+        return BadRequest();
+    }
+
+
+
+
 }

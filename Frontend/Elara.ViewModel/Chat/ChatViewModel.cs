@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class ChatViewModel : ObservableValidator
+public partial class ChatViewModel : ObservableObject
 {
     private readonly ConversationModel conversationModel;
 

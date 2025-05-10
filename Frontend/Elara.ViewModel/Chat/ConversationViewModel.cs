@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class ConversationModel : ObservableValidator, IHasNotificationNumber
+public partial class ConversationModel : ObservableObject, IHasNotificationNumber
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(LatestMessage))]

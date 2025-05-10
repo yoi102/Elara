@@ -2,7 +2,7 @@
 
 namespace Elara.ViewModel.Chat;
 
-public partial class ParticipantModel : ObservableValidator
+public partial class ParticipantModel : ObservableObject
 {
     [ObservableProperty]
     private Uri? avatarUrl;

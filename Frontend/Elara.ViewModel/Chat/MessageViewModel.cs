@@ -2,7 +2,7 @@
 
 namespace Elara.ViewModel.Chat;
 
-public partial class MessageModel : ObservableValidator
+public partial class MessageModel : ObservableObject
 {
     [ObservableProperty]
     private MessageAttachmentModel[]? attachments;

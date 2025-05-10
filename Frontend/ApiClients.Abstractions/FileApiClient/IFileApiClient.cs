@@ -4,11 +4,11 @@ namespace ApiClients.Abstractions.FileApiClient;
 
 public interface IFileApiClient
 {
-    Task UploadFileAsync(params string[] filePaths);
+    Task<ApiResponse> UploadFileAsync(string[] filePaths, CancellationToken cancellationToken = default);
 
-    Task UploadFileAsync(params Stream[] streams);
+    Task<ApiResponse> UploadFileAsync(Stream[] streams, CancellationToken cancellationToken = default);
 
-    Task<FileItemResponse> GetFileItemAsync(Guid itemId);
+    Task<FileItemResponse> GetFileItemAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task DownloadFileAsync(FileItemData fileItem, string path);
+    Task<FileItemsResponse> GetFileItemsAsync(Guid[] fileIds, CancellationToken cancellationToken = default);
 }

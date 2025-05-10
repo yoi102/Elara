@@ -1,8 +1,8 @@
 ﻿using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
+using ApiClients.Abstractions.ChatApiClient.ConversationRequest.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions.ChatServices;
 using Services.Abstractions.Results;
-using Services.Abstractions.Results.Results;
 
 namespace Services.ChatServices;
 
@@ -52,7 +52,7 @@ internal class ChatConversationRequestService : IChatConversationRequestService
         }
     }
 
-    public async Task<ConversationRequestResult> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationRequestData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -60,24 +60,18 @@ internal class ChatConversationRequestService : IChatConversationRequestService
 
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            var data = new ConversationRequestResultData(
-                                                response.ResponseData.SenderId,
-                                                response.ResponseData.ReceiverId,
-                                                response.ResponseData.ConversationId,
-                                                response.ResponseData.Role,
-                                                response.ResponseData.CreatedAt,
-                                                response.ResponseData.UpdatedAt);
-            return new ConversationRequestResult()
+
+            return new ApiServiceResult<ConversationRequestData>()
             {
                 IsSuccessful = true,
-                ResultData = data
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ConversationRequestResult()
+                return new ApiServiceResult<ConversationRequestData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -86,7 +80,7 @@ internal class ChatConversationRequestService : IChatConversationRequestService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ConversationRequestResult()
+                return new ApiServiceResult<ConversationRequestData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "Conversation request not found.",
@@ -97,7 +91,7 @@ internal class ChatConversationRequestService : IChatConversationRequestService
         }
     }
 
-    public async Task<ConversationRequestsResult> GetConversationRequestsAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationRequestData[]>> GetConversationRequestsAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -106,26 +100,17 @@ internal class ChatConversationRequestService : IChatConversationRequestService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            var data = response.ResponseData.Select(x =>
-                                                 new ConversationRequestResultData(
-                                                     x.SenderId,
-                                                     x.ReceiverId,
-                                                     x.ConversationId,
-                                                     x.Role,
-                                                     x.CreatedAt,
-                                                     x.UpdatedAt)).ToArray();
-
-            return new ConversationRequestsResult()
+            return new ApiServiceResult<ConversationRequestData[]>()
             {
                 IsSuccessful = true,
-                ResultData = data
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ConversationRequestsResult()
+                return new ApiServiceResult<ConversationRequestData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

@@ -153,4 +153,12 @@ public class MessageController : AuthorizedUserController
 
         return Ok();
     }
+
+    [HttpGet("{id}/latest-reply-message")]
+    public async Task<IActionResult> GetLatestReplyMessage([RequiredGuidStronglyId] MessageId id)
+    {
+        //TODO
+        await Task.CompletedTask;
+        return BadRequest();
+    }
 }

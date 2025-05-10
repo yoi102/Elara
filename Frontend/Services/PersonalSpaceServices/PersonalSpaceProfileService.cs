@@ -1,9 +1,9 @@
-﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
+﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Contact.Responses;
+using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
 using ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions.PersonalSpaceServices;
 using Services.Abstractions.Results;
-using Services.Abstractions.Results.Results;
 
 namespace Services.PersonalSpaceServices;
 
@@ -16,7 +16,7 @@ internal class PersonalSpaceProfileService : IPersonalSpaceProfileService
         this.personalSpaceProfileApiClient = personalSpaceProfileApiClient;
     }
 
-    public async Task<UserProfileResult> GetUserProfileAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserProfileData>> GetUserProfileAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -25,19 +25,17 @@ internal class PersonalSpaceProfileService : IPersonalSpaceProfileService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            var data = new UserProfileResultData(response.ResponseData.Id, response.ResponseData.DisplayName, response.ResponseData.AvatarItemId, response.ResponseData.CreatedAt, response.ResponseData.UpdatedAt);
-
-            return new UserProfileResult()
+            return new ApiServiceResult<UserProfileData>()
             {
                 IsSuccessful = true,
-                ResultData = data
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new UserProfileResult()
+                return new ApiServiceResult<UserProfileData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

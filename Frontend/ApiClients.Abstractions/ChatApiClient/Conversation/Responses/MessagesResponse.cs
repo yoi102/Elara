@@ -4,7 +4,7 @@ public record MessagesResponse : ApiResponse<MessageData[]>;
 
 public record MessageData()
 {
-    public required Guid MessageId { get; init; }
+    public required Guid Id { get; init; }
     public required Guid ConversationId { get; init; }
     public required Guid? QuoteMessageId { get; init; }
     public required string Content { get; init; }

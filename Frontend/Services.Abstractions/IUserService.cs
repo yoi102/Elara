@@ -1,5 +1,5 @@
-﻿using Services.Abstractions.Results;
-using Services.Abstractions.Results.Results;
+﻿using ApiClients.Abstractions.UserIdentityApiClient.Responses;
+using Services.Abstractions.Results;
 
 namespace Services.Abstractions;
 
@@ -7,5 +7,5 @@ public interface IUserService
 {
     Task<ApiServiceResult> DeleteAsync(CancellationToken cancellationToken = default);
 
-    Task<UserInfoResult> GetUserInfoAsync(CancellationToken cancellationToken = default);
+    Task<ApiServiceResult<UserInfo>> GetUserInfoAsync(CancellationToken cancellationToken = default);
 }

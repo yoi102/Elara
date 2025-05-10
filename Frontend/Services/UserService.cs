@@ -1,8 +1,8 @@
 ﻿using ApiClients.Abstractions.UserApiClient;
+using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions;
 using Services.Abstractions.Results;
-using Services.Abstractions.Results.Results;
 
 namespace Services;
 
@@ -47,7 +47,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<UserInfoResult> GetUserInfoAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserInfo>> GetUserInfoAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -56,19 +56,17 @@ public class UserService : IUserService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            var data = new UserInfoResultData(response.ResponseData.Id, response.ResponseData.Name, response.ResponseData.Email, response.ResponseData.PhoneNumber, response.ResponseData.CreationTime);
-
-            return new UserInfoResult()
+            return new ApiServiceResult<UserInfo>()
             {
                 IsSuccessful = true,
-                ResultData = data
+                ResultData = response.ResponseData,
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new UserInfoResult()
+                return new ApiServiceResult<UserInfo>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

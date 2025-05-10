@@ -81,7 +81,7 @@ public class UploaderController : ControllerBase
     }
 
     [HttpGet("batch")]
-    public async Task<IActionResult> GetBatch([FromForm] UploadedItemId[] fileIds)
+    public async Task<IActionResult> GetBatch([FromQuery] UploadedItemId[] fileIds)
     {
         var file = await repository.GetFilesByIdsAsync(fileIds);
         if (file == null)

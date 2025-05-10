@@ -1,8 +1,8 @@
 ﻿using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest;
+using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions.PersonalSpaceServices;
 using Services.Abstractions.Results;
-using Services.Abstractions.Results.Results;
 
 namespace Services.PersonalSpaceServices;
 
@@ -52,7 +52,7 @@ internal class PersonalSpaceContactRequestService : IPersonalSpaceContactRequest
         }
     }
 
-    public async Task<ContactRequestsResult> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ContactRequestData[]>> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -61,18 +61,17 @@ internal class PersonalSpaceContactRequestService : IPersonalSpaceContactRequest
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            var data = response.ResponseData.Select(x => new ContactRequestResultData(x.Id, x.SenderId, x.ReceiverId, (Abstractions.Results.Results.RequestStatus)((int)x.Status), x.CreatedAt, x.UpdatedAt)).ToArray();
-            return new ContactRequestsResult()
+            return new ApiServiceResult<ContactRequestData[]>()
             {
                 IsSuccessful = true,
-                ResultData = data
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ContactRequestsResult()
+                return new ApiServiceResult<ContactRequestData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -81,7 +80,7 @@ internal class PersonalSpaceContactRequestService : IPersonalSpaceContactRequest
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ContactRequestsResult()
+                return new ApiServiceResult<ContactRequestData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

@@ -1,4 +1,5 @@
-﻿using ApiClients.Abstractions.FileApiClient;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.FileApiClient;
 using ApiClients.Abstractions.FileApiClient.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
@@ -15,7 +16,7 @@ internal class FileApiClient : IFileApiClient
         this.client = client;
     }
 
-    public async Task UploadFileAsync(params string[] filePaths)
+    public async Task<ApiResponse> UploadFileAsync(string[] filePaths, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -27,13 +28,15 @@ internal class FileApiClient : IFileApiClient
             restRequest.AddFile("files", filePath);
         }
 
-        var response = await client.ExecuteWithAutoRefreshAsync(restRequest);
+        var response = await client.ExecuteWithAutoRefreshAsync(restRequest, cancellationToken);
 
         if (!response.IsSuccessful)
-            throw new Exception($"Upload failed: {response.StatusCode} - {response.ErrorMessage}");//TODO
+            return new ApiResponse() { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task UploadFileAsync(params Stream[] streams)
+    public async Task<ApiResponse> UploadFileAsync(Stream[] streams, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -45,21 +48,22 @@ internal class FileApiClient : IFileApiClient
             request.AddFile("files", () => stream, Guid.NewGuid().ToString());
         }
 
-        var response = await client.ExecuteWithAutoRefreshAsync(request);
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            throw new Exception($"Upload failed: {response.StatusCode} - {response.ErrorMessage}");//TODO
+            return new ApiResponse() { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+        return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<FileItemResponse> GetFileItemAsync(Guid itemId)
+    public async Task<FileItemResponse> GetFileItemAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
-            Resource = serviceUri + $"/{itemId}",
+            Resource = serviceUri + $"/{id}",
             Method = Method.Get
         };
 
-        var response = await client.ExecuteWithAutoRefreshAsync(request);
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -75,18 +79,46 @@ internal class FileApiClient : IFileApiClient
         return new FileItemResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task DownloadFileAsync(FileItemData fileItem, string path)
+    public async Task<FileItemsResponse> GetFileItemsAsync(Guid[] fileIds, CancellationToken cancellationToken = default)
     {
-        //此处会创建 client 进行下载、不会阻塞
-        using var client = new RestClient();
-        var fileDownloadRequest = new RestRequest(fileItem.RemoteUrl, Method.Get);
-        var downloadResponse = await client.ExecuteAsync(fileDownloadRequest);
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"/batch",
+            Method = Method.Get
+        };
+        foreach (var id in fileIds)
+        {
+            request.AddParameter("fileIds", id);
+        }
 
-        if (!downloadResponse.IsSuccessful || downloadResponse.RawBytes == null)
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
 
-        var savePath = Path.Combine(path, fileItem.Filename);
+        if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
+            throw new ApiResponseException();
 
-        await File.WriteAllBytesAsync(savePath, downloadResponse.RawBytes);
+        var data = JsonUtils.DeserializeInsensitive<FileItemData[]>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new FileItemsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
+
+    //public async Task DownloadFileAsync(FileItemData fileItem, string path)
+    //{
+    //    //此处会创建 client 进行下载、不会阻塞
+    //    using var client = new RestClient();
+    //    var fileDownloadRequest = new RestRequest(fileItem.RemoteUrl, Method.Get);
+    //    var downloadResponse = await client.ExecuteAsync(fileDownloadRequest);
+
+    //    if (!downloadResponse.IsSuccessful || downloadResponse.RawBytes == null)
+    //        throw new ApiResponseException();
+
+    //    var savePath = Path.Combine(path, fileItem.Filename);
+
+    //    await File.WriteAllBytesAsync(savePath, downloadResponse.RawBytes);
+    //}
 }

@@ -1,9 +1,9 @@
 ﻿using ApiClients.Abstractions.UserIdentityApiClient;
+using ApiClients.Abstractions.UserIdentityApiClient.Responses;
 using DataProviders.Abstractions;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions;
 using Services.Abstractions.Results;
-using Services.Abstractions.Results.Results;
 
 namespace Services;
 
@@ -64,7 +64,7 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<ResetCodeResult> GetResetCodeByEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ResetCodeData>> GetResetCodeByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -72,17 +72,17 @@ public class UserIdentityService : IUserIdentityService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ResetCodeResult()
+            return new ApiServiceResult<ResetCodeData>()
             {
                 IsSuccessful = true,
-                ResultData = new ResetCodeResultData(response.ResponseData.ResetCode)
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ResetCodeResult()
+                return new ApiServiceResult<ResetCodeData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -91,7 +91,7 @@ public class UserIdentityService : IUserIdentityService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ResetCodeResult()
+                return new ApiServiceResult<ResetCodeData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "User does not exist.",
@@ -102,7 +102,7 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<LoginServiceResult> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserTokenData>> LoginByEmailAndPasswordAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -110,15 +110,11 @@ public class UserIdentityService : IUserIdentityService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            var resultData = new UserTokenResultData(response.ResponseData.UserId,
-                                                         response.ResponseData.UserName,
-                                                         response.ResponseData.AccessToken,
-                                                         response.ResponseData.RefreshToken);
             userDataProvider.UpdateUser(response.ResponseData.UserId, response.ResponseData.UserName, response.ResponseData.RefreshToken);
-            return new LoginServiceResult()
+            return new ApiServiceResult<UserTokenData>()
             {
                 IsSuccessful = true,
-                ResultData = resultData
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
@@ -127,7 +123,7 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<LoginServiceResult> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserTokenData>> LoginByNameAndPasswordAsync(string name, string password, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -135,15 +131,11 @@ public class UserIdentityService : IUserIdentityService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            var resultData = new UserTokenResultData(response.ResponseData.UserId,
-                                                         response.ResponseData.UserName,
-                                                         response.ResponseData.AccessToken,
-                                                         response.ResponseData.RefreshToken);
             userDataProvider.UpdateUser(response.ResponseData.UserId, response.ResponseData.UserName, response.ResponseData.RefreshToken);
-            return new LoginServiceResult()
+            return new ApiServiceResult<UserTokenData>()
             {
                 IsSuccessful = true,
-                ResultData = resultData
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
@@ -152,7 +144,7 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    public async Task<TokenReflashResult> RefreshCurrentUserTokenAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserTokenData>> RefreshCurrentUserTokenAsync(CancellationToken cancellationToken = default)
     {
         if (userDataProvider.UserId == Guid.Empty || userDataProvider.RefreshToken is null)
             throw new ForceLogoutException();
@@ -160,7 +152,7 @@ public class UserIdentityService : IUserIdentityService
         return await RefreshTokenAsync(userDataProvider.UserId, userDataProvider.RefreshToken, cancellationToken);
     }
 
-    public async Task<TokenReflashResult> RefreshTokenAsync(Guid userId, string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserTokenData>> RefreshTokenAsync(Guid userId, string refreshToken, CancellationToken cancellationToken = default)
     {
         var userAgent = userAgentProvider.GetUserAgent();
 
@@ -173,21 +165,16 @@ public class UserIdentityService : IUserIdentityService
 
             userDataProvider.UpdateRefreshToken(response.ResponseData.AccessToken, response.ResponseData.RefreshToken);
 
-            var resultData = new UserTokenResultData(response.ResponseData.UserId,
-                                                                     response.ResponseData.UserName,
-                                                                     response.ResponseData.AccessToken,
-                                                                     response.ResponseData.RefreshToken);
-
-            return new TokenReflashResult()
+            return new ApiServiceResult<UserTokenData>()
             {
                 IsSuccessful = true,
-                ResultData = resultData
+                ResultData = response.ResponseData
             };
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode is null)
-                return new TokenReflashResult()
+                return new ApiServiceResult<UserTokenData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -196,7 +183,7 @@ public class UserIdentityService : IUserIdentityService
 
             if (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return new TokenReflashResult()
+                return new ApiServiceResult<UserTokenData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -204,7 +191,7 @@ public class UserIdentityService : IUserIdentityService
             }
             else if ((int)ex.StatusCode >= 500)
             {
-                return new TokenReflashResult()
+                return new ApiServiceResult<UserTokenData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -260,11 +247,11 @@ public class UserIdentityService : IUserIdentityService
         }
     }
 
-    private LoginServiceResult HandleLoginResponse(HttpRequestException ex)
+    private ApiServiceResult<UserTokenData> HandleLoginResponse(HttpRequestException ex)
     {
         if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
         {
-            return new LoginServiceResult()
+            return new ApiServiceResult<UserTokenData>()
             {
                 IsSuccessful = false,
                 ErrorMessage = ex.Message,
@@ -274,7 +261,7 @@ public class UserIdentityService : IUserIdentityService
         else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound ||
             ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            return new LoginServiceResult()
+            return new ApiServiceResult<UserTokenData>()
             {
                 IsSuccessful = false,
                 //ErrorMessage = ex.Message,//"密码账号错误"
@@ -283,7 +270,7 @@ public class UserIdentityService : IUserIdentityService
         }
         else if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
         {
-            return new LoginServiceResult()
+            return new ApiServiceResult<UserTokenData>()
             {
                 IsSuccessful = false,
                 //ErrorMessage = ex.Message,

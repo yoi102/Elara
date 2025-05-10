@@ -1,5 +1,6 @@
 ﻿namespace ApiClients.Abstractions.FileApiClient.Responses;
 public record FileItemResponse : ApiResponse<FileItemData>;
+public record FileItemsResponse : ApiResponse<FileItemData[]>;
 public record FileItemData
 {
     public required Guid Id { get; init; }
