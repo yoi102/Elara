@@ -33,6 +33,22 @@ public class ChatServiceRepository : IChatServiceRepository
             .ToArrayAsync();
     }
 
+    public async Task<Message?> GetLatestMessage(ConversationId id)
+    {
+        return await dbContext.Messages
+                     .Where(m => m.ConversationId == id)
+                     .OrderByDescending(m => m.CreatedAt)
+                     .FirstOrDefaultAsync();
+    }
+
+    public async Task<Message[]> GetMessagesBefore(ConversationId id, DateTimeOffset before)
+    {
+        return await dbContext.Messages
+                              .Where(m => m.ConversationId == id && m.CreatedAt < before)
+                              .OrderByDescending(m => m.CreatedAt)
+                              .Take(10)//这个应该在配置文件中获取、方便更改，最多获取最新的多少条
+                              .ToArrayAsync();
+    }
     public async Task<UserUnreadMessage[]> GetUnReadMessagesAsync(UserId userId, ConversationId conversationId)
     {
         return await dbContext.UserUnreadMessages.Where(x => x.ConversationId == conversationId && x.UserId == userId).ToArrayAsync();
@@ -62,6 +78,11 @@ public class ChatServiceRepository : IChatServiceRepository
     public async Task<Message?> FindMessageByIdAsync(MessageId id)
     {
         return await dbContext.FindAsync<Message>(id);
+    }
+
+    public async Task<Message[]> FindMessagesByIdsAsync(MessageId[] ids)
+    {
+        return await dbContext.Messages.Where(x => ids.Contains(x.Id)).ToArrayAsync();
     }
 
     public async Task<Message[]> GetConversationAllMessagesAsync(ConversationId id)
@@ -104,6 +125,13 @@ public class ChatServiceRepository : IChatServiceRepository
         return await dbContext.FindAsync<ReplyMessage>(id);
     }
 
+    public async Task<ReplyMessage?> GetLatestReplyMessage(MessageId id)
+    {
+        return await dbContext.ReplyMessages
+                     .Where(m => m.RepliedMessageId == id)
+                     .OrderByDescending(m => m.CreatedAt)
+                     .FirstOrDefaultAsync();
+    }
     public async Task<ReplyMessage[]> MessageAllReplyMessagesAsync(MessageId id)
     {
         return await dbContext
@@ -115,11 +143,6 @@ public class ChatServiceRepository : IChatServiceRepository
     #endregion ReplyMessage
 
     #region ConversationRequest
-
-    public async Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId)
-    {
-        return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
-    }
 
     public async Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId, string role)
     {
@@ -137,6 +160,10 @@ public class ChatServiceRepository : IChatServiceRepository
         return await dbContext.ConversationRequests.FindAsync(conversationRequestId);
     }
 
+    public async Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId)
+    {
+        return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
+    }
     public async Task<ConversationRequest[]> GetPendingConversationRequestByReceiverIdAsync(UserId receiverId)
     {
         return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId && c.Status == RequestStatus.Pending).ToArrayAsync();

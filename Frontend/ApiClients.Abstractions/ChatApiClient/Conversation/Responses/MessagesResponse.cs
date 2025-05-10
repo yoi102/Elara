@@ -1,6 +1,7 @@
 ﻿namespace ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
 
 public record MessagesResponse : ApiResponse<MessageData[]>;
+public record SimpleMessageResponse : SimpleApiResponse<MessageData>;
 
 public record MessageData()
 {

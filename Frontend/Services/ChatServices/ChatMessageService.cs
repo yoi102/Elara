@@ -85,6 +85,37 @@ internal class ChatMessageService : IChatMessageService
         }
     }
 
+    public async Task<ApiServiceResult<MessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await chatMessageApiClient.GetBatch(ids, cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceResult<MessageData[]>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceResult<MessageData[]>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+
+            throw new ApiResponseException();
+        }
+    }
+
     public async Task<ApiServiceResult<MessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try

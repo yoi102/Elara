@@ -30,3 +30,24 @@ public record ApiServiceResult<T> : ApiServiceResult where T : class
         };
     }
 }
+
+public record ApiServiceSimpleResult<T> : ApiServiceResult where T : class
+{
+    public ApiServiceSimpleResult()
+    {
+    }
+
+    public T? ResultData { get; init; }
+
+    public static ApiServiceResult<T> FromFailure(ApiServiceResult source)
+    {
+        if (source.IsSuccessful)
+            throw new ArgumentException("Cannot create a failure result from a successful result.", nameof(source));
+
+        return new ApiServiceResult<T>()
+        {
+            ErrorMessage = source.ErrorMessage,
+            IsServerError = source.IsServerError,
+        };
+    }
+}

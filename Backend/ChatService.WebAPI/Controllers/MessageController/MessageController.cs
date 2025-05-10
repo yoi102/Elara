@@ -66,6 +66,13 @@ public class MessageController : AuthorizedUserController
         return Ok(messageResponse);
     }
 
+    [HttpGet("batch")]
+    public async Task<IActionResult> GetBatch([FromQuery] MessageId[] ids)
+    {
+        var file = await repository.FindMessagesByIdsAsync(ids);
+        return Ok(file);
+    }
+
     [HttpGet("{id}/reply-messages")]
     public async Task<IActionResult> GetReplyMessagesId([RequiredGuidStronglyId] MessageId id)
     {
@@ -157,8 +164,8 @@ public class MessageController : AuthorizedUserController
     [HttpGet("{id}/latest-reply-message")]
     public async Task<IActionResult> GetLatestReplyMessage([RequiredGuidStronglyId] MessageId id)
     {
-        //TODO
-        await Task.CompletedTask;
-        return BadRequest();
+        var replyMessage = await repository.GetLatestReplyMessage(id);
+
+        return Ok(replyMessage);
     }
 }

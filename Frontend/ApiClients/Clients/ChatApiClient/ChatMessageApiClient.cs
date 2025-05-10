@@ -5,6 +5,7 @@ using ApiClients.Abstractions.ChatApiClient.Message.Requests;
 using ApiClients.Abstractions.ChatApiClient.Message.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
+using System.Threading;
 
 namespace ApiClients.Clients.ChatApiClient;
 
@@ -54,6 +55,34 @@ internal class ChatMessageApiClient : IChatMessageApiClient
             throw new ApiResponseException();
 
         return new MessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+
+    public async Task<MessagesResponse> GetBatch(Guid[] ids, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + "/batch",
+            Method = Method.Get
+        };
+        foreach (var id in ids)
+        {
+            request.AddQueryParameter("ids", id);
+        }
+
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new MessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<MessageData[]>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
     public async Task<MessagesResponse> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default)

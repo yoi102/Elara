@@ -10,6 +10,8 @@ public interface IChatMessageService
 
     Task<ApiServiceResult<MessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
+    Task<ApiServiceResult<MessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default);
+
     Task<ApiServiceResult<MessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<ApiServiceResult> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);

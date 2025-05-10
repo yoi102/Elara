@@ -16,7 +16,10 @@ public interface IChatConversationService
 
     Task<ApiServiceResult<ConversationData[]>> GetAllConversationAsync(CancellationToken cancellationToken = default);
 
+    Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, DateTimeOffset before, CancellationToken cancellationToken = default);
+
     Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
+    Task<ApiServiceSimpleResult<MessageData>> GetLatestMessage(Guid id, CancellationToken cancellationToken = default);
     Task<ApiServiceResult<UnreadMessageData[]>> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 }

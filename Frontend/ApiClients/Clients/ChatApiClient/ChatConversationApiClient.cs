@@ -4,7 +4,6 @@ using ApiClients.Abstractions.ChatApiClient.Conversation.Requests;
 using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
-using System.Threading;
 
 namespace ApiClients.Clients.ChatApiClient;
 
@@ -163,6 +162,51 @@ internal class ChatConversationApiClient : IChatConversationApiClient
         return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
+    public async Task<SimpleMessageResponse> GetLatestMessage(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"/{id}/latest-message",
+            Method = Method.Get
+        };
+
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new SimpleMessageResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<MessageData?>(response.Content);
+
+        return new SimpleMessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+
+    public async Task<MessagesResponse> GetMessagesBefore(Guid id, DateTimeOffset before, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"/{id}/latest-messages-before",
+            Method = Method.Get
+        };
+        request.AddQueryParameter("before", before);
+
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new MessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<MessageData[]>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
     public async Task<UnreadMessagesResponse> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
@@ -186,6 +230,7 @@ internal class ChatConversationApiClient : IChatConversationApiClient
 
         return new UnreadMessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
+
     public async Task<ApiResponse> MarkMessagesAsReadAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest

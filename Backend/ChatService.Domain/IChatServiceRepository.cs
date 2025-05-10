@@ -12,6 +12,10 @@ public interface IChatServiceRepository
 
     Task<Conversation[]> GetConversationsByUserIdAsync(UserId id);
 
+    Task<Message?> GetLatestMessage(ConversationId id);
+
+    Task<Message[]> GetMessagesBefore(ConversationId id, DateTimeOffset before);
+
     Task<UserUnreadMessage[]> GetUnReadMessagesAsync(UserId userId, ConversationId conversationId);
 
     #endregion Conversation
@@ -27,6 +31,8 @@ public interface IChatServiceRepository
     #region Message
 
     Task<Message?> FindMessageByIdAsync(MessageId id);
+
+    Task<Message[]> FindMessagesByIdsAsync(MessageId[] ids);
 
     Task<Message[]> GetConversationAllMessagesAsync(ConversationId id);
 
@@ -44,17 +50,19 @@ public interface IChatServiceRepository
 
     Task<ReplyMessage?> FindReplyMessageByIdAsync(MessageId id);
 
+    Task<ReplyMessage?> GetLatestReplyMessage(MessageId id);
+
     Task<ReplyMessage[]> MessageAllReplyMessagesAsync(MessageId id);
 
     #endregion ReplyMessage
 
     #region ConversationRequest
 
-    Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId);
-
     Task<ConversationRequest> CreateConversationRequestAsync(UserId senderId, UserId receiverId, ConversationId conversationId, string role);
 
     Task<ConversationRequest?> FindConversationRequestByIdAsync(ConversationRequestId conversationRequestId);
+
+    Task<ConversationRequest[]> GetAllReceiverConversationRequestAsync(UserId receiverId);
 
     Task<ConversationRequest[]> GetPendingConversationRequestByReceiverIdAsync(UserId receiverId);
 

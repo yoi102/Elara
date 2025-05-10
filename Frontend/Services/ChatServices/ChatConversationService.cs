@@ -197,6 +197,37 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
+    public async Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, DateTimeOffset before, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await chatConversationApiClient.GetMessagesBefore(id, before, cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceResult<MessageData[]>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceResult<MessageData[]>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+
+            throw new ApiResponseException();
+        }
+    }
+
     public async Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
@@ -228,6 +259,36 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
+    public async Task<ApiServiceSimpleResult<MessageData>> GetLatestMessage(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await chatConversationApiClient.GetLatestMessage(id, cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceSimpleResult<MessageData>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceSimpleResult<MessageData>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+
+            throw new ApiResponseException();
+        }
+    }
     public async Task<ApiServiceResult<UnreadMessageData[]>> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try

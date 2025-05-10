@@ -79,16 +79,16 @@ internal class FileApiClient : IFileApiClient
         return new FileItemResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<FileItemsResponse> GetFileItemsAsync(Guid[] fileIds, CancellationToken cancellationToken = default)
+    public async Task<FileItemsResponse> GetFileItemsAsync(Guid[] Ids, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
             Resource = serviceUri + $"/batch",
             Method = Method.Get
         };
-        foreach (var id in fileIds)
+        foreach (var id in Ids)
         {
-            request.AddParameter("fileIds", id);
+            request.AddQueryParameter("ids", id);
         }
 
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);

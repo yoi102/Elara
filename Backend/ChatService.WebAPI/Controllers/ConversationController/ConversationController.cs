@@ -143,12 +143,19 @@ public class ConversationController : AuthorizedUserController
         return Ok(conversation);
     }
 
-    [HttpDelete("{id}/mark-as-read")]
-    public async Task<IActionResult> MarkMessagesAsRead(ConversationId id)
+    [HttpGet("{id}/latest-message")]
+    public async Task<IActionResult> GetLatestMessage(ConversationId id)
     {
-        var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
-        dbContext.RemoveRange(userUnreadMessages);
-        return Ok();
+        var replyMessage = await repository.GetLatestMessage(id);
+
+        return Ok(replyMessage);
+    }
+
+    [HttpGet("{id}/latest-messages-before")]
+    public async Task<IActionResult> GetMessagesBefore([FromRoute] ConversationId id, [FromQuery] DateTimeOffset before)
+    {
+        var messages = await repository.GetMessagesBefore(id, before);
+        return Ok(messages);
     }
 
     [HttpGet("{id}/unread-messages")]
@@ -158,24 +165,11 @@ public class ConversationController : AuthorizedUserController
         return Ok(userUnreadMessages);
     }
 
-
-    [HttpGet("{id}/latest-message")]
-    public async Task<IActionResult> GetLatestMessage(ConversationId id)
+    [HttpDelete("{id}/mark-as-read")]
+    public async Task<IActionResult> MarkMessagesAsRead(ConversationId id)
     {
-        //TODO
-        await Task.CompletedTask;
-        return BadRequest();
+        var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
+        dbContext.RemoveRange(userUnreadMessages);
+        return Ok();
     }
-
-    [HttpGet("{id}/latest-messages-before")]
-    public async Task<IActionResult> GetMessagesBefore(ConversationId id, DateTimeOffset before)
-    {
-        //TODO   获取某个时间前的信息（CreateAt）、根据配置获取固定的几条（可能固定十条）
-        await Task.CompletedTask;
-        return BadRequest();
-    }
-
-
-
-
 }
