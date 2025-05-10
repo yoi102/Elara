@@ -1,4 +1,5 @@
 ﻿using ASPNETCore;
+using DomainCommons.EntityStronglyIds;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PersonalSpaceService.Domain;
@@ -38,9 +39,22 @@ public class ProfileController : AuthorizedUserController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUserProfile()
+    public async Task<IActionResult> GetCurrentUserProfile()
     {
         var profile = await repository.FindProfileByUserIdAsync(GetCurrentUserId());
+
+        if (profile is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(profile);
+    }
+
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetCurrentUserProfile(UserId userId)
+    {
+        var profile = await repository.FindProfileByUserIdAsync(userId);
 
         if (profile is null)
         {

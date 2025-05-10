@@ -4,6 +4,7 @@ using Services.Abstractions;
 using Services.Abstractions.ChatServices;
 using Services.Abstractions.PersonalSpaceServices;
 using Services.ChatServices;
+using Services.Combination;
 using Services.PersonalSpaceServices;
 
 namespace Services;
@@ -22,5 +23,6 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddTransient<IPersonalSpaceProfileService, PersonalSpaceProfileService>();
         services.AddTransient<IUserIdentityService, UserIdentityService>();
         services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IConversationQueryService, ConversationQueryService>();
     }
 }

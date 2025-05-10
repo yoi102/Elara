@@ -50,10 +50,14 @@ public class MessageController : AuthorizedUserController
         if (message is null)
             return NotFound();
 
+        var unreadMessages = await repository.GetUserUnreadMessagesAsync(GetCurrentUserId());
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet();
+
         var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(id);
         var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId);
         var messageResponse = new MessageResponse()
         {
+            IsUnread = unreadIds.Contains(message.Id),
             MessageId = message.Id,
             ConversationId = message.ConversationId,
             QuoteMessageId = message.QuoteMessageId,
@@ -84,6 +88,8 @@ public class MessageController : AuthorizedUserController
 
         var replyMessages = await repository.MessageAllReplyMessagesAsync(id);
 
+        var unreadMessages = await repository.GetUserUnreadMessagesAsync(GetCurrentUserId());
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet();
         foreach (var replyMessage in replyMessages)
         {
             var replyMessageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(id);
@@ -91,6 +97,7 @@ public class MessageController : AuthorizedUserController
 
             var messageResponse = new MessageResponse()
             {
+                IsUnread = unreadIds.Contains(message.Id),
                 MessageId = message.Id,
                 ConversationId = message.ConversationId,
                 QuoteMessageId = message.QuoteMessageId,

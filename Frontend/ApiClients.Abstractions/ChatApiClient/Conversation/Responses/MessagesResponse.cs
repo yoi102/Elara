@@ -5,6 +5,7 @@ public record SimpleMessageResponse : SimpleApiResponse<MessageData>;
 
 public record MessageData()
 {
+    public required bool IsUnread { get; init; }
     public required Guid Id { get; init; }
     public required Guid ConversationId { get; init; }
     public required Guid? QuoteMessageId { get; init; }

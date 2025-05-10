@@ -16,7 +16,9 @@ public interface IChatServiceRepository
 
     Task<Message[]> GetMessagesBefore(ConversationId id, DateTimeOffset before);
 
-    Task<UserUnreadMessage[]> GetUnReadMessagesAsync(UserId userId, ConversationId conversationId);
+    Task<UserUnreadMessage[]> GetUnreadMessagesAsync(UserId userId, ConversationId conversationId);
+
+    Task<UserUnreadMessage[]> GetUserUnreadMessagesAsync(UserId userId);
 
     #endregion Conversation
 

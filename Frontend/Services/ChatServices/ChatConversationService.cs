@@ -166,11 +166,11 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<ConversationData[]>> GetAllConversationAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await chatConversationApiClient.GetAllConversationAsync(cancellationToken);
+            var response = await chatConversationApiClient.GetUserConversationsAsync(cancellationToken);
 
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
@@ -228,11 +228,11 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<MessageData[]>> GetConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await chatConversationApiClient.GetAllConversationMessagesAsync(id, cancellationToken);
+            var response = await chatConversationApiClient.GetConversationMessagesAsync(id, cancellationToken);
 
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);

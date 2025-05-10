@@ -13,6 +13,5 @@ public partial class ParticipantModel : ObservableObject
     [ObservableProperty]
     private string? role;
 
-    public Guid ParticipantId { get; init; }
     public Guid UserId { get; init; }
 }

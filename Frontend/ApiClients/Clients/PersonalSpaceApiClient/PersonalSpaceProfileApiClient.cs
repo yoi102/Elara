@@ -10,16 +10,40 @@ internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
 {
     private const string serviceUri = "/PersonalSpaceService/api/profile";
     private readonly ITokenRefreshingRestClient client;
+
     public PersonalSpaceProfileApiClient(ITokenRefreshingRestClient client)
     {
         this.client = client;
     }
 
-    public async Task<UserProfileResponse> GetUserProfileAsync(CancellationToken cancellationToken = default)
+    public async Task<UserProfileResponse> GetCurrentUserProfileAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
             Resource = serviceUri,
+            Method = Method.Get
+        };
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new UserProfileResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<UserProfileData>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new UserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+
+    public async Task<UserProfileResponse> GetUserProfileAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"/{id}",
             Method = Method.Get
         };
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);

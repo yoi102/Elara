@@ -49,9 +49,15 @@ public class ChatServiceRepository : IChatServiceRepository
                               .Take(10)//这个应该在配置文件中获取、方便更改，最多获取最新的多少条
                               .ToArrayAsync();
     }
-    public async Task<UserUnreadMessage[]> GetUnReadMessagesAsync(UserId userId, ConversationId conversationId)
+
+    public async Task<UserUnreadMessage[]> GetUnreadMessagesAsync(UserId userId, ConversationId conversationId)
     {
         return await dbContext.UserUnreadMessages.Where(x => x.ConversationId == conversationId && x.UserId == userId).ToArrayAsync();
+    }
+
+    public async Task<UserUnreadMessage[]> GetUserUnreadMessagesAsync(UserId userId)
+    {
+        return await dbContext.UserUnreadMessages.Where(x => x.UserId == userId).ToArrayAsync();
     }
 
     #endregion Conversation
@@ -132,6 +138,7 @@ public class ChatServiceRepository : IChatServiceRepository
                      .OrderByDescending(m => m.CreatedAt)
                      .FirstOrDefaultAsync();
     }
+
     public async Task<ReplyMessage[]> MessageAllReplyMessagesAsync(MessageId id)
     {
         return await dbContext
@@ -164,6 +171,7 @@ public class ChatServiceRepository : IChatServiceRepository
     {
         return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId).ToArrayAsync();
     }
+
     public async Task<ConversationRequest[]> GetPendingConversationRequestByReceiverIdAsync(UserId receiverId)
     {
         return await dbContext.ConversationRequests.Where(c => c.ReceiverId == receiverId && c.Status == RequestStatus.Pending).ToArrayAsync();

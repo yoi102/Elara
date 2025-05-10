@@ -13,9 +13,9 @@ public interface IChatConversationApiClient
 
     Task<ConversationResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ConversationsResponse> GetAllConversationAsync(CancellationToken cancellationToken = default);
+    Task<ConversationsResponse> GetUserConversationsAsync(CancellationToken cancellationToken = default);
 
-    Task<MessagesResponse> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<MessagesResponse> GetConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<SimpleMessageResponse> GetLatestMessage(Guid id, CancellationToken cancellationToken = default);
 

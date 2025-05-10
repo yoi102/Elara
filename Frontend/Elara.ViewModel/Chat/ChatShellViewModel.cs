@@ -20,8 +20,8 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
     {
         get
         {
-            var unreadCount = Conversations.Select(c => c.UnreadMessages).Count();
-
+            var unreadCount = Conversations.SelectMany(c => c.Messages)
+                                              .Count(m => m.IsUnread);
             if (unreadCount == 0)
                 return null;
 
@@ -29,16 +29,8 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
         }
     }
 
-
-
-
     [RelayCommand]
     private void CreateGroupConversation()
     {
-
     }
-
-
-
-
 }

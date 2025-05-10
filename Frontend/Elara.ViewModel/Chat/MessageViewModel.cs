@@ -1,9 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Elara.ViewModel.Interfaces;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class MessageModel : ObservableObject
+public partial class MessageModel : ObservableObject, IHasNotificationNumber
 {
+    public MessageModel(ParticipantModel sender)
+    {
+        Sender = sender;
+    }
+
     [ObservableProperty]
     private MessageAttachmentModel[]? attachments;
 
@@ -18,6 +24,11 @@ public partial class MessageModel : ObservableObject
 
     [ObservableProperty]
     private DateTimeOffset? updateAt;
-    public required ParticipantModel Sender { get; init; }
-    public Guid SenderId { get; init; }
+
+    [ObservableProperty]
+    private bool isUnread;
+
+    public ParticipantModel Sender { get; }
+
+    public int? NotificationNumber => throw new NotImplementedException();
 }

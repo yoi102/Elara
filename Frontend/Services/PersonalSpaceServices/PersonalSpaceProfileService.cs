@@ -4,6 +4,7 @@ using ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions.PersonalSpaceServices;
 using Services.Abstractions.Results;
+using System.Threading;
 
 namespace Services.PersonalSpaceServices;
 
@@ -16,11 +17,42 @@ internal class PersonalSpaceProfileService : IPersonalSpaceProfileService
         this.personalSpaceProfileApiClient = personalSpaceProfileApiClient;
     }
 
-    public async Task<ApiServiceResult<UserProfileData>> GetUserProfileAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UserProfileData>> GetCurrentUserProfileAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await personalSpaceProfileApiClient.GetUserProfileAsync(cancellationToken);
+            var response = await personalSpaceProfileApiClient.GetCurrentUserProfileAsync(cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceResult<UserProfileData>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceResult<UserProfileData>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+
+            throw new ApiResponseException();
+        }
+    }
+
+    public async Task<ApiServiceResult<UserProfileData>> GetUserProfileAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await personalSpaceProfileApiClient.GetUserProfileAsync(id, cancellationToken);
 
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);

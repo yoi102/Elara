@@ -15,9 +15,6 @@ public partial class ConversationModel : ObservableObject, IHasNotificationNumbe
 
     [NotifyPropertyChangedFor(nameof(NotificationNumber))]
     [ObservableProperty]
-    private ObservableCollection<MessageModel> unreadMessages = [];
-
-    [ObservableProperty]
     private ObservableCollection<ParticipantModel> participants = [];
 
     public Guid Id { get; init; }
@@ -30,10 +27,11 @@ public partial class ConversationModel : ObservableObject, IHasNotificationNumbe
     {
         get
         {
-            if (UnreadMessages.Count == 0)
+            var unreadCount = Messages.Count(m => m.IsUnread);
+            if (unreadCount == 0)
                 return null;
 
-            return UnreadMessages?.Count;
+            return unreadCount;
         }
     }
 }

@@ -43,6 +43,12 @@ public class ConversationController : AuthorizedUserController
     public async Task<IActionResult> AllConversationMessages([RequiredGuidStronglyId] ConversationId id)
     {
         var messages = await repository.GetConversationAllMessagesAsync(id);
+        if (messages is null || messages.Length == 0)
+            return Ok(Array.Empty<MessageResponse>());
+
+        var unreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet(); // 提前做成HashSet，加速判断
+
         var messagesResponse = new List<MessageResponse>();
         foreach (var message in messages)
         {
@@ -51,6 +57,7 @@ public class ConversationController : AuthorizedUserController
 
             var messageResponse = new MessageResponse()
             {
+                IsUnread = unreadIds.Contains(message.Id),
                 MessageId = message.Id,
                 ConversationId = message.ConversationId,
                 QuoteMessageId = message.QuoteMessageId,
@@ -147,28 +154,78 @@ public class ConversationController : AuthorizedUserController
     public async Task<IActionResult> GetLatestMessage(ConversationId id)
     {
         var replyMessage = await repository.GetLatestMessage(id);
+        if (replyMessage is null)
+            return Ok(null);
 
-        return Ok(replyMessage);
+        var unreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet();
+
+        var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(replyMessage.Id);
+        var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId).ToArray();
+
+        var messageResponse = new MessageResponse
+        {
+            IsUnread = unreadIds.Contains(replyMessage.Id),
+            MessageId = replyMessage.Id,
+            ConversationId = replyMessage.ConversationId,
+            QuoteMessageId = replyMessage.QuoteMessageId,
+            Content = replyMessage.Content,
+            SenderId = replyMessage.SenderId,
+            UploadedItemIds = uploadedItemIds,
+            CreatedAt = replyMessage.CreatedAt,
+            UpdatedAt = replyMessage.UpdatedAt
+        };
+
+        return Ok(messageResponse);
     }
 
     [HttpGet("{id}/latest-messages-before")]
     public async Task<IActionResult> GetMessagesBefore([FromRoute] ConversationId id, [FromQuery] DateTimeOffset before)
     {
         var messages = await repository.GetMessagesBefore(id, before);
-        return Ok(messages);
+        if (messages is null || messages.Length == 0)
+            return Ok(Array.Empty<MessageResponse>());
+
+        var unreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet();
+
+        var messagesResponse = new List<MessageResponse>();
+
+        foreach (var message in messages)
+        {
+            var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(message.Id);
+            var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId).ToArray();
+
+            var messageResponse = new MessageResponse
+            {
+                IsUnread = unreadIds.Contains(message.Id),
+                MessageId = message.Id,
+                ConversationId = message.ConversationId,
+                QuoteMessageId = message.QuoteMessageId,
+                Content = message.Content,
+                SenderId = message.SenderId,
+                UploadedItemIds = uploadedItemIds,
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+
+            messagesResponse.Add(messageResponse);
+        }
+
+        return Ok(messagesResponse);
     }
 
     [HttpGet("{id}/unread-messages")]
     public async Task<IActionResult> GetUnreadMessages(ConversationId id)
     {
-        var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
+        var userUnreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
         return Ok(userUnreadMessages);
     }
 
     [HttpDelete("{id}/mark-as-read")]
     public async Task<IActionResult> MarkMessagesAsRead(ConversationId id)
     {
-        var userUnreadMessages = await repository.GetUnReadMessagesAsync(GetCurrentUserId(), id);
+        var userUnreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
         dbContext.RemoveRange(userUnreadMessages);
         return Ok();
     }

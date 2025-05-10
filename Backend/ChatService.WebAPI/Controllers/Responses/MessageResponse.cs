@@ -4,6 +4,7 @@ namespace ChatService.WebAPI.Controllers.Responses;
 
 public record MessageResponse
 {
+    public required bool IsUnread { get; init; }
     public required MessageId MessageId { get; set; }
     public required ConversationId ConversationId { get; set; }
     public required MessageId? QuoteMessageId { get; set; }

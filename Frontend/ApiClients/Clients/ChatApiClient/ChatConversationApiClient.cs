@@ -115,7 +115,7 @@ internal class ChatConversationApiClient : IChatConversationApiClient
         return new ConversationResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<ConversationsResponse> GetAllConversationAsync(CancellationToken cancellationToken = default)
+    public async Task<ConversationsResponse> GetUserConversationsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -139,7 +139,7 @@ internal class ChatConversationApiClient : IChatConversationApiClient
         return new ConversationsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<MessagesResponse> GetAllConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<MessagesResponse> GetConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
