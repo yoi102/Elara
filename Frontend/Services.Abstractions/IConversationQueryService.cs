@@ -7,7 +7,11 @@ public interface IConversationQueryService
 {
     Task<ApiServiceResult<MessageData[]>> GetConversationMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ConversationData[]>> GetConversationWithMessagesAsync(CancellationToken cancellationToken = default);
+    Task<ApiServiceResult<ParticipantData[]>> GetConversationParticipantsAsync(Guid conversationId, CancellationToken cancellationToken = default);
+
+    Task<ApiServiceResult<ConversationData[]>> GetConversationsWithMessagesAsync(CancellationToken cancellationToken = default);
+
+    Task<ApiServiceResult<MessageData[]>> GetConversationUnreadMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default);
 
     Task<ApiServiceResult<ReplyMessageData[]>> GetMessageReplyMessagesAsync(Guid messageId, CancellationToken cancellationToken = default);
 

@@ -163,7 +163,7 @@ public class UserIdentityService : IUserIdentityService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            userDataProvider.UpdateRefreshToken(response.ResponseData.AccessToken, response.ResponseData.RefreshToken);
+            userDataProvider.UpdateRefreshToken(response.ResponseData.Token, response.ResponseData.RefreshToken);
 
             return new ApiServiceResult<UserTokenData>()
             {

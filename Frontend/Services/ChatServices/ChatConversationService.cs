@@ -166,37 +166,6 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<ConversationData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var response = await chatConversationApiClient.GetUserConversationsAsync(cancellationToken);
-
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-
-            return new ApiServiceResult<ConversationData[]>()
-            {
-                IsSuccessful = true,
-                ResultData = response.ResponseData
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult<ConversationData[]>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-
-            throw new ApiResponseException();
-        }
-    }
-
     public async Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, DateTimeOffset before, CancellationToken cancellationToken = default)
     {
         try
@@ -259,6 +228,37 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
+    public async Task<ApiServiceResult<ParticipantData[]>> GetConversationParticipantsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await chatConversationApiClient.GetConversationParticipantsAsync(id, cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceResult<ParticipantData[]>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceResult<ParticipantData[]>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+
+            throw new ApiResponseException();
+        }
+    }
+
     public async Task<ApiServiceSimpleResult<MessageData>> GetLatestMessage(Guid id, CancellationToken cancellationToken = default)
     {
         try
@@ -289,7 +289,8 @@ internal class ChatConversationService : IChatConversationService
             throw new ApiResponseException();
         }
     }
-    public async Task<ApiServiceResult<UnreadMessageData[]>> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default)
+
+    public async Task<ApiServiceResult<MessageData[]>> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -298,7 +299,7 @@ internal class ChatConversationService : IChatConversationService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<UnreadMessageData[]>()
+            return new ApiServiceResult<MessageData[]>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -308,7 +309,7 @@ internal class ChatConversationService : IChatConversationService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<UnreadMessageData[]>()
+                return new ApiServiceResult<MessageData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -320,6 +321,36 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
+    public async Task<ApiServiceResult<ConversationData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await chatConversationApiClient.GetUserConversationsAsync(cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceResult<ConversationData[]>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceResult<ConversationData[]>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+
+            throw new ApiResponseException();
+        }
+    }
     public async Task<ApiServiceResult> MarkMessagesAsReadAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try

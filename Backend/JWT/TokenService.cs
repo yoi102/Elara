@@ -18,11 +18,10 @@ public class TokenService : ITokenService
 
     public string BuildToken(IEnumerable<Claim> claims)
     {
-        TimeSpan ExpiryDuration = TimeSpan.FromSeconds(_jwtOptions.ExpireSeconds);
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
         var tokenDescriptor = new JwtSecurityToken(_jwtOptions.Issuer, _jwtOptions.Audience, claims,
-            expires: DateTime.Now.Add(ExpiryDuration), signingCredentials: credentials);
+             DateTime.UtcNow, DateTime.UtcNow.AddSeconds(_jwtOptions.ExpireSeconds), credentials);
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 

@@ -24,5 +24,6 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddTransient<IUserIdentityService, UserIdentityService>();
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IConversationQueryService, ConversationQueryService>();
+        services.AddTransient<IChatConversationService, ChatConversationService>();
     }
 }

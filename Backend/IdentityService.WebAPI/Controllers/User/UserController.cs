@@ -219,7 +219,7 @@ public class UserController : ControllerBase
             return BadRequest("Invalid refresh token.");
         }
 
-        return Ok(new { request.UserId, result.UserName, result.Token, result.ReflashToken });
+        return Ok(new { request.UserId, result.UserName, result.Token, result.RefreshToken });
     }
 
     private bool TryFindUserIdFromClaims(out UserId userId)

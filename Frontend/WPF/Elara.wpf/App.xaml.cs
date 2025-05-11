@@ -25,9 +25,7 @@ public partial class App : Application
         Services = ConfigureServices();
         this.InitializeComponent();
 
-        //MainWindow = new MainWindowView();//暂时避开登录
-        //MainWindow.Show();
-
+        MainWindow = new MainWindowView();
         LaunchApplicationFlow();
 
         // 注册全局异常处理器
@@ -43,7 +41,7 @@ public partial class App : Application
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             MainWindow.Close();
-            MainWindow = null;
+            MainWindow = new MainWindowView();
             var userDataProvider = Services.GetService<IUserDataProvider>();
             userDataProvider?.CleanUserData();
             LaunchApplicationFlow();
@@ -58,7 +56,6 @@ public partial class App : Application
         if (result == true)
         {
             //TODO：一写配置加载、cache加载
-            MainWindow = new MainWindowView();
             MainWindow.Show();
             MainWindow.Closing += MainWindow_Closing;
             Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;

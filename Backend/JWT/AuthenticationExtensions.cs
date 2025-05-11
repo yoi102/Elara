@@ -18,6 +18,7 @@ public static class AuthenticationExtensions
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = jwtOpt.Issuer,
                 ValidAudience = jwtOpt.Audience,

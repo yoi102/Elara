@@ -73,12 +73,38 @@ public class MessageController : AuthorizedUserController
     [HttpGet("batch")]
     public async Task<IActionResult> GetBatch([FromQuery] MessageId[] ids)
     {
-        var file = await repository.FindMessagesByIdsAsync(ids);
-        return Ok(file);
+        var messages = await repository.FindMessagesByIdsAsync(ids);
+
+        var messagesResponse = new List<MessageResponse>();
+
+        var unreadMessages = await repository.GetUserUnreadMessagesAsync(GetCurrentUserId());
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet();
+
+        foreach (var message in messages)
+        {
+            var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(message.Id);
+            var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId);
+
+            var messageResponse = new MessageResponse()
+            {
+                IsUnread = unreadIds.Contains(message.Id),
+                MessageId = message.Id,
+                ConversationId = message.ConversationId,
+                QuoteMessageId = message.QuoteMessageId,
+                Content = message.Content,
+                SenderId = message.SenderId,
+                UploadedItemIds = [.. uploadedItemIds],
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+            messagesResponse.Add(messageResponse);
+        }
+
+        return Ok(messagesResponse);
     }
 
     [HttpGet("{id}/reply-messages")]
-    public async Task<IActionResult> GetReplyMessagesId([RequiredGuidStronglyId] MessageId id)
+    public async Task<IActionResult> GetReplyMessages([RequiredGuidStronglyId] MessageId id)
     {
         var message = await repository.FindMessageByIdAsync(id);
         if (message is null)
@@ -126,7 +152,7 @@ public class MessageController : AuthorizedUserController
         var messageAttachments = request.MessageAttachmentIds.Select(m => new MessageAttachment(message.Id, m));
         await dbContext.MessageAttachments.AddRangeAsync(messageAttachments);
 
-        var participants = await repository.GetConversationAllParticipantsAsync(request.ConversationId);
+        var participants = await repository.GetConversationParticipantsAsync(request.ConversationId);
         var unreadMessages = participants.Where(x => x.UserId != senderId).Select(x => new UserUnreadMessage(x.UserId, message.Id, request.ConversationId));
         await dbContext.UserUnreadMessages.AddRangeAsync(unreadMessages);
 

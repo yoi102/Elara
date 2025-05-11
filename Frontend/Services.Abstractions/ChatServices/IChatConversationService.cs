@@ -14,12 +14,15 @@ public interface IChatConversationService
 
     Task<ApiServiceResult<ConversationData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ConversationData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default);
-
     Task<ApiServiceResult<MessageData[]>> GetAllConversationMessagesAsync(Guid id, DateTimeOffset before, CancellationToken cancellationToken = default);
 
     Task<ApiServiceResult<MessageData[]>> GetConversationMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
+    Task<ApiServiceResult<ParticipantData[]>> GetConversationParticipantsAsync(Guid id, CancellationToken cancellationToken = default);
+
     Task<ApiServiceSimpleResult<MessageData>> GetLatestMessage(Guid id, CancellationToken cancellationToken = default);
-    Task<ApiServiceResult<UnreadMessageData[]>> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<ApiServiceResult<MessageData[]>> GetUnreadMessagesAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<ApiServiceResult<ConversationData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default);
 }

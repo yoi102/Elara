@@ -69,7 +69,7 @@ public class ChatServiceRepository : IChatServiceRepository
         return await dbContext.FindAsync<Participant>(id);
     }
 
-    public async Task<Participant[]> GetConversationAllParticipantsAsync(ConversationId id)
+    public async Task<Participant[]> GetConversationParticipantsAsync(ConversationId id)
     {
         return await dbContext
                   .Participants

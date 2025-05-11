@@ -219,7 +219,36 @@ public class ConversationController : AuthorizedUserController
     public async Task<IActionResult> GetUnreadMessages(ConversationId id)
     {
         var userUnreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
-        return Ok(userUnreadMessages);
+        var userUnreadMessageIds = userUnreadMessages.Select(x => x.MessageId).ToArray();
+
+        var messages = await repository.FindMessagesByIdsAsync(userUnreadMessageIds);
+
+        var messagesResponse = new List<MessageResponse>();
+
+        var unreadMessages = await repository.GetUserUnreadMessagesAsync(GetCurrentUserId());
+        var unreadIds = unreadMessages.Select(x => x.MessageId).ToHashSet();
+
+        foreach (var message in messages)
+        {
+            var messageAttachments = await repository.GetMessageAllMessageAttachmentsAsync(message.Id);
+            var uploadedItemIds = messageAttachments.Select(x => x.UploadedItemId);
+
+            var messageResponse = new MessageResponse()
+            {
+                IsUnread = unreadIds.Contains(message.Id),
+                MessageId = message.Id,
+                ConversationId = message.ConversationId,
+                QuoteMessageId = message.QuoteMessageId,
+                Content = message.Content,
+                SenderId = message.SenderId,
+                UploadedItemIds = [.. uploadedItemIds],
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+            messagesResponse.Add(messageResponse);
+        }
+
+        return Ok(messagesResponse);
     }
 
     [HttpDelete("{id}/mark-as-read")]
@@ -228,5 +257,12 @@ public class ConversationController : AuthorizedUserController
         var userUnreadMessages = await repository.GetUnreadMessagesAsync(GetCurrentUserId(), id);
         dbContext.RemoveRange(userUnreadMessages);
         return Ok();
+    }
+
+    [HttpGet("{id}/participants")]
+    public async Task<IActionResult> GetConversationParticipants(ConversationId id)
+    {
+        var participants = await repository.GetConversationParticipantsAsync(id);
+        return Ok(participants);
     }
 }

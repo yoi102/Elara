@@ -26,7 +26,7 @@ public interface IChatServiceRepository
 
     Task<Participant?> FindParticipantByIdAsync(ParticipantId id);
 
-    Task<Participant[]> GetConversationAllParticipantsAsync(ConversationId id);
+    Task<Participant[]> GetConversationParticipantsAsync(ConversationId id);
 
     #endregion Participant
 
