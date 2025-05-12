@@ -69,7 +69,7 @@ public class ConversationQueryService : IConversationQueryService
                 Content = data.Content,
                 Sender = sender,
                 ReplyMessages = replyMessages.ResultData,
-                UploadedItems = uploadedItems,
+                Attachments = uploadedItems,
                 QuoteMessage = quoteMessage,
                 CreatedAt = data.CreatedAt,
                 UpdatedAt = data.UpdatedAt,
@@ -96,11 +96,15 @@ public class ConversationQueryService : IConversationQueryService
             if (!profileResult.IsSuccessful)
                 return ApiServiceResult<ParticipantData[]>.FromFailure(profileResult);
 
-            var avatarItemResult = await fileService.GetFileItemAsync(profileResult.ResultData.AvatarItemId, cancellationToken);
-            if (!avatarItemResult.IsSuccessful)
-                return ApiServiceResult<ParticipantData[]>.FromFailure(profileResult);
-            var avatarItem = new UploadedItemData() { Id = avatarItemResult.ResultData.Id, Uri = avatarItemResult.ResultData.RemoteUrl };
+            UploadedItemData? avatarItem = null;
+            if (profileResult.ResultData.AvatarItemId is not null)
+            {
+                var avatarItemResult = await fileService.GetFileItemAsync(profileResult.ResultData.AvatarItemId.Value, cancellationToken);
+                if (!avatarItemResult.IsSuccessful)
+                    return ApiServiceResult<ParticipantData[]>.FromFailure(profileResult);
 
+                avatarItem = new UploadedItemData() { Id = avatarItemResult.ResultData.Id, Uri = avatarItemResult.ResultData.RemoteUrl };
+            }
             var participant = new ParticipantData()
             {
                 UserId = profileResult.ResultData.UserId,
@@ -152,7 +156,9 @@ public class ConversationQueryService : IConversationQueryService
                 Messages = conversationMessages.ResultData,
                 IsGroup = data.IsGroup,
                 Name = conversationName,
-                Participants = participantsResult.ResultData
+                Participants = participantsResult.ResultData,
+                CreatedAt = data.CreatedAt,
+                UpdatedAt = data.UpdatedAt
             };
 
             conversations.Add(conversation);
@@ -209,7 +215,7 @@ public class ConversationQueryService : IConversationQueryService
                 Content = data.Content,
                 Sender = sender,
                 ReplyMessages = replyMessages.ResultData,
-                UploadedItems = uploadedItems,
+                Attachments = uploadedItems,
                 QuoteMessage = quoteMessage,
                 CreatedAt = data.CreatedAt,
                 UpdatedAt = data.UpdatedAt,
@@ -327,11 +333,15 @@ public class ConversationQueryService : IConversationQueryService
         if (!profileResult.IsSuccessful)
             return ApiServiceResult<MessageSenderData>.FromFailure(profileResult);
 
-        var avatarItemResult = await fileService.GetFileItemAsync(profileResult.ResultData.AvatarItemId, cancellationToken);
-        if (!avatarItemResult.IsSuccessful)
-            return ApiServiceResult<MessageSenderData>.FromFailure(profileResult);
+        UploadedItemData? avatarItem = null;
+        if (profileResult.ResultData.AvatarItemId is not null)
+        {
+            var avatarItemResult = await fileService.GetFileItemAsync(profileResult.ResultData.AvatarItemId.Value, cancellationToken);
+            if (!avatarItemResult.IsSuccessful)
+                return ApiServiceResult<MessageSenderData>.FromFailure(profileResult);
 
-        var avatarItem = new UploadedItemData() { Id = avatarItemResult.ResultData.Id, Uri = avatarItemResult.ResultData.RemoteUrl };
+            avatarItem = new UploadedItemData() { Id = avatarItemResult.ResultData.Id, Uri = avatarItemResult.ResultData.RemoteUrl };
+        }
 
         var sender = new MessageSenderData()
         {

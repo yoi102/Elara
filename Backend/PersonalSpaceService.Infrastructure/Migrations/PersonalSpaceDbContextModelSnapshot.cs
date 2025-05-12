@@ -88,7 +88,7 @@ namespace PersonalSpaceService.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("AvatarItemId")
+                    b.Property<Guid?>("AvatarItemId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")

@@ -17,7 +17,7 @@ public record Profile : AggregateRootEntity<ProfileId>
     {
     }
 
-    public UploadedItemId AvatarItemId { get; private set; }
+    public UploadedItemId? AvatarItemId { get; private set; }
     public string DisplayName { get; private set; } = null!;
     public override ProfileId Id { get; protected set; }
     public UserId UserId { get; private set; }

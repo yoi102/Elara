@@ -20,19 +20,18 @@
                  TitleAlignment="Center"
                  TitleCharacterCasing="Normal"
                  WindowStartupLocation="CenterScreen"
-                 mc:Ignorable="d"
-                 >
+                 mc:Ignorable="d">
 
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <md:PopupBox Margin="10,0,0,0"
                          md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
-                         Style="{StaticResource WindowCommandsPopupBoxStyle}"
-                         >
+                         Style="{StaticResource WindowCommandsPopupBoxStyle}">
                 <StackPanel>
                     <Button Content="Hello World" />
                     <Button Content="Nice Popup" />
-                    <Button Command="{Binding TestCommand}" Content="Goodbye" />
+                    <Button Command="{Binding TestCommand}"
+                            Content="Goodbye" />
                 </StackPanel>
             </md:PopupBox>
 
@@ -41,8 +40,7 @@
                           Margin="5,0,10,0"
                           AutomationProperties.Name="HamburgerToggleButton"
                           IsChecked="False"
-                          Style="{StaticResource MaterialDesignHamburgerToggleButton}"
-                          />
+                          Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
 
             <Border Margin="10,0,10,0">
                 <StackPanel Orientation="Horizontal">
@@ -50,8 +48,7 @@
 
                     <TextBlock Margin="3,0,0,0"
                                VerticalAlignment="Center"
-                               Text="{Binding UserInfo.Name}"
-                               />
+                               Text="{Binding UserInfo.Name}" />
                 </StackPanel>
             </Border>
         </mah:WindowCommands>
@@ -60,15 +57,13 @@
         <md:DrawerHost Name="NavDrawer"
                        IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"
                        LeftDrawerCornerRadius="0 10 10 0"
-                       OpenMode="Modal"
-                       >
+                       OpenMode="Modal">
             <md:DrawerHost.LeftDrawerContent>
                 <md:ColorZone Width="200"
                               Padding="10"
                               md:ElevationAssist.Elevation="Dp3"
                               DockPanel.Dock="Top"
-                              Mode="Standard"
-                              />
+                              Mode="Standard" />
             </md:DrawerHost.LeftDrawerContent>
 
             <Grid>
@@ -79,8 +74,7 @@
                 <md:ColorZone HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               md:ElevationAssist.Elevation="Dp5"
-                              Mode="Standard"
-                              >
+                              Mode="Standard">
                     <StackPanel>
                         <RadioButton Width="50"
                                      Height="50"
@@ -88,8 +82,7 @@
                                      Content="{md:PackIcon Kind=Chat,
                                                            Size=40}"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
-                                     ToolTip="Chats"
-                                     />
+                                     ToolTip="Chats" />
 
                         <RadioButton Width="50"
                                      Height="50"
@@ -97,12 +90,13 @@
                                      Content="{md:PackIcon Kind=AccountBox,
                                                            Size=40}"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
-                                     ToolTip="Contacts"
-                                     />
+                                     ToolTip="Contacts" />
                     </StackPanel>
                 </md:ColorZone>
-
-                <ContentControl Grid.Column="1" />
+                <md:DialogHost Grid.Column="1"
+                               Identifier="{x:Static identifiers:DialogHostIdentifiers.MainContentControl}">
+                    <ContentControl />
+                </md:DialogHost>
             </Grid>
         </md:DrawerHost>
     </md:DialogHost>

@@ -10,4 +10,7 @@ public record ConversationData
     public required MessageData[] Messages { get; init; }
 
     public required ParticipantData[] Participants { get; init; }
+
+    public required DateTimeOffset CreatedAt { get; init; }
+    public required DateTimeOffset? UpdatedAt { get; init; }
 }

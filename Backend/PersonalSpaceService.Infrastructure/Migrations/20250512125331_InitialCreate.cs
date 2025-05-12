@@ -52,7 +52,7 @@ namespace PersonalSpaceService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    AvatarItemId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AvatarItemId = table.Column<Guid>(type: "TEXT", nullable: true),
                     DisplayName = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),

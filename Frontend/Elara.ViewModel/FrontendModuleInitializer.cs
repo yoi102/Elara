@@ -10,8 +10,8 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
 {
     public void Initialize(IServiceCollection services)
     {
-        services.AddTransient<ChatShellViewModel>();
-        services.AddTransient<ContactInfoViewModel>();
+        services.AddSingleton<ChatShellViewModel>();
+        services.AddSingleton<ContactShellViewModel>();
         services.AddTransient<LoginWindowViewModel>();
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<ResetPasswordViewModel>();

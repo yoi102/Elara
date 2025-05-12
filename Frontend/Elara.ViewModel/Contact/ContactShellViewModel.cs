@@ -5,12 +5,19 @@ namespace Elara.ViewModel.Contact;
 
 public partial class ContactShellViewModel : ObservableObject, IHasNotificationNumber
 {
+
+
+
     public int? NotificationNumber => throw new NotImplementedException();
 
 
 
 
+    public async Task InitializeAsync()
+    {
 
+
+    }
 
 
 
