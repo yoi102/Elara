@@ -1,47 +1,45 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
+using Services.Abstractions.ChatServices;
 using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class MessageModel : ObservableObject, IHasNotificationNumber
+public partial class MessageViewModel : ObservableObject, IHasNotificationNumber
 {
+    private readonly IChatMessageService chatMessageService;
+
     [ObservableProperty]
     private ObservableCollection<UploadedItemData> attachments = [];
 
     [ObservableProperty]
-    private string content = string.Empty;
+    private MessageData? messageData;
 
     [ObservableProperty]
-    private bool isUnread;
+    private ObservableCollection<ReplyMessageViewModel> replyMessages = [];
 
-    [ObservableProperty]
-    private QuoteMessageData? quoteMessage;
-
-    [ObservableProperty]
-    private ObservableCollection<ReplyMessageModel> replyMessages = [];
-
-    [ObservableProperty]
-    private DateTimeOffset sendAt;
-
-    [ObservableProperty]
-    private DateTimeOffset? updatedAt;
-
-    public MessageModel(MessageSenderData sender)
+    public MessageViewModel(IChatMessageService chatMessageService)
     {
-        Sender = sender;
+        this.chatMessageService = chatMessageService;
     }
 
     public int? NotificationNumber
     {
         get
         {
-            var count = ReplyMessages.Count(x => x.IsUnread);
+            var count = ReplyMessages.Count(x => x.ReplyMessageData!.IsUnread);
             if (count == 0) return null;
             return count;
         }
     }
 
-    public MessageSenderData Sender { get; }
+    public MessageSenderData? Sender { get; set; }
+
+    [RelayCommand]
+    public void RelyMessage()
+    {
+        //await  chatMessageService.ReplyMessageAsync();
+    }
 }

@@ -1,36 +1,38 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
+using Services.Abstractions.ChatServices;
 using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
 
-public partial class ConversationModel : ObservableObject, IHasNotificationNumber
+public partial class ConversationViewModel : ObservableObject, IHasNotificationNumber
 {
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(LatestMessage))]
-    private ObservableCollection<MessageModel> messages = [];
+
+    public ConversationViewModel(IChatMessageService chatMessageService)
+    {
+        this.chatMessageService = chatMessageService;
+    }
 
     [ObservableProperty]
-    private string name = "";
+    [NotifyPropertyChangedFor(nameof(LatestMessage))]
+    private ObservableCollection<MessageViewModel> messages = [];
 
     [NotifyPropertyChangedFor(nameof(NotificationNumber))]
     [ObservableProperty]
     private ObservableCollection<ParticipantData> participants = [];
+    public MessageViewModel? LatestMessage => Messages?.FirstOrDefault();
 
-    public Guid Id { get; init; }
-    public bool IsGroup { get; init; }
-    public MessageModel? LatestMessage => Messages?.FirstOrDefault();
 
-    public DateTimeOffset CreatedAt { get; init; }
-    public DateTimeOffset? UpdatedAt { get; init; }
+    [ObservableProperty]
+    private ConversationData? conversationData;
 
     public int? NotificationNumber
     {
         get
         {
-            var unreadMessageCount = Messages.Count(m => m.IsUnread);
+            var unreadMessageCount = Messages.Count(m => m.MessageData!.IsUnread);
             var unreadReplyMessageCount = Messages.Sum(x => x.NotificationNumber ?? 0);
 
             var unreadCount = unreadMessageCount + unreadReplyMessageCount;
@@ -41,11 +43,31 @@ public partial class ConversationModel : ObservableObject, IHasNotificationNumbe
         }
     }
 
+
+    [ObservableProperty]
+    private string drafts = string.Empty;
+    [ObservableProperty]
+    private ObservableCollection<UploadedItemData> draftsAttachments = [];
+    private readonly IChatMessageService chatMessageService;
+
     [RelayCommand]
-    private void SendMessage()
+    private async Task SendMessageAsync()
     {
+      //await  chatMessageService.SendMessageAsync()
+
 
     }
+
+    [RelayCommand]
+    private void UploadFile()
+    {
+
+
+
+    }
+
+
+
 
 
 }

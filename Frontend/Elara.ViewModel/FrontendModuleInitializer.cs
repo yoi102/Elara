@@ -16,5 +16,8 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<ResetPasswordViewModel>();
         services.AddTransient<SignUpViewModel>();
+        services.AddTransient<ConversationViewModel>();
+        services.AddTransient<MessageViewModel>();
+        services.AddTransient<ReplyMessageViewModel>();
     }
 }

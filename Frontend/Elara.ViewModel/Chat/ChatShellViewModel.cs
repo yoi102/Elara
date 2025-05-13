@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
 using Frontend.Shared.Identifiers;
 using InteractionServices.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Services.Abstractions;
 using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
@@ -11,8 +12,9 @@ namespace Elara.ViewModel.Chat;
 
 public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumber
 {
-    public ChatShellViewModel(IConversationQueryService conversationQueryService, IDialogService dialogService)
+    public ChatShellViewModel(IServiceProvider serviceProvider, IConversationQueryService conversationQueryService, IDialogService dialogService)
     {
+        this.serviceProvider = serviceProvider;
         this.conversationQueryService = conversationQueryService;
         this.dialogService = dialogService;
     }
@@ -27,45 +29,32 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
         }
         foreach (var data in conversationsDataResult.ResultData)
         {
-            ConversationModel conversationModel = DataToModel(data);
+            ConversationViewModel conversationModel = DataToModel(data);
 
             Conversations.Add(conversationModel);
         }
     }
 
-    #region DataToModel
+    #region DataToModel 应该弄到工厂上？ 晚点吧
 
-    private ConversationModel DataToModel(ConversationData data)
+    private ConversationViewModel DataToModel(ConversationData data)
     {
-        var conversationModel = new ConversationModel()
-        {
-            Id = data.Id,
-            IsGroup = data.IsGroup,
-            CreatedAt = data.CreatedAt,
-            UpdatedAt = data.UpdatedAt
-        };
+        var conversationModel = serviceProvider.GetService<ConversationViewModel>()!;
+        conversationModel.ConversationData = data;
 
         foreach (var message in data.Messages)
         {
-            MessageModel messageModel = DataToModel(message);
-
+            MessageViewModel messageModel = DataToModel(message);
             conversationModel.Messages.Add(messageModel);
         }
 
         return conversationModel;
     }
 
-    private MessageModel DataToModel(MessageData message)
+    private MessageViewModel DataToModel(MessageData message)
     {
-        var messageModel = new MessageModel(message.Sender)
-        {
-            IsUnread = message.IsUnread,
-            Attachments = new(message.Attachments),
-            Content = message.Content,
-            QuoteMessage = message.QuoteMessage,
-            SendAt = message.CreatedAt,
-            UpdatedAt = message.UpdatedAt
-        };
+        var messageModel = serviceProvider.GetService<MessageViewModel>()!;
+        messageModel.MessageData = message;
 
         foreach (var replyMessageData in message.ReplyMessages)
         {
@@ -76,31 +65,23 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
         return messageModel;
     }
 
-    private ReplyMessageModel DataToModel(ReplyMessageData replyMessageData)
+    private ReplyMessageViewModel DataToModel(ReplyMessageData replyMessageData)
     {
-        var replyMessageModel = new ReplyMessageModel(replyMessageData.Sender)
-        {
-            IsUnread = replyMessageData.IsUnread,
-            Content = replyMessageData.Content,
-            UpdatedAt = replyMessageData.UpdatedAt,
-            MessageId = replyMessageData.MessageId,
-            QuoteMessage = replyMessageData.QuoteMessage,
-            CreatedAt = replyMessageData.CreatedAt
-        };
+        var replyMessageModel = serviceProvider.GetService<ReplyMessageViewModel>()!;
+        replyMessageModel.ReplyMessageData = replyMessageData;
+
         return replyMessageModel;
     }
 
     #endregion DataToModel
 
     [ObservableProperty]
-    private ObservableCollection<ConversationModel> conversations = [];
+    private ObservableCollection<ConversationViewModel> conversations = [];
 
     [ObservableProperty]
-    private ConversationModel? selectedConversation;
+    private ConversationViewModel? selectedConversation;
 
-    [ObservableProperty]
-    private ChatViewModel? chatViewModel;
-
+    private readonly IServiceProvider serviceProvider;
     private readonly IConversationQueryService conversationQueryService;
     private readonly IDialogService dialogService;
 
@@ -109,7 +90,7 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
         get
         {
             var unreadCount = Conversations.SelectMany(c => c.Messages)
-                                              .Count(m => m.IsUnread);
+                                              .Count(m => m.MessageData!.IsUnread);
             if (unreadCount == 0)
                 return null;
 
@@ -118,7 +99,7 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
     }
 
     [RelayCommand]
-    private void CreateGroupConversation()
+    private void CreateGroupConversationAsync()
     {
     }
 }

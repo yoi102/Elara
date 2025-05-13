@@ -44,6 +44,8 @@ public partial struct WorkspaceMemberId;
 
 [Strongly]
 public partial struct UserUnreadMessageId;
+[Strongly]
+public partial struct UserUnreadConversationRequestId;
 
 [Strongly]
 public partial struct MessageAttachmentId;
