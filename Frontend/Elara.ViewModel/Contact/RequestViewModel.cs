@@ -1,19 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
-using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Contact;
 
-public partial class ContactViewModel : ObservableObject, IHasNotificationNumber
+public partial class RequestViewModel : ObservableObject, IHasNotificationNumber
 {
     public int? NotificationNumber => throw new NotImplementedException();
 
     [ObservableProperty]
-    private ObservableCollection<ContactRequestViewModel> contactRequests = [];
+    private ContactRequestViewModel? contactRequestViewModel;
 
     [ObservableProperty]
-    private ObservableCollection<GroupConversationRequestViewModel> groupConversationRequest = [];
+    private GroupConversationRequestViewModel? groupConversationRequestViewModel;
 
 
 

@@ -17,7 +17,5 @@ public interface IConversationQueryService
 
     Task<ApiServiceSimpleResult<QuoteMessageData>> GetQuoteMessageAsync(Guid messageId, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<MessageSenderData>> GetSenderDataById(Guid senderId, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<UploadedItemData[]>> GetUploadedItemByIds(Guid[] fileIds, CancellationToken cancellationToken = default);
 }

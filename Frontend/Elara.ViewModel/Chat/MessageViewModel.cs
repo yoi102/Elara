@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using ApiClients.Abstractions.FileApiClient.Responses;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
 using Services.Abstractions.ChatServices;
@@ -12,7 +13,7 @@ public partial class MessageViewModel : ObservableObject, IHasNotificationNumber
     private readonly IChatMessageService chatMessageService;
 
     [ObservableProperty]
-    private ObservableCollection<UploadedItemData> attachments = [];
+    private ObservableCollection<FileItemData> attachments = [];
 
     [ObservableProperty]
     private MessageData? messageData;
@@ -35,7 +36,7 @@ public partial class MessageViewModel : ObservableObject, IHasNotificationNumber
         }
     }
 
-    public MessageSenderData? Sender { get; set; }
+    public UserInfoData? Sender { get; set; }
 
     [RelayCommand]
     public void RelyMessage()

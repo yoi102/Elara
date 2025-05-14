@@ -1,10 +1,8 @@
-﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Contact.Responses;
-using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
+﻿using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
 using ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions.PersonalSpaceServices;
 using Services.Abstractions.Results;
-using System.Threading;
 
 namespace Services.PersonalSpaceServices;
 

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using ApiClients.Abstractions.FileApiClient.Responses;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
 using Services.Abstractions.ChatServices;
@@ -47,7 +48,7 @@ public partial class ConversationViewModel : ObservableObject, IHasNotificationN
     [ObservableProperty]
     private string drafts = string.Empty;
     [ObservableProperty]
-    private ObservableCollection<UploadedItemData> draftsAttachments = [];
+    private ObservableCollection<FileItemData> draftsAttachments = [];
     private readonly IChatMessageService chatMessageService;
 
     [RelayCommand]

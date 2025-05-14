@@ -11,18 +11,18 @@ public class ConversationQueryService : IConversationQueryService
 {
     private readonly IChatConversationService conversationService;
     private readonly IFileService fileService;
+    private readonly IUserProfileService userProfileService;
     private readonly IChatMessageService messageService;
-    private readonly IPersonalSpaceProfileService profileService;
     private readonly IUserDataProvider userDataProvider;
 
     //TODO：感觉会非常耗时。。。。。。先这样把、、迟点并发优化
-    public ConversationQueryService(IUserDataProvider userDataProvider, IChatConversationService conversationService, IChatMessageService chatMessageService, IPersonalSpaceProfileService profileService, IFileService fileService)
+    public ConversationQueryService(IUserDataProvider userDataProvider, IChatConversationService conversationService, IChatMessageService chatMessageService, IPersonalSpaceProfileService profileService, IFileService fileService, IUserProfileService userProfileService)
     {
         this.userDataProvider = userDataProvider;
         this.conversationService = conversationService;
         this.messageService = chatMessageService;
-        this.profileService = profileService;
         this.fileService = fileService;
+        this.userProfileService = userProfileService;
     }
 
     public async Task<ApiServiceResult<MessageData[]>> GetConversationMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default)
@@ -39,17 +39,17 @@ public class ConversationQueryService : IConversationQueryService
             if (!replyMessages.IsSuccessful)
                 return ApiServiceResult<MessageData[]>.FromFailure(replyMessages);
 
-            var senderDataResult = await GetSenderDataById(data.SenderId, cancellationToken);
+            var senderDataResult = await userProfileService.GetUserInfoDataById(data.SenderId, cancellationToken);
             if (!senderDataResult.IsSuccessful)
                 return ApiServiceResult<MessageData[]>.FromFailure(senderDataResult);
 
             var sender = senderDataResult.ResultData;
 
-            var uploadedItemResult = await GetUploadedItemByIds(data.UploadedItemIds, cancellationToken);
-            if (!uploadedItemResult.IsSuccessful)
-                return ApiServiceResult<MessageData[]>.FromFailure(uploadedItemResult);
+            var fileItemsResult = await fileService.GetFileItemsAsync(data.UploadedItemIds, cancellationToken);
+            if (!fileItemsResult.IsSuccessful)
+                return ApiServiceResult<MessageData[]>.FromFailure(fileItemsResult);
 
-            var uploadedItems = uploadedItemResult.ResultData;
+            var fileItems = fileItemsResult.ResultData;
 
             QuoteMessageData? quoteMessage = null;
             if (data.QuoteMessageId is not null)
@@ -69,7 +69,7 @@ public class ConversationQueryService : IConversationQueryService
                 Content = data.Content,
                 Sender = sender,
                 ReplyMessages = replyMessages.ResultData,
-                Attachments = uploadedItems,
+                Attachments = fileItems,
                 QuoteMessage = quoteMessage,
                 CreatedAt = data.CreatedAt,
                 UpdatedAt = data.UpdatedAt,
@@ -90,27 +90,16 @@ public class ConversationQueryService : IConversationQueryService
             return ApiServiceResult<ParticipantData[]>.FromFailure(participantsResult);
         var participants = new List<ParticipantData>();
 
-        foreach (var item in participantsResult.ResultData)
+        foreach (var data in participantsResult.ResultData)
         {
-            var profileResult = await profileService.GetUserProfileAsync(item.UserId, cancellationToken);
-            if (!profileResult.IsSuccessful)
-                return ApiServiceResult<ParticipantData[]>.FromFailure(profileResult);
+            var userDataResult = await userProfileService.GetUserInfoDataById(data.UserId, cancellationToken);
+            if (!userDataResult.IsSuccessful)
+                return ApiServiceResult<ParticipantData[]>.FromFailure(userDataResult);
 
-            UploadedItemData? avatarItem = null;
-            if (profileResult.ResultData.AvatarItemId is not null)
-            {
-                var avatarItemResult = await fileService.GetFileItemAsync(profileResult.ResultData.AvatarItemId.Value, cancellationToken);
-                if (!avatarItemResult.IsSuccessful)
-                    return ApiServiceResult<ParticipantData[]>.FromFailure(profileResult);
-
-                avatarItem = new UploadedItemData() { Id = avatarItemResult.ResultData.Id, Uri = avatarItemResult.ResultData.RemoteUrl };
-            }
             var participant = new ParticipantData()
             {
-                UserId = profileResult.ResultData.UserId,
-                Name = profileResult.ResultData.DisplayName,
-                Avatar = avatarItem,
-                Role = item.Role
+                UserInfoData = userDataResult.ResultData,
+                Role = data.Role
             };
             participants.Add(participant);
         }
@@ -146,8 +135,8 @@ public class ConversationQueryService : IConversationQueryService
             }
             else
             {
-                var other = participantsResult.ResultData.Where(p => p.UserId != userDataProvider.UserId).Single();
-                conversationName = other.Name;
+                var other = participantsResult.ResultData.Where(p => p.UserInfoData.UserId != userDataProvider.UserId).Single();
+                conversationName = other.UserInfoData.DisplayName;
             }
 
             var conversation = new ConversationData()
@@ -185,17 +174,17 @@ public class ConversationQueryService : IConversationQueryService
             if (!replyMessages.IsSuccessful)
                 return ApiServiceResult<MessageData[]>.FromFailure(replyMessages);
 
-            var senderDataResult = await GetSenderDataById(data.SenderId, cancellationToken);
+            var senderDataResult = await userProfileService.GetUserInfoDataById(data.SenderId, cancellationToken);
             if (!senderDataResult.IsSuccessful)
                 return ApiServiceResult<MessageData[]>.FromFailure(senderDataResult);
 
             var sender = senderDataResult.ResultData;
 
-            var uploadedItemResult = await GetUploadedItemByIds(data.UploadedItemIds, cancellationToken);
-            if (!uploadedItemResult.IsSuccessful)
-                return ApiServiceResult<MessageData[]>.FromFailure(uploadedItemResult);
+            var fileItemsResult = await fileService.GetFileItemsAsync(data.UploadedItemIds, cancellationToken);
+            if (!fileItemsResult.IsSuccessful)
+                return ApiServiceResult<MessageData[]>.FromFailure(fileItemsResult);
 
-            var uploadedItems = uploadedItemResult.ResultData;
+            var fileItems = fileItemsResult.ResultData;
 
             QuoteMessageData? quoteMessage = null;
             if (data.QuoteMessageId is not null)
@@ -215,7 +204,7 @@ public class ConversationQueryService : IConversationQueryService
                 Content = data.Content,
                 Sender = sender,
                 ReplyMessages = replyMessages.ResultData,
-                Attachments = uploadedItems,
+                Attachments = fileItems,
                 QuoteMessage = quoteMessage,
                 CreatedAt = data.CreatedAt,
                 UpdatedAt = data.UpdatedAt,
@@ -241,17 +230,17 @@ public class ConversationQueryService : IConversationQueryService
 
         foreach (var data in replyMessageData)
         {
-            var senderDataResult = await GetSenderDataById(data.SenderId, cancellationToken);
+            var senderDataResult = await userProfileService.GetUserInfoDataById(data.SenderId, cancellationToken);
             if (!senderDataResult.IsSuccessful)
                 return ApiServiceResult<ReplyMessageData[]>.FromFailure(senderDataResult);
 
             var sender = senderDataResult.ResultData;
 
-            var uploadedItemResult = await GetUploadedItemByIds(data.UploadedItemIds, cancellationToken);
-            if (!uploadedItemResult.IsSuccessful)
-                return ApiServiceResult<ReplyMessageData[]>.FromFailure(uploadedItemResult);
+            var fileItemsResult = await fileService.GetFileItemsAsync(data.UploadedItemIds, cancellationToken);
+            if (!fileItemsResult.IsSuccessful)
+                return ApiServiceResult<ReplyMessageData[]>.FromFailure(fileItemsResult);
 
-            var uploadedItems = uploadedItemResult.ResultData;
+            var fileItems = fileItemsResult.ResultData;
 
             QuoteMessageData? quoteMessage = null;
             if (data.QuoteMessageId is not null)
@@ -269,7 +258,7 @@ public class ConversationQueryService : IConversationQueryService
                 IsUnread = data.IsUnread,
                 Content = data.Content,
                 Sender = sender,
-                UploadedItems = uploadedItems,
+                FileItems = fileItems,
                 QuoteMessage = quoteMessage,
                 CreatedAt = data.CreatedAt,
                 UpdatedAt = data.UpdatedAt,
@@ -300,14 +289,14 @@ public class ConversationQueryService : IConversationQueryService
             return ApiServiceSimpleResult<QuoteMessageData>.FromFailure(messagesResult);
         }
 
-        var senderDataResult = await GetSenderDataById(messagesResult.ResultData.SenderId, cancellationToken);
+        var senderDataResult = await userProfileService.GetUserInfoDataById(messagesResult.ResultData.SenderId, cancellationToken);
         if (!senderDataResult.IsSuccessful)
             return ApiServiceSimpleResult<QuoteMessageData>.FromFailure(senderDataResult);
 
         var sender = senderDataResult.ResultData;
 
-        var uploadedItemResult = await GetUploadedItemByIds(messagesResult.ResultData.UploadedItemIds, cancellationToken);
-        if (!uploadedItemResult.IsSuccessful)
+        var fileItemsResult = await fileService.GetFileItemsAsync(messagesResult.ResultData.UploadedItemIds, cancellationToken);
+        if (!fileItemsResult.IsSuccessful)
             return ApiServiceSimpleResult<QuoteMessageData>.FromFailure(senderDataResult);
 
         var data = new QuoteMessageData()
@@ -315,7 +304,7 @@ public class ConversationQueryService : IConversationQueryService
             MessageId = messagesResult.ResultData.Id,
             Content = messagesResult.ResultData.Content,
             Sender = sender,
-            UploadedItems = uploadedItemResult.ResultData,
+            FileItems = fileItemsResult.ResultData,
             CreatedAt = messagesResult.ResultData.CreatedAt,
             UpdatedAt = messagesResult.ResultData.UpdatedAt,
         };
@@ -324,55 +313,6 @@ public class ConversationQueryService : IConversationQueryService
         {
             IsSuccessful = true,
             ResultData = data
-        };
-    }
-
-    public async Task<ApiServiceResult<MessageSenderData>> GetSenderDataById(Guid senderId, CancellationToken cancellationToken = default)
-    {
-        var profileResult = await profileService.GetUserProfileAsync(senderId, cancellationToken);
-        if (!profileResult.IsSuccessful)
-            return ApiServiceResult<MessageSenderData>.FromFailure(profileResult);
-
-        UploadedItemData? avatarItem = null;
-        if (profileResult.ResultData.AvatarItemId is not null)
-        {
-            var avatarItemResult = await fileService.GetFileItemAsync(profileResult.ResultData.AvatarItemId.Value, cancellationToken);
-            if (!avatarItemResult.IsSuccessful)
-                return ApiServiceResult<MessageSenderData>.FromFailure(profileResult);
-
-            avatarItem = new UploadedItemData() { Id = avatarItemResult.ResultData.Id, Uri = avatarItemResult.ResultData.RemoteUrl };
-        }
-
-        var sender = new MessageSenderData()
-        {
-            UserId = profileResult.ResultData.UserId,
-            Name = profileResult.ResultData.DisplayName,
-            Avatar = avatarItem,
-        };
-
-        return new ApiServiceResult<MessageSenderData>()
-        {
-            IsSuccessful = true,
-            IsServerError = false,
-            ResultData = sender,
-        };
-    }
-
-    public async Task<ApiServiceResult<UploadedItemData[]>> GetUploadedItemByIds(Guid[] fileIds, CancellationToken cancellationToken = default)
-    {
-        var uploadedItemResult = await fileService.GetFileItemsAsync(fileIds, cancellationToken);
-        if (!uploadedItemResult.IsSuccessful)
-            return ApiServiceResult<UploadedItemData[]>.FromFailure(uploadedItemResult);
-
-        var uploadedItems = uploadedItemResult.ResultData.Select(x =>
-        {
-            return new UploadedItemData() { Id = x.Id, Uri = x.RemoteUrl };
-        }).ToArray();
-
-        return new ApiServiceResult<UploadedItemData[]>()
-        {
-            IsSuccessful = true,
-            ResultData = uploadedItems,
         };
     }
 }
