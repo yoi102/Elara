@@ -1,11 +1,6 @@
-﻿namespace ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest.Responses;
+﻿using Frontend.Shared;
 
-public enum RequestStatus
-{
-    Pending,
-    Accepted,
-    Rejected
-}
+namespace ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest.Responses;
 
 public record ContactRequestsResponse : ApiResponse<ContactRequestData[]>;
 

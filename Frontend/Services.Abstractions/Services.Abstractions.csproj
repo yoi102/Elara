@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiClients.Abstractions\ApiClients.Abstractions.csproj" />
+    <ProjectReference Include="..\Frontend.Shared\Frontend.Shared.csproj" />
   </ItemGroup>
 
 </Project>

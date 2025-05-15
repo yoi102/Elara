@@ -12,4 +12,8 @@
     <Folder Include="UserApiClient\Responses\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Frontend.Shared\Frontend.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
