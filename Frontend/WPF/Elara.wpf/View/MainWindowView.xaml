@@ -69,7 +69,7 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="75" />
+                    <ColumnDefinition Width="65" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <md:ColorZone HorizontalAlignment="Stretch"
@@ -79,6 +79,7 @@
                               Background="{DynamicResource MahApps.Brushes.WindowTitle}">
                     <StackPanel>
                         <RadioButton Width="50"
+                                     HorizontalAlignment="Center"
                                      Height="50"
                                      Margin="0,50,0,0"
                                      x:Name="ChatButton"
@@ -105,7 +106,8 @@
                             </i:Interaction.Triggers>
                         </RadioButton>
 
-                        <RadioButton Width="50"
+                        <RadioButton HorizontalAlignment="Center"
+                                     Width="50"
                                      Height="50"
                                      Margin="0,20,0,0"
                                      x:Name="ContactButton"
@@ -134,7 +136,7 @@
                     </StackPanel>
                 </md:ColorZone>
                 <md:DialogHost Grid.Column="1"
-                               Identifier="{x:Static identifiers:DialogHostIdentifiers.MainContentControl}">
+                               Identifier="{x:Static identifiers:DialogHostIdentifiers.MainShellControl}">
                     <ContentControl />
                 </md:DialogHost>
             </Grid>

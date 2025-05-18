@@ -43,7 +43,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void ChangeShellViewModel(object shellViewModel)
     {
-        using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.MainContentControl);
+        using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.MainShellControl);
 
         CurrentShellViewModel = shellViewModel;
         //刷新数据？
