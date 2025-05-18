@@ -20,7 +20,7 @@ public class GroupConversationRequest : IGroupConversationRequest
         this.conversationService = conversationService;
     }
 
-    public async Task<ApiServiceResult<GroupConversationRequestData[]>> GetCurrentUserConversationRequests()
+    public async Task<ApiServiceResult<GroupConversationRequestData[]>> GetCurrentUserConversationRequestsAsync()
     {
         var conversationRequestResult = await chatConversationRequestService.GetConversationRequestsAsync();
 
@@ -55,6 +55,40 @@ public class GroupConversationRequest : IGroupConversationRequest
             IsSuccessful = true,
             IsServerError = false,
             ResultData = conversationRequests.ToArray(),
+        };
+    }
+
+    public async Task<ApiServiceResult<GroupConversationRequestData>> GetCurrentUserConversationRequestsAsync(Guid id)
+    {
+        var conversationRequestResult = await chatConversationRequestService.FindByIdAsync(id);
+
+        if (!conversationRequestResult.IsSuccessful)
+            return ApiServiceResult<GroupConversationRequestData>.FromFailure(conversationRequestResult);
+        var data = conversationRequestResult.ResultData;
+        var senderInfoResult = await userProfileService.GetUserInfoDataById(data.SenderId);
+
+        if (!senderInfoResult.IsSuccessful)
+            return ApiServiceResult<GroupConversationRequestData>.FromFailure(senderInfoResult);
+
+        var conversationDataResult = await conversationService.FindByIdAsync(data.ConversationId);
+        if (!conversationDataResult.IsSuccessful)
+            return ApiServiceResult<GroupConversationRequestData>.FromFailure(conversationDataResult);
+
+        var conversationRequest = new GroupConversationRequestData()
+        {
+            Id = data.Id,
+            Sender = senderInfoResult.ResultData,
+            ConversationName = conversationDataResult.ResultData.Name,
+            Role = data.Role,
+            CreatedAt = data.CreatedAt,
+            UpdatedAt = data.UpdatedAt,
+        };
+
+        return new ApiServiceResult<GroupConversationRequestData>()
+        {
+            IsSuccessful = true,
+            IsServerError = false,
+            ResultData = conversationRequest
         };
     }
 }

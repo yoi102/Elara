@@ -20,13 +20,15 @@ public partial class MainWindowViewModel : ObservableObject
         chatShellViewModel = serviceProvider.GetService<ChatShellViewModel>()!;
         contactShellViewModel = serviceProvider.GetService<ContactShellViewModel>()!;
     }
+
     [ObservableProperty]
     private ChatShellViewModel chatShellViewModel;
 
     [ObservableProperty]
     private ContactShellViewModel contactShellViewModel;
 
-
+    [ObservableProperty]
+    private object? currentShellViewModel;
 
     public async Task InitializeAsync()
     {
@@ -34,27 +36,16 @@ public partial class MainWindowViewModel : ObservableObject
         await ChatShellViewModel.InitializeAsync();
         await ContactShellViewModel.InitializeAsync();
 
-
-
-
-
-
-
-
-
+        CurrentShellViewModel = ChatShellViewModel;
+        CurrentShellViewModel = ContactShellViewModel;
     }
 
-
-
-
     [RelayCommand]
-    private async Task TestAsync()
+    private void ChangeShellViewModel(object shellViewModel)
     {
-        //强制退到登录界面
-        //throw new ForceLogoutException();
+        using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.MainContentControl);
 
-        //Test
-        await InitializeAsync();
-        await Task.CompletedTask;
+        CurrentShellViewModel = shellViewModel;
+        //刷新数据？
     }
 }

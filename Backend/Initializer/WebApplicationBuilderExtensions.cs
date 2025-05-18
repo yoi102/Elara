@@ -148,7 +148,7 @@ public static class WebApplicationBuilderExtensions
     private static void ReadAndSetHostBuilderConfiguration(WebApplicationBuilder builder)
     {
         string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-        string settingsFullPath = Path.Combine(programFilesPath, "Elara\\appsettings.json");
+        string settingsFullPath = Path.Combine(programFilesPath, "Elara\\common.appsettings.json");
         builder.Configuration.AddJsonFile(settingsFullPath);
 
         var dbFileName = builder.Configuration.GetValue<string>("DefaultDB:ConnectionStrings");

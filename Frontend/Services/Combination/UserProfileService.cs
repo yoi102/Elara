@@ -38,6 +38,8 @@ public class UserProfileService : IUserProfileService
             UserId = profileResult.ResultData.UserId,
             DisplayName = profileResult.ResultData.DisplayName,
             Avatar = avatarItem,
+            CreatedAt = profileResult.ResultData.CreatedAt,
+            UpdatedAt = profileResult.ResultData.UpdatedAt,
         };
 
         return new ApiServiceResult<UserInfoData>()

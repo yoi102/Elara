@@ -9,6 +9,10 @@ builder.ConfigureCommonServices(new InitializerOptions
     EventBusQueueName = "FileService.WebAPI",
     LogFileRelativePath = "FileService/log_.txt"
 });
+string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+string settingsFullPath = Path.Combine(programFilesPath, "Elara\\fileservice.appsettings.json");
+builder.Configuration.AddJsonFile(settingsFullPath);
+
 builder.Services.AddOpenApi();
 builder.Services.AddHttpContextAccessor();
 

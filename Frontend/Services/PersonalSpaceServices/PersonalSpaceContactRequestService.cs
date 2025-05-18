@@ -3,6 +3,7 @@ using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions.PersonalSpaceServices;
 using Services.Abstractions.Results;
+using System.Threading;
 
 namespace Services.PersonalSpaceServices;
 
@@ -44,6 +45,45 @@ internal class PersonalSpaceContactRequestService : IPersonalSpaceContactRequest
                 return new ApiServiceResult()
                 {
                     IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+            throw new ApiResponseException();
+        }
+    }
+
+    public async Task<ApiServiceResult<ContactRequestData>> GetContactRequestByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await personalSpaceContactRequestApiClient.GetContactRequestByIdAsync(id, cancellationToken);
+
+            if (!response.IsSuccessful)
+                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+
+            return new ApiServiceResult<ContactRequestData>()
+            {
+                IsSuccessful = true,
+                ResultData = response.ResponseData
+            };
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
+            {
+                return new ApiServiceResult<ContactRequestData>()
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = ex.Message,
+                    IsServerError = true
+                };
+            }
+            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return new ApiServiceResult<ContactRequestData>()
+                {
+                    IsSuccessful = true,
                     ErrorMessage = ex.Message,
                     IsServerError = true
                 };

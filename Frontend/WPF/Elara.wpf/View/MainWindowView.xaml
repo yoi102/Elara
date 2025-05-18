@@ -10,6 +10,8 @@
                  xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                  xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel;assembly=Elara.ViewModel"
                  xmlns:yr="https://github.com/yoi102/xaml/controls"
+                 xmlns:cv="clr-namespace:Elara.wpf.Converters"
+                 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                  Name="window"
                  Title="Elara"
                  Width="1100"
@@ -30,8 +32,7 @@
                 <StackPanel>
                     <Button Content="Hello World" />
                     <Button Content="Nice Popup" />
-                    <Button Command="{Binding TestCommand}"
-                            Content="Goodbye" />
+                    <Button Content="Goodbye" />
                 </StackPanel>
             </md:PopupBox>
 
@@ -74,23 +75,62 @@
                 <md:ColorZone HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               md:ElevationAssist.Elevation="Dp5"
-                              Mode="Standard">
+                              Mode="Standard"
+                              Background="{DynamicResource MahApps.Brushes.WindowTitle}">
                     <StackPanel>
                         <RadioButton Width="50"
                                      Height="50"
                                      Margin="0,50,0,0"
+                                     x:Name="ChatButton"
+                                     GroupName="ChatShellViewModel"
+                                     Tag="{Binding ChatShellViewModel}"
                                      Content="{md:PackIcon Kind=Chat,
                                                            Size=40}"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
-                                     ToolTip="Chats" />
+                                     ToolTip="Chats">
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}"
+                                              Mode="OneWay">
+                                    <Binding Path="CurrentShellViewModel"
+                                             Mode="OneWay" />
+                                    <Binding Path="ChatShellViewModel"
+                                             Mode="OneWay" />
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Checked">
+                                    <i:InvokeCommandAction Command="{Binding ChangeShellViewModelCommand}"
+                                                           CommandParameter="{Binding Path=Tag,ElementName=ChatButton}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </RadioButton>
 
                         <RadioButton Width="50"
                                      Height="50"
                                      Margin="0,20,0,0"
+                                     x:Name="ContactButton"
+                                     GroupName="ContactShellViewModel"
+                                     Tag="{Binding ContactShellViewModel}"
                                      Content="{md:PackIcon Kind=AccountBox,
                                                            Size=40}"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
-                                     ToolTip="Contacts" />
+                                     ToolTip="Contacts">
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}"
+                                              Mode="OneWay">
+                                    <Binding Path="CurrentShellViewModel"
+                                             Mode="OneWay" />
+                                    <Binding Path="ContactShellViewModel"
+                                             Mode="OneWay" />
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Checked">
+                                    <i:InvokeCommandAction Command="{Binding ChangeShellViewModelCommand}"
+                                                           CommandParameter="{Binding Path=Tag,ElementName=ContactButton}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </RadioButton>
                     </StackPanel>
                 </md:ColorZone>
                 <md:DialogHost Grid.Column="1"

@@ -31,6 +31,29 @@ internal class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactReque
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
+    public async Task<ContactRequestResponse> GetContactRequestByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = new RestRequest
+        {
+            Resource = serviceUri + $"{id}",
+            Method = Method.Get
+        };
+        var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
+
+        if (!response.IsSuccessful)
+            return new ContactRequestResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+
+        if (string.IsNullOrEmpty(response.Content))
+            throw new ApiResponseException();
+
+        var data = JsonUtils.DeserializeInsensitive<ContactRequestData>(response.Content);
+
+        if (data is null)
+            throw new ApiResponseException();
+
+        return new ContactRequestResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+    }
+
     public async Task<ContactRequestsResponse> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
@@ -80,7 +103,6 @@ internal class PersonalSpaceContactRequestApiClient : IPersonalSpaceContactReque
 
         if (!response.IsSuccessful)
             return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
-
 
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }

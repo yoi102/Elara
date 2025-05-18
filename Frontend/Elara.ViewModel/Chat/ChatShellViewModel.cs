@@ -73,7 +73,7 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
         return replyMessageModel;
     }
 
-    #endregion DataToModel
+    #endregion DataToModel 应该弄到工厂上？ 晚点吧
 
     [ObservableProperty]
     private ObservableCollection<ConversationViewModel> conversations = [];

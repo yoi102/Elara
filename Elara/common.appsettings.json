@@ -7,11 +7,6 @@
       "http://localhost:8080"
     ]
   },
-  "FileService": {
-    "SMB": {
-      "WorkingDirectory": "C:/Program Files/Elara/upload"
-    }
-  },
   "Nginx": {
     "Listen": "8080",
     "ServerName": "localhost",
@@ -23,14 +18,6 @@
   "RabbitMQ": {
     "HostName": "127.0.0.1",
     "ExchangeName": "_event_bus"
-  },
-  "JWT": {
-    "Issuer": "Elara",
-    "Audience": "User",
-    "Key": "adasfwetqd3142343rdawd@!$$3321!@#$%^(*(852",
-    "ExpireSeconds": "15",
-	"RefreshTokenExpireDays":"90",
-	"ResetTokenExpireMinutes":"5"
   },
   "Serilog": {
     "MinimumLevel": {
@@ -50,14 +37,13 @@
         }
       }
     ]
+  },
+  "JWT": {
+    "Issuer": "Elara",
+    "Audience": "User",
+    "Key": "adasfwetqd3142343rdawd@!$$3321!@#$%^(*(852",
+    "ExpireSeconds": "15",
+	"RefreshTokenExpireDays":"90",
+	"ResetTokenExpireMinutes":"5"
   }
-
-
-
-
-
-
-
-
-
 }

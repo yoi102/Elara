@@ -46,4 +46,32 @@ public class ContactRequestService : IContactRequestService
             ResultData = contacts.ToArray(),
         };
     }
+
+    public async Task<ApiServiceResult<ContactRequestData>> GetUserContactRequest(Guid contactRequestId)
+    {
+        var contactsDataResult = await contactRequestService.GetContactRequestByIdAsync(contactRequestId);
+        if (!contactsDataResult.IsSuccessful)
+            return ApiServiceResult<ContactRequestData>.FromFailure(contactsDataResult);
+        var data = contactsDataResult.ResultData;
+
+        var senderInfoResult = await userProfileService.GetUserInfoDataById(data.SenderId);
+        if (!senderInfoResult.IsSuccessful)
+            return ApiServiceResult<ContactRequestData>.FromFailure(senderInfoResult);
+
+        var contact = new ContactRequestData()
+        {
+            Id = data.Id,
+            Sender = senderInfoResult.ResultData,
+            Status = data.Status,
+            CreatedAt = data.CreatedAt,
+            UpdatedAt = data.UpdatedAt,
+        };
+
+        return new ApiServiceResult<ContactRequestData>()
+        {
+            IsSuccessful = true,
+            IsServerError = false,
+            ResultData = contact,
+        };
+    }
 }

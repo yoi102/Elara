@@ -1,0 +1,7 @@
+{
+  "FileService": {
+    "SMB": {
+      "WorkingDirectory": "C:/Program Files/Elara/upload"
+    }
+  }
+}

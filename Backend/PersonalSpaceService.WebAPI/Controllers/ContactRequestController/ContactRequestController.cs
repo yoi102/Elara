@@ -64,6 +64,16 @@ public class ContactRequestController : AuthorizedUserController
         return Ok(result);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetReceivedContactRequest(ContactRequestId id)
+    {
+        var result = await repository.FindContactRequestByIdAsync(id);
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
     [HttpPatch("{id}/reject")]
     public async Task<IActionResult> RejectContactRequest(ContactRequestId id)
     {

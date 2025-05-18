@@ -28,7 +28,6 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         if (!response.IsSuccessful)
             return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
-
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
@@ -66,7 +65,6 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
 
         if (!response.IsSuccessful)
             return new ApiResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
-
 
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
