@@ -5,10 +5,19 @@ namespace Elara.ViewModel.Contact;
 
 public partial class ContactShellViewModel : ObservableObject, IHasNotificationNumber
 {
+    public ContactShellViewModel()
+    {
+
+    }
+
+
     [ObservableProperty]
     public RequestViewModel? requestViewModel;
 
-    public int? NotificationNumber => throw new NotImplementedException();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    public int? NotificationNumber => throw new NotImplementedException();
+
+
+
 
 
 

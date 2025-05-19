@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Commons\Commons.csproj" />
+    <ProjectReference Include="..\EventBus.SignalR.Client\EventBus.SignalR.Client.csproj" />
     <ProjectReference Include="..\InteractionServices.Abstractions\InteractionServices.Abstractions.csproj" />
     <ProjectReference Include="..\Frontend.Shared\Frontend.Shared.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />

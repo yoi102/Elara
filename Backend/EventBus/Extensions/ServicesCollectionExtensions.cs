@@ -75,7 +75,7 @@ public static class ServicesCollectionExtensions
                 var eventNameAttrs = type.GetCustomAttributes<EventNameAttribute>();
                 if (eventNameAttrs.Any() == false)
                 {
-                    throw new ApplicationException($"There shoule be at least one EventNameAttribute on {type}");
+                    throw new ApplicationException($"There should be at least one EventNameAttribute on {type}");
                 }
                 foreach (var eventNameAttr in eventNameAttrs)
                 {
