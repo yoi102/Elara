@@ -39,36 +39,38 @@ public class UploaderController : ControllerBase
 
     [HttpPost]
     [RequestSizeLimit(60_000_000)]
-    public async Task<ActionResult<Uri>> Upload([FromForm] UploadRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<UploadedItemResponse>> Upload([FromForm] UploadRequest request, CancellationToken cancellationToken = default)
     {
         var file = request.File;
         string fileName = file.FileName;
         using Stream stream = file.OpenReadStream();
-        var result = await domainService.UploadAsync(stream, fileName, file.ContentType, cancellationToken);
-        if (!result.isOldUploadedItem)
+        var (isOldItem, Item) = await domainService.UploadAsync(stream, fileName, file.ContentType, cancellationToken);
+        if (!isOldItem)
         {
-            dbContext.Add(result.UploadedItem);
+            dbContext.Add(Item);
         }
-        return result.UploadedItem.RemoteUrl;
+        var uploadItemResult = new UploadedItemResponse(Item.Id, Item.FileSizeInBytes, Item.Filename, Item.FileType, Item.FileSHA256Hash, Item.RemoteUrl, Item.CreatedAt);
+        return Ok(uploadItemResult);
     }
 
     [HttpPost, Route("files")]
     [RequestSizeLimit(60_000_000)]
-    public async Task<ActionResult<IList<Uri>>> PostFiles([FromForm] IEnumerable<IFormFile> files, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<IList<UploadedItemResponse>>> PostFiles([FromForm] IEnumerable<IFormFile> files, CancellationToken cancellationToken = default)
     {
-        List<Uri> uris = new();
+        List<UploadedItemResponse> uploadItemResults = new();
         foreach (var file in files)
         {
             string fileName = file.FileName;
             using Stream stream = file.OpenReadStream();
-            var result = await domainService.UploadAsync(stream, fileName, file.ContentType, cancellationToken);
-            if (!result.isOldUploadedItem)
+            var (isOldItem, Item) = await domainService.UploadAsync(stream, fileName, file.ContentType, cancellationToken);
+            if (!isOldItem)
             {
-                dbContext.Add(result.UploadedItem);
+                dbContext.Add(Item);
             }
-            uris.Add(result.UploadedItem.RemoteUrl);
+            var uploadItemResult = new UploadedItemResponse(Item.Id, Item.FileSizeInBytes, Item.Filename, Item.FileType, Item.FileSHA256Hash, Item.RemoteUrl, Item.CreatedAt);
+            uploadItemResults.Add(uploadItemResult);
         }
-        return uris;
+        return Ok(uploadItemResults);
     }
 
     [HttpGet("{fileId}")]
@@ -77,14 +79,17 @@ public class UploaderController : ControllerBase
         var file = await repository.GetFileByIdAsync(fileId);
         if (file == null)
             return NotFound();
-        return Ok(file);
+
+        var uploadItemResult = new UploadedItemResponse(file.Id, file.FileSizeInBytes, file.Filename, file.FileType, file.FileSHA256Hash, file.RemoteUrl, file.CreatedAt);
+
+        return Ok(uploadItemResult);
     }
 
     [HttpGet("batch")]
     public async Task<IActionResult> GetBatch([FromQuery] UploadedItemId[] Ids)
     {
         var file = await repository.GetFilesByIdsAsync(Ids);
-
-        return Ok(file);
+        var uploadItemResults = file.Select(x => new UploadedItemResponse(x.Id, x.FileSizeInBytes, x.Filename, x.FileType, x.FileSHA256Hash, x.RemoteUrl, x.CreatedAt)).ToArray();
+        return Ok(uploadItemResults);
     }
 }

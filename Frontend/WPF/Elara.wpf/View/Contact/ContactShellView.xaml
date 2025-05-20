@@ -33,7 +33,7 @@
                                 <ColumnDefinition Width="20" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Image Source="{Binding ,Converter={x:Static cv:StringToImageSourceConverter.Instance}}" />
+                            <Image Source="{Binding ., Converter={x:Static cv:StringToImageSourceConverter.Instance}}" />
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition />

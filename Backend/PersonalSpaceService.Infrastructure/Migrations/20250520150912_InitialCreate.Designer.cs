@@ -11,7 +11,7 @@ using PersonalSpaceService.Infrastructure;
 namespace PersonalSpaceService.Infrastructure.Migrations
 {
     [DbContext(typeof(PersonalSpaceDbContext))]
-    [Migration("20250512125331_InitialCreate")]
+    [Migration("20250520150912_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace PersonalSpaceService.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ContactId")
+                    b.Property<Guid>("ContactUserId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")

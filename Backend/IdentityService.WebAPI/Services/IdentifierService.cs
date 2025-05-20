@@ -16,17 +16,24 @@ public class IdentifierService : Identifier.IdentifierBase
         this.userRepository = userRepository;
     }
 
-    public override async Task<UserInfoReply> GetUserInfo(UserInfoRequest request, ServerCallContext context)
+    public override async Task<AccountInfoReply> GetAccountInfo(AccountInfoRequest request, ServerCallContext context)
     {
         if (!UserId.TryParse(request.Id, out var userId))
         {
-            return new UserInfoReply();
+            return new AccountInfoReply();
         }
 
         var user = await userRepository.FindByIdAsync(userId);
 
-        if (user == null) return new UserInfoReply();
+        if (user == null) return new AccountInfoReply();
 
-        return new UserInfoReply { UserName = user.UserName, Email = user.Email, PhoneNumber = user.PhoneNumber };
+        return new AccountInfoReply
+        {
+            Id = user.Id.ToString(),
+            Name = user.UserName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            CreatedAt = user.CreatedAt.ToString()
+        };
     }
 }

@@ -1,0 +1,39 @@
+﻿
+syntax = "proto3";
+
+package uploaded_item;
+
+
+service UploadedItemService {
+
+  rpc GetUploadedItem (UploadedItemRequest) returns (UploadedItemReply);
+
+  rpc GetUploadedItems (UploadedItemsRequest) returns (UploadedItemsReply);
+
+}
+
+
+message UploadedItemRequest {
+  string id = 1;
+}
+
+
+message UploadedItemReply {
+  string id = 1;
+  int64 file_size_in_bytes = 2;
+  string filename = 3;
+  string file_type = 4;
+  string file_sha256_hash = 5;
+  string url = 6;
+  string uploaded_at = 7; 
+}
+
+
+message UploadedItemsRequest {
+  repeated string ids = 1;
+}
+
+
+message UploadedItemsReply {
+  repeated UploadedItemReply items = 1;
+}

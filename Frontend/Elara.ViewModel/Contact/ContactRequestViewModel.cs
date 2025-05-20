@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Contact;
-public partial class ContactRequestViewModel: ObservableObject
+public partial class ContactRequestViewModel : ObservableObject
 {
 
     //private ObservableCollection<ContactRequestData> contactRequestData = [];

@@ -34,7 +34,7 @@ namespace PersonalSpaceService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ContactId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ContactUserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     OwnerId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Remark = table.Column<string>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),

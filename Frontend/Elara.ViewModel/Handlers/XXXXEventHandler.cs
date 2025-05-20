@@ -2,8 +2,8 @@
 
 namespace Elara.ViewModel.Handlers;
 
-[EventName("XXXXX")]
-internal class FileName : IEventHandler
+[EventName("XXXXXEvent")]
+internal class XXXXEventHandler : IEventHandler
 {
     public Task HandleAsync()
     {

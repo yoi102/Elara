@@ -5,6 +5,7 @@ using Frontend.Shared.Identifiers;
 using InteractionServices.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Abstractions;
+using Services.Abstractions.ChatServices;
 using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
 
@@ -12,27 +13,27 @@ namespace Elara.ViewModel.Chat;
 
 public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumber
 {
-    public ChatShellViewModel(IServiceProvider serviceProvider, IConversationQueryService conversationQueryService, IDialogService dialogService)
+    public ChatShellViewModel(IServiceProvider serviceProvider, IChatConversationRequestService chatConversationRequestService, IDialogService dialogService)
     {
         this.serviceProvider = serviceProvider;
-        this.conversationQueryService = conversationQueryService;
+        this.chatConversationRequestService = chatConversationRequestService;
         this.dialogService = dialogService;
     }
 
     public async Task InitializeAsync()
     {
-        var conversationsDataResult = await conversationQueryService.GetConversationsWithMessagesAsync();
-        if (!conversationsDataResult.IsSuccessful)
-        {
-            await dialogService.ShowMessageDialogAsync(conversationsDataResult.ErrorMessage, DialogHostIdentifiers.MainWindow);
-            return;
-        }
-        foreach (var data in conversationsDataResult.ResultData)
-        {
-            ConversationViewModel conversationModel = DataToModel(data);
+        //var conversationsDataResult = await chatConversationRequestService.GetConversationsWithMessagesAsync();
+        //if (!conversationsDataResult.IsSuccessful)
+        //{
+        //    await dialogService.ShowMessageDialogAsync(conversationsDataResult.ErrorMessage, DialogHostIdentifiers.MainWindow);
+        //    return;
+        //}
+        //foreach (var data in conversationsDataResult.ResultData)
+        //{
+        //    ConversationViewModel conversationModel = DataToModel(data);
 
-            Conversations.Add(conversationModel);
-        }
+        //    Conversations.Add(conversationModel);
+        //}
     }
 
     #region DataToModel 应该弄到工厂上？ 晚点吧
@@ -82,7 +83,7 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
     private ConversationViewModel? selectedConversation;
 
     private readonly IServiceProvider serviceProvider;
-    private readonly IConversationQueryService conversationQueryService;
+    private readonly IChatConversationRequestService chatConversationRequestService;
     private readonly IDialogService dialogService;
 
     public int? NotificationNumber

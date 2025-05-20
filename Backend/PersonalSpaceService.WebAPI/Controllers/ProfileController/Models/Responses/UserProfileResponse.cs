@@ -1,28 +1,28 @@
-﻿namespace ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
+﻿using DomainCommons.EntityStronglyIds;
 
-public record UserProfileResponse : ApiResponse<UserProfileData>;
+namespace PersonalSpaceService.WebAPI.Controllers.ProfileController.Models.Responses;
 
-public record UserProfileData
+public record UserProfileResponse
 {
-    public required Guid Id { get; set; }
-    public required AccountInfoData AccountInfo { get; set; }
+    public required ProfileId Id { get; set; }
+    public required AccountInfoResponse AccountInfo { get; set; }
     public required string DisplayName { get; set; }
-    public required UploadedItemData? Avatar { get; set; }
+    public required UploadedItemResponse? Avatar { get; set; }
     public required DateTimeOffset CreatedAt { get; set; }
 }
 
-public record AccountInfoData
+public record AccountInfoResponse
 {
-    public required Guid Id { get; set; }
+    public required UserId Id { get; set; }
     public required string Name { get; set; }
     public required string? Email { get; set; }
     public required string? PhoneNumber { get; set; }
     public required DateTimeOffset CreatedAt { get; set; }
 }
 
-public record UploadedItemData
+public record UploadedItemResponse
 {
-    public required Guid Id { get; set; }
+    public required UploadedItemId Id { get; set; }
     public required long FileSizeInBytes { get; set; }
     public required string Filename { get; set; }
     public required string FileType { get; set; }

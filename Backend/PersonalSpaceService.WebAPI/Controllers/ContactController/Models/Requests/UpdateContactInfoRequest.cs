@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace PersonalSpaceService.WebAPI.Controllers.ContactController.Requests;
+namespace PersonalSpaceService.WebAPI.Controllers.ContactController.Models.Requests;
 
 
 public record class UpdateContactInfoRequest(string Remark);

@@ -8,7 +8,7 @@ public record Contact : AggregateRootEntity<ContactId>
 {
     public Contact(UserId ownerId, UserId contactId, string remark)
     {
-        ContactId = contactId;
+        ContactUserId = contactId;
         Id = DomainCommons.EntityStronglyIds.ContactId.New();
         OwnerId = ownerId;
         Remark = remark;
@@ -18,7 +18,7 @@ public record Contact : AggregateRootEntity<ContactId>
     {
     }
 
-    public UserId ContactId { get; private set; }
+    public UserId ContactUserId { get; private set; }
     public override ContactId Id { get; protected set; }
     public UserId OwnerId { get; private set; }
     public string Remark { get; private set; } = null!;

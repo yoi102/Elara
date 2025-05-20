@@ -15,7 +15,5 @@ public record FileItemData
 
     public required string FileSHA256Hash { get; init; }
 
-    public required Uri RemoteUrl { get; init; }
-
-    public required Uri BackupUrl { get; init; }
+    public required Uri Url { get; init; }
 }

@@ -22,7 +22,7 @@ namespace PersonalSpaceService.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ContactId")
+                    b.Property<Guid>("ContactUserId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")

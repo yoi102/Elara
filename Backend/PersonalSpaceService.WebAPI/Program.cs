@@ -1,6 +1,7 @@
 ﻿using Identity;
 using Initializer;
 using Scalar.AspNetCore;
+using UploadedItem;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +19,14 @@ builder.Services.AddDataProtection();
 builder.Services.AddGrpc();
 builder.Services.AddGrpcClient<Identifier.IdentifierClient>("IdentifierClient", options =>
 {
-    options.Address = new Uri("https://localhost:8080/Elara/IdentityService");//Nginx
+    options.Address = new Uri("https://localhost:8080/Elara/IdentityService");
 });
+
+builder.Services.AddGrpcClient<UploadedItemService.UploadedItemServiceClient>("UploadedItemServiceClient", options =>
+{
+    options.Address = new Uri("https://localhost:8080/Elara/FileService");
+});
+
 
 var app = builder.Build();
 
