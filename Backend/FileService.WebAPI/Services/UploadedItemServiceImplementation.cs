@@ -5,12 +5,12 @@ using UploadedItem;
 
 namespace FileService.WebAPI.Services;
 
-public class UploadedItemService : UploadedItem.UploadedItemService.UploadedItemServiceBase
+public class UploadedItemServiceImplementation : UploadedItemService.UploadedItemServiceBase
 {
-    private readonly ILogger<UploadedItemService> logger;
+    private readonly ILogger<UploadedItemServiceImplementation> logger;
     private readonly IFileServiceRepository fileServiceRepository;
 
-    public UploadedItemService(ILogger<UploadedItemService> logger, IFileServiceRepository fileServiceRepository)
+    public UploadedItemServiceImplementation(ILogger<UploadedItemServiceImplementation> logger, IFileServiceRepository fileServiceRepository)
     {
         this.logger = logger;
         this.fileServiceRepository = fileServiceRepository;

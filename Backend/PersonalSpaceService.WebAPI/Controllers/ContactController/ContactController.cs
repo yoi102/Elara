@@ -44,7 +44,7 @@ public class ContactController : AuthorizedUserController
             var avatar = default(UploadedItemResponse);
             if (profile.AvatarItemId is not null)
             {
-                var uploadedItemReply = uploadedItemServiceClient.GetUploadedItem(new UploadedItemRequest() { Id = profile.AvatarItemId.ToString() });
+                var uploadedItemReply = await uploadedItemServiceClient.GetUploadedItemAsync(new UploadedItemRequest() { Id = profile.AvatarItemId.ToString() });
 
                 if (uploadedItemReply.Id == profile.AvatarItemId.ToString())
                 {
@@ -80,7 +80,7 @@ public class ContactController : AuthorizedUserController
     }
 
     [HttpDelete("{contactId}")]
-    public async Task<ActionResult> DeleteContact([RequiredGuidStronglyId] ContactId contactId)
+    public async Task<IActionResult> DeleteContact([RequiredGuidStronglyId] ContactId contactId)
     {
         await repository.DeleteContactAsync(contactId);
 
@@ -101,7 +101,7 @@ public class ContactController : AuthorizedUserController
         var avatar = default(UploadedItemResponse);
         if (profile.AvatarItemId is not null)
         {
-            var uploadedItemReply = uploadedItemServiceClient.GetUploadedItem(new UploadedItemRequest() { Id = profile.AvatarItemId.ToString() });
+            var uploadedItemReply = await uploadedItemServiceClient.GetUploadedItemAsync(new UploadedItemRequest() { Id = profile.AvatarItemId.ToString() });
 
             if (uploadedItemReply.Id == profile.AvatarItemId.ToString())
             {
@@ -135,7 +135,7 @@ public class ContactController : AuthorizedUserController
     }
 
     [HttpPatch("{contactId}")]
-    public async Task<ActionResult<Contact>> UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
+    public async Task<IActionResult> UpdateContactInfo([RequiredGuidStronglyId] ContactId contactId, UpdateContactInfoRequest request)
     {
         var contact = await repository.UpdateContactInfoAsync(contactId, request.Remark);
         if (contact is null)

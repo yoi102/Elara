@@ -50,14 +50,7 @@ public class ProfileController : AuthorizedUserController
     [HttpGet]
     public async Task<IActionResult> GetCurrentUserProfile()
     {
-        var profile = await repository.FindProfileByUserIdAsync(GetCurrentUserId());
-
-        if (profile is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(profile);
+        return await GetUserProfile(GetCurrentUserId());
     }
 
     [HttpGet("{userId}")]
@@ -85,7 +78,7 @@ public class ProfileController : AuthorizedUserController
         var avatar = default(UploadedItemResponse);
         if (profile.AvatarItemId is not null)
         {
-            var uploadedItemReply = uploadedItemServiceClient.GetUploadedItem(new UploadedItemRequest() { Id = profile.AvatarItemId.ToString() });
+            var uploadedItemReply = await uploadedItemServiceClient.GetUploadedItemAsync(new UploadedItemRequest() { Id = profile.AvatarItemId.ToString() });
 
             if (uploadedItemReply.Id == profile.AvatarItemId.ToString())
             {

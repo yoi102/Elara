@@ -1,11 +1,11 @@
 ﻿using ASPNETCore;
 using ChatService.Domain;
 using ChatService.Infrastructure;
-using ChatService.WebAPI.Controllers.ParticipantController.Requests;
+using ChatService.WebAPI.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ChatService.WebAPI.Controllers.ParticipantController;
+namespace ChatService.WebAPI.Controllers;
 
 [Authorize]
 [ApiController]
@@ -31,8 +31,6 @@ public class ParticipantController : AuthorizedUserController
     [HttpPatch()]
     public async Task<IActionResult> UpdateParticipantRole(UpdateParticipantRoleRequest request)
     {
-        //todo:权限.....
-
         var participant = await repository.FindParticipantByIdAsync(request.Id);
 
         if (participant is null)
@@ -40,6 +38,6 @@ public class ParticipantController : AuthorizedUserController
 
         participant.ChangeRole(request.Role);
 
-        return Ok(participant);
+        return Ok();
     }
 }

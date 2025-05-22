@@ -5,12 +5,12 @@ using IdentityService.Infrastructure;
 
 namespace IdentityService.WebAPI.Services;
 
-public class IdentifierService : Identifier.IdentifierBase
+public class IdentifierServiceImplementation : Identifier.IdentifierBase
 {
-    private readonly ILogger<IdentifierService> logger;
+    private readonly ILogger<IdentifierServiceImplementation> logger;
     private readonly UserRepository userRepository;
 
-    public IdentifierService(ILogger<IdentifierService> logger, UserRepository userRepository)
+    public IdentifierServiceImplementation(ILogger<IdentifierServiceImplementation> logger, UserRepository userRepository)
     {
         this.logger = logger;
         this.userRepository = userRepository;

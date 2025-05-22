@@ -1,0 +1,23 @@
+﻿
+syntax = "proto3";
+
+package profile;
+
+
+service ProfileService {
+
+  rpc GetUserProfile (GetUserProfileRequest) returns (GetUserProfileReply);
+
+}
+
+
+message GetUserProfileRequest {
+  string user_id = 1;
+}
+
+
+message GetUserProfileReply {
+  string user_id = 1;
+  string avatar_id = 2;
+  string display_name = 3;
+}

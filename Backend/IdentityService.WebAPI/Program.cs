@@ -9,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureCommonServices(new InitializerOptions
 {
-    EventBusQueueName = "IdentifierService.WebAPI",
-    LogFileRelativePath = "IdentifierService//log_.txt"
+    EventBusQueueName = "IdentifierServiceImplementation.WebAPI",
+    LogFileRelativePath = "IdentifierServiceImplementation//log_.txt"
 });
 
 builder.Services.AddDataProtection();
@@ -36,7 +36,7 @@ idBuilder.AddEntityFrameworkStores<IdentityDbContext>()
 
 var app = builder.Build();
 
-app.MapGrpcService<IdentityService.WebAPI.Services.IdentifierService>();
+app.MapGrpcService<IdentityService.WebAPI.Services.IdentifierServiceImplementation>();
 
 if (app.Environment.IsDevelopment())
 {

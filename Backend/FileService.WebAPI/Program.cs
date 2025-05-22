@@ -28,7 +28,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
-app.MapGrpcService<UploadedItemService>();
+app.MapGrpcService<UploadedItemServiceImplementation>();
 
 app.UseStaticFiles();
 

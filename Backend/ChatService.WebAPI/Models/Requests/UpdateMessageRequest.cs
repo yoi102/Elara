@@ -1,7 +1,7 @@
 ﻿using DomainCommons.EntityStronglyIds;
 using FluentValidation;
 
-namespace ChatService.WebAPI.Controllers.MessageController.Requests;
+namespace ChatService.WebAPI.Models.Requests;
 
 public record UpdateMessageRequest(MessageId MessageId, string Content, UploadedItemId[] MessageAttachmentIds, MessageId? QuoteMessage);
 

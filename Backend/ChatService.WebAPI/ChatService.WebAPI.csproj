@@ -7,11 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Protobuf Include="..\ASPNETCore\Protos\uploaded_item.proto" GrpcServices="Client" Link="Protos\uploaded_item.proto" />
+    <Protobuf Include="..\ASPNETCore\Protos\profile.proto" GrpcServices="Client" Link="Protos\profile.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ChatService.Infrastructure\ChatService.Infrastructure.csproj" />
     <ProjectReference Include="..\Initializer\Initializer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.Tools" Version="2.72.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
       <PrivateAssets>all</PrivateAssets>

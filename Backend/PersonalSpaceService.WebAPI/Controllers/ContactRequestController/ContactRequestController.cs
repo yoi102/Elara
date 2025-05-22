@@ -4,6 +4,7 @@ using DomainCommons.Enums;
 using Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PersonalSpaceService.Domain.Entities;
 using PersonalSpaceService.Domain.Interfaces;
 using PersonalSpaceService.WebAPI.Controllers.ContactRequestController.Models.Responses;
 using PersonalSpaceService.WebAPI.Controllers.ProfileController.Models.Responses;
@@ -79,7 +80,7 @@ public class ContactRequestController : AuthorizedUserController
             var avatar = default(UploadedItemResponse);
             if (senderProfile.AvatarItemId is not null)
             {
-                var uploadedItemReply = uploadedItemServiceClient.GetUploadedItem(new UploadedItemRequest() { Id = senderProfile.AvatarItemId.ToString() });
+                var uploadedItemReply = await uploadedItemServiceClient.GetUploadedItemAsync(new UploadedItemRequest() { Id = senderProfile.AvatarItemId.ToString() });
 
                 if (uploadedItemReply.Id == senderProfile.AvatarItemId.ToString())
                 {
@@ -129,7 +130,7 @@ public class ContactRequestController : AuthorizedUserController
         var avatar = default(UploadedItemResponse);
         if (senderProfile.AvatarItemId is not null)
         {
-            var uploadedItemReply = uploadedItemServiceClient.GetUploadedItem(new UploadedItemRequest() { Id = senderProfile.AvatarItemId.ToString() });
+            var uploadedItemReply = await uploadedItemServiceClient.GetUploadedItemAsync(new UploadedItemRequest() { Id = senderProfile.AvatarItemId.ToString() });
 
             if (uploadedItemReply.Id == senderProfile.AvatarItemId.ToString())
             {
@@ -180,13 +181,55 @@ public class ContactRequestController : AuthorizedUserController
     [HttpPost("{receiverId}")]
     public async Task<IActionResult> SendContactRequest(UserId receiverId)
     {
+   
+
         var receiver = new AccountInfoRequest() { Id = receiverId.ToString() };
         var receiverInfo = await identifierClient.GetAccountInfoAsync(receiver);
         if (receiverInfo?.Name is null)
         {
             return NotFound();
         }
-        var request = await repository.CreateContactRequestAsync(GetCurrentUserId(), receiverId);
-        return Ok();
+        var senderProfile = await repository.FindProfileByUserIdAsync(GetCurrentUserId());
+        if (senderProfile is null)
+            return NotFound();
+
+        var contactRequest = await repository.CreateContactRequestAsync(GetCurrentUserId(), receiverId);
+
+        var avatar = default(UploadedItemResponse);
+        if (senderProfile.AvatarItemId is not null)
+        {
+            var uploadedItemReply = await uploadedItemServiceClient.GetUploadedItemAsync(new UploadedItemRequest() { Id = senderProfile.AvatarItemId.ToString() });
+
+            if (uploadedItemReply.Id == senderProfile.AvatarItemId.ToString())
+            {
+                avatar = new UploadedItemResponse()
+                {
+                    Id = UploadedItemId.Parse(uploadedItemReply.Id),
+                    Filename = uploadedItemReply.Filename,
+                    FileType = uploadedItemReply.FileType,
+                    FileSizeInBytes = uploadedItemReply.FileSizeInBytes,
+                    FileSHA256Hash = uploadedItemReply.FileSha256Hash,
+                    Url = new Uri(uploadedItemReply.Url),
+                    UploadedAt = DateTimeOffset.Parse(uploadedItemReply.UploadedAt)
+                };
+            }
+        }
+
+        var senderInfo = new SenderUserInfoResponse()
+        {
+            UserId = senderProfile.UserId,
+            DisplayName = senderProfile.DisplayName,
+            Avatar = avatar
+        };
+        var response = new ContactRequestResponse()
+        {
+            Id = contactRequest.Id,
+            SenderInfo = senderInfo,
+            CreatedAt = contactRequest.CreatedAt,
+            Status = contactRequest.Status,
+        };
+
+
+        return Created(nameof(GetReceivedContactRequest), response);
     }
 }

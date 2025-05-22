@@ -1,7 +1,7 @@
 ﻿using DomainCommons.EntityStronglyIds;
 using FluentValidation;
 
-namespace ChatService.WebAPI.Controllers.ConversationRequestController.Requests;
+namespace ChatService.WebAPI.Models.Requests;
 
 public record ConversationRequestRequest(UserId ReceiverId, ConversationId ConversationId, string Role);
 
