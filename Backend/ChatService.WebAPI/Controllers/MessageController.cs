@@ -135,6 +135,6 @@ public class MessageController : AuthorizedUserController
         if (message is null)
             return NotFound();
 
-        return Ok(message);
+        return Ok();
     }
 }

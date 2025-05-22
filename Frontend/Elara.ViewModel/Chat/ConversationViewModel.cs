@@ -1,9 +1,8 @@
-﻿using ApiClients.Abstractions.FileApiClient.Responses;
+﻿using ApiClients.Abstractions.Models.Responses;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
 using Services.Abstractions.ChatServices;
-using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
@@ -27,7 +26,7 @@ public partial class ConversationViewModel : ObservableObject, IHasNotificationN
 
 
     [ObservableProperty]
-    private ConversationData? conversationData;
+    private ConversationDetailsData? conversationData;
 
     public int? NotificationNumber
     {
@@ -48,7 +47,7 @@ public partial class ConversationViewModel : ObservableObject, IHasNotificationN
     [ObservableProperty]
     private string drafts = string.Empty;
     [ObservableProperty]
-    private ObservableCollection<FileItemData> draftsAttachments = [];
+    private ObservableCollection<UploadedItemData> draftsAttachments = [];
     private readonly IChatMessageService chatMessageService;
 
     [RelayCommand]

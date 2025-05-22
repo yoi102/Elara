@@ -9,5 +9,5 @@ public record ConversationInfoResponse
     public required bool IsGroup { get; set; }
     //public required string? Avatar { get; set; }
     public required DateTimeOffset CreatedAt { get; set; }
-
 }
+

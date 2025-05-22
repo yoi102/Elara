@@ -1,6 +1,6 @@
-﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
-using ApiClients.Abstractions.ChatApiClient.ConversationRequest.Responses;
+﻿using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -31,7 +31,7 @@ internal class ChatConversationRequestApiClient : IChatConversationRequestApiCli
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<ConversationRequestResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<ConversationRequestData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -41,7 +41,7 @@ internal class ChatConversationRequestApiClient : IChatConversationRequestApiCli
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new ConversationRequestResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<ConversationRequestData> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -51,10 +51,10 @@ internal class ChatConversationRequestApiClient : IChatConversationRequestApiCli
         if (data is null)
             throw new ApiResponseException();
 
-        return new ConversationRequestResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<ConversationRequestData>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<ConversationRequestsResponse> GetConversationRequestsAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<ConversationRequestData[]>> GetConversationRequestsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -64,7 +64,7 @@ internal class ChatConversationRequestApiClient : IChatConversationRequestApiCli
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new ConversationRequestsResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<ConversationRequestData[]> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -74,7 +74,7 @@ internal class ChatConversationRequestApiClient : IChatConversationRequestApiCli
         if (data is null)
             throw new ApiResponseException();
 
-        return new ConversationRequestsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<ConversationRequestData[]>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
     public async Task<ApiResponse> RejectConversationRequestAsync(Guid id, CancellationToken cancellationToken = default)

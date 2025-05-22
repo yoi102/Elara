@@ -1,6 +1,6 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.FileApiClient;
-using ApiClients.Abstractions.FileApiClient.Responses;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -55,7 +55,7 @@ internal class FileApiClient : IFileApiClient
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<FileItemResponse> GetFileItemAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UploadedItemData>> GetFileItemAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -71,15 +71,15 @@ internal class FileApiClient : IFileApiClient
         if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
             throw new ApiResponseException();
 
-        var data = JsonUtils.DeserializeInsensitive<FileItemData>(response.Content);
+        var data = JsonUtils.DeserializeInsensitive<UploadedItemData>(response.Content);
 
         if (data is null)
             throw new ApiResponseException();
 
-        return new FileItemResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<UploadedItemData>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<FileItemsResponse> GetFileItemsAsync(Guid[] Ids, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UploadedItemData[]>> GetFileItemsAsync(Guid[] Ids, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -99,12 +99,12 @@ internal class FileApiClient : IFileApiClient
         if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
             throw new ApiResponseException();
 
-        var data = JsonUtils.DeserializeInsensitive<FileItemData[]>(response.Content);
+        var data = JsonUtils.DeserializeInsensitive<UploadedItemData[]>(response.Content);
 
         if (data is null)
             throw new ApiResponseException();
 
-        return new FileItemsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<UploadedItemData[]>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
     //public async Task DownloadFileAsync(FileItemData fileItem, string path)

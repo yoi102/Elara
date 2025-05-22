@@ -1,12 +1,7 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Conversation;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.ChatApiClient.Conversation;
 using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
 using ApiClients.Abstractions.ChatApiClient.Message;
-using ApiClients.Abstractions.ChatApiClient.Participant;
-using ApiClients.Abstractions.FileApiClient;
-using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest;
-using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
-using ApiClients.Abstractions.UserApiClient;
-using ApiClients.Abstractions.UserIdentityApiClient;
 using ApiClients.Clients;
 using ApiClients.Clients.ChatApiClient;
 using ApiClients.Clients.PersonalSpaceApiClient;

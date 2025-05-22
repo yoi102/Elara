@@ -1,6 +1,6 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.PersonalSpaceApiClient.Contact;
-using ApiClients.Abstractions.PersonalSpaceApiClient.Contact.Responses;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -31,7 +31,7 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<ContactsResponse> GetContactsAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<ContactData[]>> GetContactsAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -41,7 +41,7 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new ContactsResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<ContactData[]> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -51,7 +51,7 @@ internal class PersonalSpaceContactApiClient : IPersonalSpaceContactApiClient
         if (data is null)
             throw new ApiResponseException();
 
-        return new ContactsResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<ContactData[]>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
     public async Task<ApiResponse> UpdateContactInfoAsync(Guid id, CancellationToken cancellationToken = default)

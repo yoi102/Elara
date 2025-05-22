@@ -1,9 +1,9 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
-using ApiClients.Abstractions.ChatApiClient.Message;
+﻿using ApiClients.Abstractions.ChatApiClient.Message;
 using ApiClients.Abstractions.ChatApiClient.Message.Requests;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
+using Services.Abstractions;
 using Services.Abstractions.ChatServices;
-using Services.Abstractions.Results;
 
 namespace Services.ChatServices;
 
@@ -45,7 +45,7 @@ internal class ChatMessageService : IChatMessageService
         }
     }
 
-    public async Task<ApiServiceResult<MessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<MessageWithReplyMessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -54,7 +54,7 @@ internal class ChatMessageService : IChatMessageService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<MessageData>()
+            return new ApiServiceResult<MessageWithReplyMessageData>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -64,7 +64,7 @@ internal class ChatMessageService : IChatMessageService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<MessageData>()
+                return new ApiServiceResult<MessageWithReplyMessageData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -73,7 +73,7 @@ internal class ChatMessageService : IChatMessageService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ApiServiceResult<MessageData>()
+                return new ApiServiceResult<MessageWithReplyMessageData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "Not Found",
@@ -85,7 +85,7 @@ internal class ChatMessageService : IChatMessageService
         }
     }
 
-    public async Task<ApiServiceResult<MessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<MessageWithReplyMessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -94,7 +94,7 @@ internal class ChatMessageService : IChatMessageService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<MessageData[]>()
+            return new ApiServiceResult<MessageWithReplyMessageData[]>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -104,7 +104,7 @@ internal class ChatMessageService : IChatMessageService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<MessageData[]>()
+                return new ApiServiceResult<MessageWithReplyMessageData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -116,7 +116,7 @@ internal class ChatMessageService : IChatMessageService
         }
     }
 
-    public async Task<ApiServiceResult<MessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ReplyMessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -125,7 +125,7 @@ internal class ChatMessageService : IChatMessageService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<MessageData[]>()
+            return new ApiServiceResult<ReplyMessageData[]>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -135,7 +135,7 @@ internal class ChatMessageService : IChatMessageService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<MessageData[]>()
+                return new ApiServiceResult<ReplyMessageData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

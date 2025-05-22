@@ -1,6 +1,6 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.PersonalSpaceApiClient.Profile;
-using ApiClients.Abstractions.PersonalSpaceApiClient.Profile.Responses;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -16,7 +16,7 @@ internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         this.client = client;
     }
 
-    public async Task<UserProfileResponse> GetCurrentUserProfileAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UserProfileData>> GetCurrentUserProfileAsync(CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -26,7 +26,7 @@ internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new UserProfileResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<UserProfileData> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -36,10 +36,10 @@ internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         if (data is null)
             throw new ApiResponseException();
 
-        return new UserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<UserProfileData>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<UserProfileResponse> GetUserProfileAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UserProfileData>> GetUserProfileAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -49,7 +49,7 @@ internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new UserProfileResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<UserProfileData> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
@@ -59,7 +59,7 @@ internal class PersonalSpaceProfileApiClient : IPersonalSpaceProfileApiClient
         if (data is null)
             throw new ApiResponseException();
 
-        return new UserProfileResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<UserProfileData>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
     public async Task<ApiResponse> UpdateUserProfileAsync(UserProfileData userProfileData, CancellationToken cancellationToken = default)

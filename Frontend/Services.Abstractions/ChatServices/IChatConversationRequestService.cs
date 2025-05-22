@@ -1,5 +1,4 @@
-﻿using ApiClients.Abstractions.ChatApiClient.ConversationRequest.Responses;
-using Services.Abstractions.Results;
+﻿using ApiClients.Abstractions.Models.Responses;
 
 namespace Services.Abstractions.ChatServices;
 

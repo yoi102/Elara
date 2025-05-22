@@ -1,6 +1,6 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.UserApiClient;
-using ApiClients.Abstractions.UserIdentityApiClient.Responses;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -32,7 +32,7 @@ internal class UserApiClient : IUserApiClient
         return new ApiResponse() { IsSuccessful = true, StatusCode = restResponse.StatusCode };
     }
 
-    public async Task<UserInfoResponse> GetUserInfoAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<AccountInfoData>> GetUserInfoAsync(CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -42,16 +42,16 @@ internal class UserApiClient : IUserApiClient
         var restResponse = await client.ExecuteWithAutoRefreshAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new UserInfoResponse { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
+            return new ApiResponse<AccountInfoData> { IsSuccessful = false, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage };
 
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
 
-        var userInfo = JsonUtils.DeserializeInsensitive<UserInfo>(restResponse.Content);
+        var userInfo = JsonUtils.DeserializeInsensitive<AccountInfoData>(restResponse.Content);
 
         if (userInfo is null)
             throw new ApiResponseException();
 
-        return new UserInfoResponse() { IsSuccessful = true, StatusCode = restResponse.StatusCode, ResponseData = userInfo };
+        return new ApiResponse<AccountInfoData>() { IsSuccessful = true, StatusCode = restResponse.StatusCode, ResponseData = userInfo };
     }
 }

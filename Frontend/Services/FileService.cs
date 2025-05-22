@@ -1,12 +1,7 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.ChatApiClient.Participant;
-using ApiClients.Abstractions.FileApiClient;
-using ApiClients.Abstractions.FileApiClient.Responses;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions;
-using Services.Abstractions.Results;
-using System.IO;
-using System.Threading;
 
 namespace Services;
 
@@ -19,7 +14,7 @@ public class FileService : IFileService
         this.fileApiClient = fileApiClient;
     }
 
-    public async Task<ApiServiceResult<FileItemData>> GetFileItemAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UploadedItemData>> GetFileItemAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -27,7 +22,7 @@ public class FileService : IFileService
 
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult<FileItemData>()
+            return new ApiServiceResult<UploadedItemData>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -37,7 +32,7 @@ public class FileService : IFileService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<FileItemData>()
+                return new ApiServiceResult<UploadedItemData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -46,7 +41,7 @@ public class FileService : IFileService
             }
             if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ApiServiceResult<FileItemData>()
+                return new ApiServiceResult<UploadedItemData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -57,7 +52,7 @@ public class FileService : IFileService
         }
     }
 
-    public async Task<ApiServiceResult<FileItemData[]>> GetFileItemsAsync(Guid[] fileIds, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<UploadedItemData[]>> GetFileItemsAsync(Guid[] fileIds, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -65,7 +60,7 @@ public class FileService : IFileService
 
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult<FileItemData[]>()
+            return new ApiServiceResult<UploadedItemData[]>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -75,7 +70,7 @@ public class FileService : IFileService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<FileItemData[]>()
+                return new ApiServiceResult<UploadedItemData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -84,7 +79,7 @@ public class FileService : IFileService
             }
             if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ApiServiceResult<FileItemData[]>()
+                return new ApiServiceResult<UploadedItemData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

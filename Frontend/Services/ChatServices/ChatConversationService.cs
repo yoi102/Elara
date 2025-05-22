@@ -1,9 +1,9 @@
 ﻿using ApiClients.Abstractions.ChatApiClient.Conversation;
 using ApiClients.Abstractions.ChatApiClient.Conversation.Requests;
-using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
+using Services.Abstractions;
 using Services.Abstractions.ChatServices;
-using Services.Abstractions.Results;
 
 namespace Services.ChatServices;
 
@@ -60,7 +60,7 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<ConversationData>> CreateConversationAsync(Guid targetUserId, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationInfoData>> CreateConversationAsync(Guid targetUserId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -69,7 +69,7 @@ internal class ChatConversationService : IChatConversationService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ConversationData>()
+            return new ApiServiceResult<ConversationInfoData>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData,
@@ -79,7 +79,7 @@ internal class ChatConversationService : IChatConversationService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<ConversationData>()
+                return new ApiServiceResult<ConversationInfoData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -90,7 +90,7 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<ConversationData>> CreateGroupConversationAsync(string name, IEnumerable<ConversationMemberRequest> memberRequests, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationInfoData>> CreateGroupConversationAsync(string name, IEnumerable<ConversationMemberRequest> memberRequests, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -99,7 +99,7 @@ internal class ChatConversationService : IChatConversationService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ConversationData>()
+            return new ApiServiceResult<ConversationInfoData>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -109,7 +109,7 @@ internal class ChatConversationService : IChatConversationService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<ConversationData>()
+                return new ApiServiceResult<ConversationInfoData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -118,7 +118,7 @@ internal class ChatConversationService : IChatConversationService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                return new ApiServiceResult<ConversationData>()
+                return new ApiServiceResult<ConversationInfoData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "The name is already in use."
@@ -128,7 +128,7 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<ConversationData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationInfoData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -137,7 +137,7 @@ internal class ChatConversationService : IChatConversationService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ConversationData>()
+            return new ApiServiceResult<ConversationInfoData>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -147,7 +147,7 @@ internal class ChatConversationService : IChatConversationService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<ConversationData>()
+                return new ApiServiceResult<ConversationInfoData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,
@@ -156,7 +156,7 @@ internal class ChatConversationService : IChatConversationService
             }
             else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return new ApiServiceResult<ConversationData>()
+                return new ApiServiceResult<ConversationInfoData>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = "Conversation not found.",
@@ -321,7 +321,7 @@ internal class ChatConversationService : IChatConversationService
         }
     }
 
-    public async Task<ApiServiceResult<ConversationData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default)
+    public async Task<ApiServiceResult<ConversationDetailsData[]>> GetUserConversationsAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -330,7 +330,7 @@ internal class ChatConversationService : IChatConversationService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ConversationData[]>()
+            return new ApiServiceResult<ConversationDetailsData[]>()
             {
                 IsSuccessful = true,
                 ResultData = response.ResponseData
@@ -340,7 +340,7 @@ internal class ChatConversationService : IChatConversationService
         {
             if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
             {
-                return new ApiServiceResult<ConversationData[]>()
+                return new ApiServiceResult<ConversationDetailsData[]>()
                 {
                     IsSuccessful = false,
                     ErrorMessage = ex.Message,

@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ChatApiClient\Participant\Requests\" />
-    <Folder Include="ChatApiClient\Participant\Responses\" />
-    <Folder Include="UserApiClient\Responses\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Frontend.Shared\Frontend.Shared.csproj" />
   </ItemGroup>
 

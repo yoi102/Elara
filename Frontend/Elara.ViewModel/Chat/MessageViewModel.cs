@@ -1,9 +1,8 @@
-﻿using ApiClients.Abstractions.FileApiClient.Responses;
+﻿using ApiClients.Abstractions.Models.Responses;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Interfaces;
 using Services.Abstractions.ChatServices;
-using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
@@ -13,10 +12,10 @@ public partial class MessageViewModel : ObservableObject, IHasNotificationNumber
     private readonly IChatMessageService chatMessageService;
 
     [ObservableProperty]
-    private ObservableCollection<FileItemData> attachments = [];
+    private ObservableCollection<UploadedItemData> attachments = [];
 
     [ObservableProperty]
-    private MessageData? messageData;
+    private MessageWithReplyMessageData? messageData;
 
     [ObservableProperty]
     private ObservableCollection<ReplyMessageViewModel> replyMessages = [];

@@ -37,22 +37,28 @@ public class ConversationController : AuthorizedUserController
     }
 
     [HttpGet("all-conversation")]
-    public async Task<IActionResult> AllConversation()
+    public async Task<IActionResult> GetAllConversationDetails()
     {
         var conversationEntities = await repository.GetConversationsByUserIdAsync(GetCurrentUserId());
-        var conversationInfos = new List<ConversationInfoResponse>();
+        var conversationDetailsInfos = new List<ConversationDetailsResponse>();
         foreach (var conversation in conversationEntities)
         {
-            var conversationInfo = new ConversationInfoResponse()
+            var participants = await messageQueryService.GetConversationParticipants(conversation.Id);
+
+            var messages = await messageQueryService.GetConversationAllMessagesWithReplyMessagesAsync(conversation.Id);
+
+            var conversationDetailsInfo = new ConversationDetailsResponse()
             {
                 Id = conversation.Id,
                 Name = conversation.Name,
                 IsGroup = conversation.IsGroup,
                 CreatedAt = conversation.CreatedAt,
+                Messages =messages,
+                Participants = participants,
             };
-            conversationInfos.Add(conversationInfo);
+            conversationDetailsInfos.Add(conversationDetailsInfo);
         }
-        return Ok(conversationInfos);
+        return Ok(conversationDetailsInfos);
     }
 
     [HttpGet("{id}/messages")]
@@ -213,24 +219,8 @@ public class ConversationController : AuthorizedUserController
         if (conversation is null)
             return NotFound("Conversation not found");
 
-        var participants = await repository.GetConversationParticipantsAsync(id);
+        var participants = await messageQueryService.GetConversationParticipants(id);
 
-        var participantsResponse = new List<ParticipantInfoResponse>();
-        foreach (var participant in participants)
-        {
-            var userInfo = await messageQueryService.GetUserInfoAsync(participant.UserId);
-            if (userInfo is null)
-                continue;
-            var participantInfo = new ParticipantInfoResponse()
-            {
-                Id = participant.Id,
-                Role = participant.Role,
-                UserInfo = userInfo,
-                ConversationId = participant.ConversationId,
-            };
-            participantsResponse.Add(participantInfo);
-        }
-
-        return Ok(participantsResponse);
+        return Ok(participants);
     }
 }

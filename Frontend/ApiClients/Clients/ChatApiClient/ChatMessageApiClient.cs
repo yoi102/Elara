@@ -1,11 +1,9 @@
-﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
-using ApiClients.Abstractions.ChatApiClient.Message;
+﻿using ApiClients.Abstractions.ChatApiClient.Message;
 using ApiClients.Abstractions.ChatApiClient.Message.Requests;
-using ApiClients.Abstractions.ChatApiClient.Message.Responses;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
-using System.Threading;
 
 namespace ApiClients.Clients.ChatApiClient;
 
@@ -34,7 +32,7 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         return new ApiResponse() { IsSuccessful = true, StatusCode = response.StatusCode };
     }
 
-    public async Task<MessageResponse> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<MessageWithReplyMessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -44,20 +42,20 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new MessageResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<MessageWithReplyMessageData> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
 
-        var data = JsonUtils.DeserializeInsensitive<MessageData>(response.Content);
+        var data = JsonUtils.DeserializeInsensitive<MessageWithReplyMessageData>(response.Content);
 
         if (data is null)
             throw new ApiResponseException();
 
-        return new MessageResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<MessageWithReplyMessageData>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<MessagesResponse> GetBatch(Guid[] ids, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<MessageWithReplyMessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -72,20 +70,20 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new MessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<MessageWithReplyMessageData[]> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
 
-        var data = JsonUtils.DeserializeInsensitive<MessageData[]>(response.Content);
+        var data = JsonUtils.DeserializeInsensitive<MessageWithReplyMessageData[]>(response.Content);
 
         if (data is null)
             throw new ApiResponseException();
 
-        return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<MessageWithReplyMessageData[]>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
-    public async Task<MessagesResponse> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<ReplyMessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var request = new RestRequest
         {
@@ -95,17 +93,17 @@ internal class ChatMessageApiClient : IChatMessageApiClient
         var response = await client.ExecuteWithAutoRefreshAsync(request, cancellationToken);
 
         if (!response.IsSuccessful)
-            return new MessagesResponse { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
+            return new ApiResponse<ReplyMessageData[]> { IsSuccessful = false, StatusCode = response.StatusCode, ErrorMessage = response.ErrorMessage };
 
         if (string.IsNullOrEmpty(response.Content))
             throw new ApiResponseException();
 
-        var data = JsonUtils.DeserializeInsensitive<MessageData[]>(response.Content);
+        var data = JsonUtils.DeserializeInsensitive<ReplyMessageData[]>(response.Content);
 
         if (data is null)
             throw new ApiResponseException();
 
-        return new MessagesResponse() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
+        return new ApiResponse<ReplyMessageData[]>() { IsSuccessful = true, StatusCode = response.StatusCode, ResponseData = data };
     }
 
     public async Task<ApiResponse> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default)

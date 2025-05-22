@@ -6,6 +6,9 @@ namespace ChatService.WebAPI.Services;
 
 public interface IMessageQueryService
 {
+    Task<MessageWithReplyMessageResponse[]> GetConversationAllMessagesWithReplyMessagesAsync(ConversationId id);
+    Task<ParticipantInfoResponse[]> GetConversationParticipants(ConversationId id);
+
     Task<MessageWithReplyMessageResponse[]> GetMessagesWithReplyMessagesAsync(Message[] messages);
 
     Task<MessageWithReplyMessageResponse[]> GetMessagesWithReplyMessagesAsync(MessageId[] ids);

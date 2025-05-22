@@ -1,5 +1,5 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.ChatApiClient.Participant;
+using ApiClients.Abstractions.Models;
 using RestSharp;
 
 namespace ApiClients.Clients.ChatApiClient;

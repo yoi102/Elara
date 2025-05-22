@@ -1,6 +1,5 @@
-﻿using ApiClients.Abstractions.FileApiClient.Responses;
+﻿using ApiClients.Abstractions.Models.Responses;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Services.Abstractions.Results.Data;
 using System.Collections.ObjectModel;
 
 namespace Elara.ViewModel.Chat;
@@ -8,7 +7,7 @@ namespace Elara.ViewModel.Chat;
 public partial class ReplyMessageViewModel : ObservableObject
 {
     [ObservableProperty]
-    public ObservableCollection<FileItemData> uploadedItems = [];
+    public ObservableCollection<UploadedItemData> uploadedItems = [];
 
     [ObservableProperty]
     private ReplyMessageData? replyMessageData;

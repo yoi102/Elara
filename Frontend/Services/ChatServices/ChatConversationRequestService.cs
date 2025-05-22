@@ -1,8 +1,8 @@
 ﻿using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
-using ApiClients.Abstractions.ChatApiClient.ConversationRequest.Responses;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
+using Services.Abstractions;
 using Services.Abstractions.ChatServices;
-using Services.Abstractions.Results;
 
 namespace Services.ChatServices;
 

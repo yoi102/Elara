@@ -7,6 +7,6 @@ public record ParticipantInfoResponse
 {
     public required ParticipantId Id { get; set; }
     public required ConversationId ConversationId { get; set; }
-    public required string Role { get; set; } = Roles.Member;
+    public required string Role { get; set; }
     public required UserInfoResponse UserInfo { get; set; }
 }

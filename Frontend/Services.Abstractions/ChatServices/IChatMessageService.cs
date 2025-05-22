@@ -1,6 +1,5 @@
-﻿using ApiClients.Abstractions.ChatApiClient.Conversation.Responses;
-using ApiClients.Abstractions.ChatApiClient.Message.Requests;
-using Services.Abstractions.Results;
+﻿using ApiClients.Abstractions.ChatApiClient.Message.Requests;
+using ApiClients.Abstractions.Models.Responses;
 
 namespace Services.Abstractions.ChatServices;
 
@@ -8,11 +7,11 @@ public interface IChatMessageService
 {
     Task<ApiServiceResult> DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<MessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ApiServiceResult<MessageWithReplyMessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<MessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default);
+    Task<ApiServiceResult<MessageWithReplyMessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<MessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ApiServiceResult<ReplyMessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<ApiServiceResult> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);
 

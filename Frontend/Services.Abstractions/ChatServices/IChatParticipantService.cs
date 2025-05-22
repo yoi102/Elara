@@ -1,6 +1,4 @@
-﻿using Services.Abstractions.Results;
-
-namespace Services.Abstractions.ChatServices;
+﻿namespace Services.Abstractions.ChatServices;
 
 public interface IChatParticipantService
 {

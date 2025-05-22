@@ -24,6 +24,37 @@ public class MessageQueryService : IMessageQueryService
         this.uploadedItemServiceClient = uploadedItemServiceClient;
         this.httpContextAccessor = httpContextAccessor;
     }
+    public async Task<MessageWithReplyMessageResponse[]> GetConversationAllMessagesWithReplyMessagesAsync(ConversationId id)
+    {
+        var messages = await repository.GetConversationAllMessagesAsync(id);
+
+        return await GetMessagesWithReplyMessagesAsync(messages);
+    }
+
+
+
+
+    public async Task<ParticipantInfoResponse[]> GetConversationParticipants(ConversationId id)
+    {
+        var participants = await repository.GetConversationParticipantsAsync(id);
+
+        var participantsResponse = new List<ParticipantInfoResponse>();
+        foreach (var participant in participants)
+        {
+            var userInfo = await this.GetUserInfoAsync(participant.UserId);
+            if (userInfo is null)
+                continue;
+            var participantInfo = new ParticipantInfoResponse()
+            {
+                Id = participant.Id,
+                Role = participant.Role,
+                UserInfo = userInfo,
+                ConversationId = participant.ConversationId,
+            };
+            participantsResponse.Add(participantInfo);
+        }
+        return [.. participantsResponse];
+    }
 
     public async Task<MessageWithReplyMessageResponse[]> GetMessagesWithReplyMessagesAsync(Message[] messages)
     {

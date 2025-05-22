@@ -1,5 +1,4 @@
-﻿using ApiClients.Abstractions.PersonalSpaceApiClient.ContactRequest.Responses;
-using Services.Abstractions.Results;
+﻿using ApiClients.Abstractions.Models.Responses;
 
 namespace Services.Abstractions.PersonalSpaceServices;
 

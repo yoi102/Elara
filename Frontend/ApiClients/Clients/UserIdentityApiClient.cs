@@ -1,6 +1,6 @@
 ﻿using ApiClients.Abstractions;
-using ApiClients.Abstractions.UserIdentityApiClient;
-using ApiClients.Abstractions.UserIdentityApiClient.Responses;
+using ApiClients.Abstractions.Models;
+using ApiClients.Abstractions.Models.Responses;
 using Frontend.Shared.Exceptions;
 using RestSharp;
 
@@ -16,7 +16,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         this.restClient = restClient;
     }
 
-    public async Task<RefreshTokenResponse> RefreshTokenAsync(Guid userId, string refreshToken, string userAgent, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UserTokenData>> RefreshTokenAsync(Guid userId, string refreshToken, string userAgent, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -28,7 +28,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.PostAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new RefreshTokenResponse()
+            return new ApiResponse<UserTokenData>()
             {
                 StatusCode = restResponse.StatusCode,
                 ErrorMessage = restResponse.ErrorMessage,
@@ -43,7 +43,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
 
         restClient.AddDefaultHeader("Authorization", "Bearer " + responseData.Token);
 
-        return new RefreshTokenResponse()
+        return new ApiResponse<UserTokenData>()
         {
             IsSuccessful = true,
             StatusCode = restResponse.StatusCode,
@@ -51,7 +51,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         };
     }
 
-    public async Task<ResetCodeResponse> GetResetCodeByEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<ResetCodeData>> GetResetCodeByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -62,7 +62,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.GetAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new ResetCodeResponse() { IsSuccessful = false, StatusCode = restResponse.StatusCode };
+            return new ApiResponse<ResetCodeData>() { IsSuccessful = false, StatusCode = restResponse.StatusCode };
 
         if (string.IsNullOrEmpty(restResponse.Content))
             throw new ApiResponseException();
@@ -71,10 +71,10 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         if (responseData is null)
             throw new ApiResponseException();
 
-        return new ResetCodeResponse() { IsSuccessful = true, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage, ResponseData = responseData };
+        return new ApiResponse<ResetCodeData>() { IsSuccessful = true, StatusCode = restResponse.StatusCode, ErrorMessage = restResponse.ErrorMessage, ResponseData = responseData };
     }
 
-    public async Task<LoginResponse> LoginByEmailAndPasswordAsync(string email, string password, string userAgent, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UserTokenData>> LoginByEmailAndPasswordAsync(string email, string password, string userAgent, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -87,7 +87,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.PostAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new LoginResponse()
+            return new ApiResponse<UserTokenData>()
             {
                 StatusCode = restResponse.StatusCode,
                 ErrorMessage = restResponse.ErrorMessage,
@@ -103,7 +103,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
 
         restClient.DefaultParameters.ReplaceParameter(new HeaderParameter("Authorization", "Bearer " + responseData.Token));
 
-        return new LoginResponse()
+        return new ApiResponse<UserTokenData>()
         {
             IsSuccessful = true,
             StatusCode = restResponse.StatusCode,
@@ -111,7 +111,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         };
     }
 
-    public async Task<LoginResponse> LoginByNameAndPasswordAsync(string name, string password, string userAgent, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse<UserTokenData>> LoginByNameAndPasswordAsync(string name, string password, string userAgent, CancellationToken cancellationToken = default)
     {
         var restRequest = new RestRequest
         {
@@ -123,7 +123,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
         var restResponse = await restClient.PostAsync(restRequest, cancellationToken);
 
         if (!restResponse.IsSuccessful)
-            return new LoginResponse()
+            return new ApiResponse<UserTokenData>()
             {
                 StatusCode = restResponse.StatusCode,
                 ErrorMessage = restResponse.ErrorMessage,
@@ -139,7 +139,7 @@ internal class UserIdentityApiClient : IUserIdentityApiClient
 
         restClient.DefaultParameters.ReplaceParameter(new HeaderParameter("Authorization", "Bearer " + responseData.Token));
 
-        return new LoginResponse()
+        return new ApiResponse<UserTokenData>()
         {
             IsSuccessful = true,
             StatusCode = restResponse.StatusCode,

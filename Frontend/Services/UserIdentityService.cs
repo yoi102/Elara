@@ -1,9 +1,8 @@
-﻿using ApiClients.Abstractions.UserIdentityApiClient;
-using ApiClients.Abstractions.UserIdentityApiClient.Responses;
+﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.Models.Responses;
 using DataProviders.Abstractions;
 using Frontend.Shared.Exceptions;
 using Services.Abstractions;
-using Services.Abstractions.Results;
 
 namespace Services;
 
