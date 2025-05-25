@@ -57,17 +57,10 @@ public partial class SignUpViewModel : ObservableValidator, IHasCredentialsSubmi
 
         using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
 
-        var response = await userIdentityService.SignUpAsync(Name, Email, Password);
+        await userIdentityService.SignUpAsync(Name, Email, Password);
         await Task.Delay(1000);//Simulate
 
-        if (response.IsSuccessful)
-        {
-            snackbarService.Enqueue(SnackBarHostIdentifiers.LoginWindow, Strings.Created, TimeSpan.FromSeconds(2));
-            OnCreated(Name, Password);
-        }
-        else
-        {
-            await dialogService.ShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
-        }
+        snackbarService.Enqueue(SnackBarHostIdentifiers.LoginWindow, Strings.Created, TimeSpan.FromSeconds(2));
+        OnCreated(Name, Password);
     }
 }

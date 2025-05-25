@@ -4,7 +4,7 @@ namespace Services.Abstractions;
 
 public interface IUserService
 {
-    Task<ApiServiceResult> DeleteAsync(CancellationToken cancellationToken = default);
+    Task DeleteAsync(CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<AccountInfoData>> GetUserInfoAsync(CancellationToken cancellationToken = default);
+    Task<AccountInfoData> GetUserInfoAsync(CancellationToken cancellationToken = default);
 }

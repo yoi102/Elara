@@ -62,18 +62,10 @@ public partial class ResetPasswordViewModel : ObservableValidator, IHasCredentia
             return;
         }
 
-        var response = await userIdentityService.ResetPasswordWithResetCodeAsync(Email, NewPassword, ResetCode);
+        await userIdentityService.ResetPasswordWithResetCodeAsync(Email, NewPassword, ResetCode);
         await Task.Delay(1000);//Simulate
 
-        if (response.IsSuccessful)
-        {
-            await dialogService.ShowMessageDialogAsync(Strings.ResetSuccessful, DialogHostIdentifiers.LoginRootDialog);
-            OnCompleted(Email, NewPassword);
-        }
-        else
-        {
-            await dialogService.ShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
-        }
+        OnCompleted(Email, NewPassword);
     }
 
     [RelayCommand]
@@ -85,21 +77,14 @@ public partial class ResetPasswordViewModel : ObservableValidator, IHasCredentia
         var errors = GetErrors(nameof(Email));
         if (errors.Any())
         {
-            await dialogService.ShowMessageDialogAsync(Strings.PleaseEnterAValidEmailAddress, DialogHostIdentifiers.LoginRootDialog);
+            await dialogService.ShowOrReplaceMessageDialogAsync(Strings.PleaseEnterAValidEmailAddress, DialogHostIdentifiers.LoginRootDialog);
             return;
         }
 
         var response = await userIdentityService.GetResetCodeByEmailAsync(Email);
         await Task.Delay(1000);//Simulate
-        if (response.IsSuccessful)
-        {
-            CanSendResetCode = false;
-            snackbarService.Enqueue(SnackBarHostIdentifiers.LoginWindow, $"(Email Message:)Reset Code：{response.ResultData.ResetCode}", TimeSpan.FromSeconds(3));
-            ResetCode = response.ResultData.ResetCode;
-        }
-        else
-        {
-            await dialogService.ShowMessageDialogAsync(response.ErrorMessage, DialogHostIdentifiers.LoginRootDialog);
-        }
+        CanSendResetCode = false;
+        snackbarService.Enqueue(SnackBarHostIdentifiers.LoginWindow, $"(Email Message:)Reset Code：{response.ResetCode}", TimeSpan.FromSeconds(3));
+        ResetCode = response.ResetCode;
     }
 }

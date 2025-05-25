@@ -2,5 +2,5 @@
 
 public interface IChatParticipantService
 {
-    Task<ApiServiceResult> UpdateParticipantRoleAsync(Guid id, string role, CancellationToken cancellationToken = default);
+    Task UpdateParticipantRoleAsync(Guid id, string role, CancellationToken cancellationToken = default);
 }

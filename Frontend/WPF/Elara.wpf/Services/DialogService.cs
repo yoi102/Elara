@@ -1,7 +1,9 @@
-﻿using Elara.wpf.View.Dialogs;
+﻿using Elara.wpf.Extensions;
+using Elara.wpf.View.Dialogs;
 using Frontend.Shared;
 using InteractionServices.Abstractions;
 using MaterialDesignThemes.Wpf;
+using System.Windows;
 
 namespace Elara.wpf.Services;
 
@@ -30,21 +32,47 @@ public class DialogService : IDialogService
         dialogSession?.Close();
     }
 
-    public async Task ShowMessageDialogAsync(string message, object dialogIdentifier)
+    public async Task ShowOrReplaceMessageDialogAsync(string message, object dialogIdentifier)
     {
- 
-
         var dialogSession = DialogHost.GetDialogSession(dialogIdentifier);
-        MessageDialog messageDialog = new MessageDialog(message);
-
         if (dialogSession is not null)
         {
-            //await dialogSession.UpdateContent(messageDialog);//await 不了！！！！遗憾
+            //await dialogSession.UpdateContent(messageDialog);//await 不了！！！！遗憾，不能直接更新
             dialogSession.Close();//无奈之举，只能关闭后重开
         }
-        //else
-        {
-            await DialogHost.Show(messageDialog, dialogIdentifier);
-        }
+
+        MessageDialog messageDialog = new MessageDialog(message);
+        await DialogHost.Show(messageDialog, dialogIdentifier);
+    }
+
+    public async Task ShowOrReplaceMessageInActiveWindowAsync(string message)
+    {
+        var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
+        activeWindow ??= WindowTracker.LastActivatedWindow;
+        activeWindow ??= Application.Current.MainWindow;
+        if (activeWindow is null)
+            return;
+
+        var dialogHost = GetFirstDialogHost(activeWindow);
+        if (dialogHost is null)
+            return;
+        
+        // 关闭当前打开的对话框，确保新的对话框可以正确显示
+        var identifier = dialogHost.Identifier;
+
+        var dialogSession = DialogHost.GetDialogSession(identifier);
+        dialogSession?.Close();
+
+        MessageDialog messageDialog = new MessageDialog(message);
+        await dialogHost.ShowDialog(messageDialog);
+    }
+
+    private static DialogHost? GetFirstDialogHost(Window window)
+    {
+        if (window is null) throw new ArgumentNullException(nameof(window));
+
+        DialogHost? dialogHost = window.VisualDepthFirstTraversal().OfType<DialogHost>().FirstOrDefault();
+
+        return dialogHost;
     }
 }

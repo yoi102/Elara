@@ -16,6 +16,7 @@ public partial class MainWindowView : MetroWindow
         InitializeComponent();
         this.DataContext = _vm = App.Current.Services.GetService<MainWindowViewModel>();
         this.ContentRendered += MainWindowView_ContentRendered;
+        WindowTracker.Register(this);
     }
 
     private async void MainWindowView_ContentRendered(object? sender, EventArgs e)

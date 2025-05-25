@@ -27,6 +27,7 @@ public partial class LoginWindowView : Window
                 DialogResult = true;
             });
         });
+        WindowTracker.Register(this);
     }
 
     public static FuncValueConverter<int, string> LCIDToStringConverter { get; } = new(lcid =>

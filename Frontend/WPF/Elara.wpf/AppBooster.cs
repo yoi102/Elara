@@ -36,8 +36,14 @@ public class AppBooster
             }
             else
             {
-                var isHandled = await _serviceProvider.GetService<IExceptionDispatcher>()!.DispatchAsync(e.Exception);
-                e.Handled = isHandled is true;
+                var handler = _serviceProvider.GetService<IExceptionDispatcher>()!.GetExceptionHandler(e.Exception);
+
+                if (handler is not null)
+                {
+                    //必须要设置为 true，否则异常会被再次抛出
+                    e.Handled = true;
+                    await handler.HandleExceptionAsync(e.Exception);
+                }
             }
             // 其他异常可继续扩展
         };

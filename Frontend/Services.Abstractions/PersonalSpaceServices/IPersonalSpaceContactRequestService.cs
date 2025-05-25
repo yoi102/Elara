@@ -4,13 +4,13 @@ namespace Services.Abstractions.PersonalSpaceServices;
 
 public interface IPersonalSpaceContactRequestService
 {
-    Task<ApiServiceResult> AcceptContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AcceptContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ContactRequestData>> GetContactRequestByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ContactRequestData?> GetContactRequestByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ContactRequestData[]>> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default);
+    Task<ContactRequestData[]> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> RejectContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
+    Task RejectContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> SendContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
+    Task SendContactRequestAsync(Guid id, CancellationToken cancellationToken = default);
 }

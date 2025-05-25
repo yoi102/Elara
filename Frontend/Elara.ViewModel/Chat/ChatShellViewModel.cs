@@ -22,12 +22,8 @@ public partial class ChatShellViewModel : ObservableObject, IHasNotificationNumb
     public async Task InitializeAsync()
     {
         var conversationsDataResult = await chatConversationService.GetUserConversationsAsync();
-        if (!conversationsDataResult.IsSuccessful)
-        {
-            await dialogService.ShowMessageDialogAsync(conversationsDataResult.ErrorMessage, DialogHostIdentifiers.MainWindow);
-            return;
-        }
-        foreach (var data in conversationsDataResult.ResultData)
+
+        foreach (var data in conversationsDataResult)
         {
             ConversationViewModel conversationModel = DataToModel(data);
 

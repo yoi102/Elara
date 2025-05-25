@@ -1,7 +1,5 @@
 ﻿using ApiClients.Abstractions.ChatApiClient.ConversationRequest;
 using ApiClients.Abstractions.Models.Responses;
-using Frontend.Shared.Exceptions;
-using Services.Abstractions;
 using Services.Abstractions.ChatServices;
 
 namespace Services.ChatServices;
@@ -15,44 +13,15 @@ internal class ChatConversationRequestService : IChatConversationRequestService
         this.chatConversationRequestApiClient = chatConversationRequestApiClient;
     }
 
-    public async Task<ApiServiceResult> AcceptConversationRequestAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task AcceptConversationRequestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await chatConversationRequestApiClient.AcceptConversationRequestAsync(id, cancellationToken);
+        var response = await chatConversationRequestApiClient.AcceptConversationRequestAsync(id, cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult()
-            {
-                IsSuccessful = true
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = "Conversation request not found.",
-                };
-            }
-
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
     }
 
-    public async Task<ApiServiceResult<ConversationRequestData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ConversationRequestData?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -61,138 +30,37 @@ internal class ChatConversationRequestService : IChatConversationRequestService
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ConversationRequestData>()
-            {
-                IsSuccessful = true,
-                ResultData = response.ResponseData
-            };
+            return response.ResponseData;
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult<ConversationRequestData>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult<ConversationRequestData>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = "Conversation request not found.",
-                };
-            }
-
-            throw new ApiResponseException();
+            return null;
         }
     }
 
-    public async Task<ApiServiceResult<ConversationRequestData[]>> GetConversationRequestsAsync(CancellationToken cancellationToken = default)
+    public async Task<ConversationRequestData[]> GetConversationRequestsAsync(CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await chatConversationRequestApiClient.GetConversationRequestsAsync(cancellationToken);
+        var response = await chatConversationRequestApiClient.GetConversationRequestsAsync(cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ConversationRequestData[]>()
-            {
-                IsSuccessful = true,
-                ResultData = response.ResponseData
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult<ConversationRequestData[]>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-
-            throw new ApiResponseException();
-        }
+        return response.ResponseData;
     }
 
-    public async Task<ApiServiceResult> RejectConversationRequestAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task RejectConversationRequestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await chatConversationRequestApiClient.RejectConversationRequestAsync(id, cancellationToken);
+        var response = await chatConversationRequestApiClient.RejectConversationRequestAsync(id, cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult()
-            {
-                IsSuccessful = true
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = "Conversation request not found.",
-                };
-            }
-
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
     }
 
-    public async Task<ApiServiceResult> SendConversationRequestAsync(Guid receiverId, Guid conversationId, string role, CancellationToken cancellationToken = default)
+    public async Task SendConversationRequestAsync(Guid receiverId, Guid conversationId, string role, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await chatConversationRequestApiClient.SendConversationRequestAsync(receiverId, conversationId, role, cancellationToken);
+        var response = await chatConversationRequestApiClient.SendConversationRequestAsync(receiverId, conversationId, role, cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult()
-            {
-                IsSuccessful = true
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = "The user is already a participant in the conversation.",
-                };
-            }
-
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
     }
 }

@@ -5,6 +5,22 @@ namespace Elara.wpf.Services;
 
 public class SnackbarService : ISnackbarService
 {
+    public void EnqueueInAll(object content, TimeSpan? durationOverride = null, bool promote = false, bool neverConsiderToBeDuplicate = false)
+    {
+        var snackbars = SnackbarIdentifierAssist.SnackbarGroups.Values.SelectMany(x => x);
+        foreach (var snackbar in snackbars)
+        {
+            snackbar.MessageQueue?.Enqueue(
+                content,
+                null,
+                null,
+                null,
+                promote,
+                neverConsiderToBeDuplicate,
+                durationOverride);
+        }
+    }
+
     public void Enqueue(object identifier, object content, TimeSpan? durationOverride = null, bool promote = false, bool neverConsiderToBeDuplicate = false)
     {
         if (!SnackbarIdentifierAssist.SnackbarGroups.TryGetValue(identifier, out var snackbars))

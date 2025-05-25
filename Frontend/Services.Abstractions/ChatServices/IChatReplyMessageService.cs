@@ -4,5 +4,5 @@ namespace Services.Abstractions.ChatServices;
 
 public interface IChatReplyMessageService
 {
-    Task<ApiServiceResult> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);
+    Task ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);
 }

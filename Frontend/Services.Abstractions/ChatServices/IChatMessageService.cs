@@ -5,17 +5,17 @@ namespace Services.Abstractions.ChatServices;
 
 public interface IChatMessageService
 {
-    Task<ApiServiceResult> DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task DeleteByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<MessageWithReplyMessageData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<MessageWithReplyMessageData?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<MessageWithReplyMessageData[]>> GetBatch(Guid[] ids, CancellationToken cancellationToken = default);
+    Task<MessageWithReplyMessageData[]> GetBatch(Guid[] ids, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ReplyMessageData[]>> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ReplyMessageData[]> GetReplyMessagesAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);
+    Task ReplyMessageAsync(ReplyMessageRequest replyMessageRequest, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
+    Task SendMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
+    Task UpdateMessageAsync(MessageRequest messageData, CancellationToken cancellationToken = default);
 }

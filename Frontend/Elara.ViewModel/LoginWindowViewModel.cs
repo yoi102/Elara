@@ -128,15 +128,15 @@ public partial class LoginWindowViewModel : ObservableValidator
         using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.LoginRootDialog);
         await Task.Delay(1000);//Simulate
 
-        var login = await userIdentityService.LoginByNameAndPasswordAsync(NameEmail, Password);
-        if (!login.IsSuccessful)
+        var userData = await userIdentityService.LoginByNameAndPasswordAsync(NameEmail, Password);
+        if (userData is null)
         {
             if (IsValidEmail(NameEmail))
-                login = await userIdentityService.LoginByEmailAndPasswordAsync(NameEmail, Password);
+                userData = await userIdentityService.LoginByEmailAndPasswordAsync(NameEmail, Password);
         }
-        if (!login.IsSuccessful)
+        if (userData is null)
         {
-            await dialogService.ShowMessageDialogAsync(login.ErrorMessage!, DialogHostIdentifiers.LoginRootDialog);
+            await dialogService.ShowOrReplaceMessageDialogAsync("Incorrect username or password.", DialogHostIdentifiers.LoginRootDialog);
         }
         else
         {

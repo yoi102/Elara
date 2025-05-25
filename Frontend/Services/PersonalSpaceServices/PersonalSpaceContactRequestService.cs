@@ -1,9 +1,6 @@
 ﻿using ApiClients.Abstractions;
 using ApiClients.Abstractions.Models.Responses;
-using Frontend.Shared.Exceptions;
-using Services.Abstractions;
 using Services.Abstractions.PersonalSpaceServices;
-using System.Threading;
 
 namespace Services.PersonalSpaceServices;
 
@@ -16,44 +13,15 @@ internal class PersonalSpaceContactRequestService : IPersonalSpaceContactRequest
         this.personalSpaceContactRequestApiClient = personalSpaceContactRequestApiClient;
     }
 
-    public async Task<ApiServiceResult> AcceptContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task AcceptContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await personalSpaceContactRequestApiClient.AcceptContactRequestAsync(id, cancellationToken);
+        var response = await personalSpaceContactRequestApiClient.AcceptContactRequestAsync(id, cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult()
-            {
-                IsSuccessful = true
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
     }
 
-    public async Task<ApiServiceResult<ContactRequestData>> GetContactRequestByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ContactRequestData?> GetContactRequestByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -62,146 +30,36 @@ internal class PersonalSpaceContactRequestService : IPersonalSpaceContactRequest
             if (!response.IsSuccessful)
                 throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
 
-            return new ApiServiceResult<ContactRequestData>()
-            {
-                IsSuccessful = true,
-                ResultData = response.ResponseData
-            };
+            return response.ResponseData;
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult<ContactRequestData>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult<ContactRequestData>()
-                {
-                    IsSuccessful = true,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            throw new ApiResponseException();
+            return null;
         }
     }
 
-    public async Task<ApiServiceResult<ContactRequestData[]>> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default)
+    public async Task<ContactRequestData[]> GetReceivedContactRequestsAsync(CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await personalSpaceContactRequestApiClient.GetReceivedContactRequestsAsync(cancellationToken);
+        var response = await personalSpaceContactRequestApiClient.GetReceivedContactRequestsAsync(cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-
-            return new ApiServiceResult<ContactRequestData[]>()
-            {
-                IsSuccessful = true,
-                ResultData = response.ResponseData
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult<ContactRequestData[]>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult<ContactRequestData[]>()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
+        return response.ResponseData;
     }
 
-    public async Task<ApiServiceResult> RejectContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task RejectContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await personalSpaceContactRequestApiClient.RejectContactRequestAsync(id, cancellationToken);
+        var response = await personalSpaceContactRequestApiClient.RejectContactRequestAsync(id, cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult()
-            {
-                IsSuccessful = true
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
     }
 
-    public async Task<ApiServiceResult> SendContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task SendContactRequestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var response = await personalSpaceContactRequestApiClient.SendContactRequestAsync(id, cancellationToken);
+        var response = await personalSpaceContactRequestApiClient.SendContactRequestAsync(id, cancellationToken);
 
-            if (!response.IsSuccessful)
-                throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
-            return new ApiServiceResult()
-            {
-                IsSuccessful = true
-            };
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode is null || (int)ex.StatusCode >= 500)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            else if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return new ApiServiceResult()
-                {
-                    IsSuccessful = false,
-                    ErrorMessage = ex.Message,
-                    IsServerError = true
-                };
-            }
-            throw new ApiResponseException();
-        }
+        if (!response.IsSuccessful)
+            throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
     }
 }

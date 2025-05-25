@@ -24,10 +24,7 @@ internal class TokenRefreshingRestClient : ITokenRefreshingRestClient
         {
             var accessToken = await userIdentityService.RefreshCurrentUserTokenAsync(cancellationToken);
 
-            if (!accessToken.IsSuccessful)
-                throw new ForceLogoutException();
-
-            client.DefaultParameters.ReplaceParameter(new HeaderParameter("Authorization", "Bearer " + accessToken.ResultData.Token));
+            client.DefaultParameters.ReplaceParameter(new HeaderParameter("Authorization", "Bearer " + accessToken.Token));
 
             response = await client.ExecuteAsync(request, cancellationToken);
         }

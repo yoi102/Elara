@@ -212,11 +212,11 @@ public class UserController : ControllerBase
         }
         else if (result.Status == RefreshTokenStatus.TokenMismatch)
         {
-            return BadRequest("User ID does not match token data.");
+            return Unauthorized("User ID does not match token data.");
         }
         else if (result.Status == RefreshTokenStatus.UserNotFound)
         {
-            return BadRequest("Invalid refresh token.");
+            return Unauthorized("Invalid refresh token.");
         }
 
         return Ok(new { request.UserId, result.UserName, result.Token, result.RefreshToken });

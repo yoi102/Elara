@@ -4,13 +4,13 @@ namespace Services.Abstractions.ChatServices;
 
 public interface IChatConversationRequestService
 {
-    Task<ApiServiceResult> AcceptConversationRequestAsync(Guid id, CancellationToken cancellationToken = default);
+    Task AcceptConversationRequestAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ConversationRequestData>> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ConversationRequestData?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult<ConversationRequestData[]>> GetConversationRequestsAsync(CancellationToken cancellationToken = default);
+    Task<ConversationRequestData[]> GetConversationRequestsAsync(CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> RejectConversationRequestAsync(Guid id, CancellationToken cancellationToken = default);
+    Task RejectConversationRequestAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<ApiServiceResult> SendConversationRequestAsync(Guid receiverId, Guid conversationId, string role, CancellationToken cancellationToken = default);
+    Task SendConversationRequestAsync(Guid receiverId, Guid conversationId, string role, CancellationToken cancellationToken = default);
 }
