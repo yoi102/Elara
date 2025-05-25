@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Elara.ViewModel\Elara.ViewModel.csproj" />
     <ProjectReference Include="..\..\ApiClients\ApiClients.csproj" />
     <ProjectReference Include="..\..\DataProviders\DataProviders.csproj" />
+    <ProjectReference Include="..\..\ExceptionHandling\ExceptionHandling.csproj" />
     <ProjectReference Include="..\..\InteractionServices.Abstractions\InteractionServices.Abstractions.csproj" />
     <ProjectReference Include="..\..\Frontend.Shared\Frontend.Shared.csproj" />
     <ProjectReference Include="..\..\Resources\Resources.csproj" />

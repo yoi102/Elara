@@ -1,6 +1,6 @@
 ﻿using EventBus.SignalR.Client;
 
-namespace Elara.ViewModel.Handlers;
+namespace Elara.ViewModel.SignalRHandlers;
 
 [EventName("XXXXXEvent")]
 internal class XXXXEventHandler : IEventHandler

@@ -1,11 +1,8 @@
 ﻿using Commons.Extensions;
 using Commons.Helpers;
-using DataProviders.Abstractions;
-using Elara.wpf.View;
-using Frontend.Shared.Exceptions;
+using ExceptionHandling;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Elara.wpf;
 
@@ -24,51 +21,10 @@ public partial class App : Application
 
         Services = ConfigureServices();
         this.InitializeComponent();
+        Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-        MainWindow = new MainWindowView();
-        LaunchApplicationFlow();
-
-        // 注册全局异常处理器
-        DispatcherUnhandledException += OnDispatcherUnhandledException;
-    }
-
-    private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-    {
-        //UI线程异常
-
-        if (e.Exception is ForceLogoutException)
-        {
-            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-
-            MainWindow.Close();
-            MainWindow = new MainWindowView();
-            var userDataProvider = Services.GetService<IUserDataProvider>();
-            userDataProvider?.CleanUserData();
-            LaunchApplicationFlow();
-            e.Handled = true;
-        }
-    }
-
-    private void LaunchApplicationFlow()
-    {
-        var loginWindow = new LoginWindowView();
-        var result = loginWindow.ShowDialog();
-        if (result == true)
-        {
-            //TODO：一写配置加载、cache加载
-            MainWindow.Show();
-            MainWindow.Closing += MainWindow_Closing;
-            Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
-        }
-        else
-        {
-            Application.Current.Shutdown();
-        }
-    }
-
-    private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
-    {
-        //TODO：关闭前一些设置保存
+        var booster = new AppBooster(Services);
+        booster.Run(); // 只需一行，运行整个流程
     }
 
     #region Services
@@ -89,6 +45,8 @@ public partial class App : Application
 
         var assemblies = ReflectionHelper.GetAllReferencedAssemblies();
         services.RunFrontendModuleInitializers(assemblies);
+
+        services.RegisterHandlers(assemblies);
 
         return services.BuildServiceProvider();
     }

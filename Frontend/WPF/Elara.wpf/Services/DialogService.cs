@@ -32,6 +32,8 @@ public class DialogService : IDialogService
 
     public async Task ShowMessageDialogAsync(string message, object dialogIdentifier)
     {
+ 
+
         var dialogSession = DialogHost.GetDialogSession(dialogIdentifier);
         MessageDialog messageDialog = new MessageDialog(message);
 
