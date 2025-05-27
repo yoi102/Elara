@@ -16,10 +16,10 @@ internal class HttpRequestExceptionHandler : IExceptionHandler
         this.snackbarService = snackbarService;
     }
 
-    public async Task HandleExceptionAsync(Exception exception)
+    public async Task<bool> HandleExceptionAsync(Exception exception)
     {
         if (exception is not HttpRequestException requestException)
-            return;
+            return false;
 
         if (requestException.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
@@ -35,5 +35,6 @@ internal class HttpRequestExceptionHandler : IExceptionHandler
         snackbarService.EnqueueInAll($"Message: {requestException.Message}", TimeSpan.FromSeconds(2));
         var message = $"Message: \r\n{requestException.Message}";
         await dialogService.ShowOrReplaceMessageInActiveWindowAsync(message);
+        return true;
     }
 }

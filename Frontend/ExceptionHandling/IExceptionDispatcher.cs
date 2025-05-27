@@ -1,5 +1,5 @@
 ﻿namespace ExceptionHandling;
 public interface IExceptionDispatcher
 {
-    IExceptionHandler? GetExceptionHandler(Exception exception);
+    Task<bool> DispatchAsync(Exception exception);
 }

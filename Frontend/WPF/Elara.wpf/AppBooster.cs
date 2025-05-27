@@ -3,6 +3,7 @@ using Elara.wpf.View;
 using ExceptionHandling;
 using Frontend.Shared.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Elara.wpf;
@@ -36,16 +37,19 @@ public class AppBooster
             }
             else
             {
-                var handler = _serviceProvider.GetService<IExceptionDispatcher>()!.GetExceptionHandler(e.Exception);
+                // ❗ 先标记 Handled，避免 await 造成异常泄露
+                e.Handled = true;
+                var handled = await _serviceProvider.GetService<IExceptionDispatcher>()!.DispatchAsync(e.Exception);
 
-                if (handler is not null)
+                if (!handled)
                 {
-                    //必须要设置为 true，否则异常会被再次抛出
-                    e.Handled = true;
-                    await handler.HandleExceptionAsync(e.Exception);
+                    // 如果没有处理，则显示默认的错误对话框
+                    // fallback 处理：记录日志、显示MessageBox等
+                    MessageBox.Show("未处理的异常: " + e.Exception.Message);
+                    //Debug模式的话就强制中断
+                    Debugger.Break();
                 }
             }
-            // 其他异常可继续扩展
         };
     }
 

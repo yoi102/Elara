@@ -2,5 +2,5 @@
 
 public interface IExceptionHandler
 {
-    Task HandleExceptionAsync(Exception exception);
+    Task<bool> HandleExceptionAsync(Exception exception);
 }

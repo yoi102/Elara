@@ -18,7 +18,7 @@ internal class ExceptionDispatcher : IExceptionDispatcher
             throw new ArgumentNullException(nameof(exceptionHandlerMap), "Exception handler map cannot be null.");
     }
 
-    public IExceptionHandler? GetExceptionHandler(Exception exception)
+    public async Task<bool> DispatchAsync(Exception exception)
     {
         var exType = exception.GetType();
 
@@ -26,12 +26,13 @@ internal class ExceptionDispatcher : IExceptionDispatcher
         var handlerType = _exceptionHandlerMap.FirstOrDefault(kv => kv.Key.IsAssignableFrom(exType)).Value;
 
         //则尝试匹配对应的处理器类型
-        if (handlerType != null)
-        {
-            var handler = (IExceptionHandler)_serviceProvider.GetService(handlerType)!;
-            return handler;
-        }
+        if (handlerType is null)
+            return false;
 
-        return null;
+        var handler = _serviceProvider.GetService(handlerType)!;
+        if (handler is not IExceptionHandler exceptionHandler)
+            return false;
+
+        return await exceptionHandler.HandleExceptionAsync(exception);
     }
 }
