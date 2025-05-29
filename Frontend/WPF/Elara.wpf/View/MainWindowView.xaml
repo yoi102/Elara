@@ -25,15 +25,13 @@
                  TitleAlignment="Center"
                  TitleCharacterCasing="Normal"
                  WindowStartupLocation="CenterScreen"
-                 mc:Ignorable="d"
-                 >
+                 mc:Ignorable="d">
 
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <md:PopupBox Margin="10,0,0,0"
                          md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
-                         Style="{StaticResource WindowCommandsPopupBoxStyle}"
-                         >
+                         Style="{StaticResource WindowCommandsPopupBoxStyle}">
                 <StackPanel>
                     <Button Content="Hello World" />
                     <Button Content="Nice Popup" />
@@ -46,17 +44,17 @@
                           Margin="5,0,10,0"
                           AutomationProperties.Name="HamburgerToggleButton"
                           IsChecked="False"
-                          Style="{StaticResource MaterialDesignHamburgerToggleButton}"
-                          />
+                          Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
 
             <Border Margin="10,0,10,0">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="{Binding UserInfo.UserIcon}" />
+                    <Image Width="20"
+                           Height="20"
+                           Source="{Binding UserInfo.Avatar.Url, Converter={x:Static cv:UriToImageSourceConverter.Instance}}" />
 
                     <TextBlock Margin="3,0,0,0"
                                VerticalAlignment="Center"
-                               Text="{Binding UserInfo.Name}"
-                               />
+                               Text="{Binding UserInfo.AccountInfo.Name}" />
                 </StackPanel>
             </Border>
         </mah:WindowCommands>
@@ -65,15 +63,13 @@
         <md:DrawerHost Name="NavDrawer"
                        IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}"
                        LeftDrawerCornerRadius="0 10 10 0"
-                       OpenMode="Modal"
-                       >
+                       OpenMode="Modal">
             <md:DrawerHost.LeftDrawerContent>
                 <md:ColorZone Width="200"
                               Padding="10"
                               md:ElevationAssist.Elevation="Dp3"
                               DockPanel.Dock="Top"
-                              Mode="Standard"
-                              />
+                              Mode="Standard" />
             </md:DrawerHost.LeftDrawerContent>
 
             <Grid>
@@ -85,8 +81,7 @@
                               VerticalAlignment="Stretch"
                               md:ElevationAssist.Elevation="Dp5"
                               Background="{DynamicResource MahApps.Brushes.WindowTitle}"
-                              Mode="Standard"
-                              >
+                              Mode="Standard">
                     <StackPanel>
                         <RadioButton x:Name="ChatButton"
                                      Width="50"
@@ -98,17 +93,20 @@
                                      GroupName="ChatShellViewModel"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
                                      Tag="{Binding ChatShellViewModel}"
-                                     ToolTip="Chats"
-                                     >
+                                     ToolTip="Chats">
                             <RadioButton.IsChecked>
-                                <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}" Mode="OneWay">
-                                    <Binding Mode="OneWay" Path="CurrentShellViewModel" />
-                                    <Binding Mode="OneWay" Path="ChatShellViewModel" />
+                                <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}"
+                                              Mode="OneWay">
+                                    <Binding Mode="OneWay"
+                                             Path="CurrentShellViewModel" />
+                                    <Binding Mode="OneWay"
+                                             Path="ChatShellViewModel" />
                                 </MultiBinding>
                             </RadioButton.IsChecked>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Checked">
-                                    <i:InvokeCommandAction Command="{Binding ChangeShellViewModelCommand}" CommandParameter="{Binding Path=Tag, ElementName=ChatButton}" />
+                                    <i:InvokeCommandAction Command="{Binding ChangeShellViewModelCommand}"
+                                                           CommandParameter="{Binding Path=Tag, ElementName=ChatButton}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </RadioButton>
@@ -123,23 +121,27 @@
                                      GroupName="ContactShellViewModel"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
                                      Tag="{Binding ContactShellViewModel}"
-                                     ToolTip="Contacts"
-                                     >
+                                     ToolTip="Contacts">
                             <RadioButton.IsChecked>
-                                <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}" Mode="OneWay">
-                                    <Binding Mode="OneWay" Path="CurrentShellViewModel" />
-                                    <Binding Mode="OneWay" Path="ContactShellViewModel" />
+                                <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}"
+                                              Mode="OneWay">
+                                    <Binding Mode="OneWay"
+                                             Path="CurrentShellViewModel" />
+                                    <Binding Mode="OneWay"
+                                             Path="ContactShellViewModel" />
                                 </MultiBinding>
                             </RadioButton.IsChecked>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Checked">
-                                    <i:InvokeCommandAction Command="{Binding ChangeShellViewModelCommand}" CommandParameter="{Binding Path=Tag, ElementName=ContactButton}" />
+                                    <i:InvokeCommandAction Command="{Binding ChangeShellViewModelCommand}"
+                                                           CommandParameter="{Binding Path=Tag, ElementName=ContactButton}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </RadioButton>
                     </StackPanel>
                 </md:ColorZone>
-                <md:DialogHost Grid.Column="1" Identifier="{x:Static identifiers:DialogHostIdentifiers.MainShellControl}">
+                <md:DialogHost Grid.Column="1"
+                               Identifier="{x:Static identifiers:DialogHostIdentifiers.MainShellControl}">
                     <md:DialogHost.Resources>
                         <DataTemplate DataType="{x:Type chatviewmodel:ChatShellViewModel}">
                             <chat:ChatShellView />

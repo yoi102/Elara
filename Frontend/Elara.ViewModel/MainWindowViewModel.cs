@@ -1,10 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using ApiClients.Abstractions.Models.Responses;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Elara.ViewModel.Chat;
 using Elara.ViewModel.Contact;
 using Frontend.Shared.Identifiers;
 using InteractionServices.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using Services.Abstractions.PersonalSpaceServices;
 
 namespace Elara.wpf.ViewModel;
 
@@ -12,11 +14,13 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IServiceProvider serviceProvider;
     private readonly IDialogService dialogService;
+    private readonly IPersonalSpaceProfileService personalSpaceProfileService;
 
-    public MainWindowViewModel(IServiceProvider serviceProvider, IDialogService dialogService)
+    public MainWindowViewModel(IServiceProvider serviceProvider, IDialogService dialogService, IPersonalSpaceProfileService personalSpaceProfileService)
     {
         this.serviceProvider = serviceProvider;
         this.dialogService = dialogService;
+        this.personalSpaceProfileService = personalSpaceProfileService;
         chatShellViewModel = serviceProvider.GetService<ChatShellViewModel>()!;
         contactShellViewModel = serviceProvider.GetService<ContactShellViewModel>()!;
     }
@@ -30,6 +34,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private object? currentShellViewModel;
 
+    [ObservableProperty]
+    private UserProfileData? userInfo;
+
     public async Task InitializeAsync()
     {
         using var _ = dialogService.ShowProgressBarDialog(DialogHostIdentifiers.MainWindow);
@@ -38,6 +45,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         CurrentShellViewModel = ChatShellViewModel;
         CurrentShellViewModel = ContactShellViewModel;
+        UserInfo = await personalSpaceProfileService.GetCurrentUserProfileAsync();
     }
 
     [RelayCommand]

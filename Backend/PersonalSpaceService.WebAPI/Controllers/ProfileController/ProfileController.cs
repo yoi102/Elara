@@ -61,7 +61,6 @@ public class ProfileController : AuthorizedUserController
         if (profile is null)
             return NotFound();
 
-
         var userInfoReply = await identifierClient.GetAccountInfoAsync(new AccountInfoRequest() { Id = profile.UserId.ToString() });
 
         if (userInfoReply.Id != profile.UserId.ToString())

@@ -32,7 +32,7 @@ internal class HttpRequestExceptionHandler : IExceptionHandler
         //    // 服务器错误或未知状态码，
         //}
 
-        snackbarService.EnqueueInAll($"Message: {requestException.Message}", TimeSpan.FromSeconds(2));
+        snackbarService.EnqueueInAll($"Message:\r\n {requestException.Message}", TimeSpan.FromSeconds(2));
         var message = $"Message: \r\n{requestException.Message}";
         await dialogService.ShowOrReplaceMessageInActiveWindowAsync(message);
         return true;

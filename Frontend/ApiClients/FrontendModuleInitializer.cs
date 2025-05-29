@@ -15,7 +15,18 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
 {
     public void Initialize(IServiceCollection services)
     {
-        var client = new RestClient("http://localhost:8080/Elara");
+        var options = new RestClientOptions("https://localhost:8080/Elara")
+        {
+            ConfigureMessageHandler = handler =>
+            {
+                return new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+            }
+        };
+
+        var client = new RestClient(options);
         client.AddDefaultHeader("Accept", "application/json");
 
         services.AddSingleton<IRestClient>(client);
@@ -25,8 +36,8 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddTransient<IChatMessageApiClient, ChatMessageApiClient>();
         services.AddTransient<IChatParticipantApiClient, ChatParticipantApiClient>();
         services.AddTransient<IFileApiClient, FileApiClient>();
+        services.AddTransient<IPersonalSpaceContactApiClient, PersonalSpaceContactApiClient>();
         services.AddTransient<IPersonalSpaceContactRequestApiClient, PersonalSpaceContactRequestApiClient>();
-        services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
         services.AddTransient<IPersonalSpaceProfileApiClient, PersonalSpaceProfileApiClient>();
         services.AddTransient<IUserApiClient, UserApiClient>();
         services.AddTransient<IUserIdentityApiClient, UserIdentityApiClient>();

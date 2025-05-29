@@ -1,16 +1,16 @@
 ﻿using DomainCommons.EntityStronglyIds;
 using Grpc.Core;
 using Identity;
-using IdentityService.Infrastructure;
+using IdentityService.Domain.Interfaces;
 
 namespace IdentityService.WebAPI.Services;
 
 public class IdentifierServiceImplementation : Identifier.IdentifierBase
 {
     private readonly ILogger<IdentifierServiceImplementation> logger;
-    private readonly UserRepository userRepository;
+    private readonly IUserRepository userRepository;
 
-    public IdentifierServiceImplementation(ILogger<IdentifierServiceImplementation> logger, UserRepository userRepository)
+    public IdentifierServiceImplementation(ILogger<IdentifierServiceImplementation> logger, IUserRepository userRepository)
     {
         this.logger = logger;
         this.userRepository = userRepository;
@@ -32,7 +32,7 @@ public class IdentifierServiceImplementation : Identifier.IdentifierBase
             Id = user.Id.ToString(),
             Name = user.UserName,
             Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
+            PhoneNumber = user.PhoneNumber ?? "",
             CreatedAt = user.CreatedAt.ToString()
         };
     }

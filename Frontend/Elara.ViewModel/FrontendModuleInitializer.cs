@@ -19,5 +19,7 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
         services.AddTransient<ConversationViewModel>();
         services.AddTransient<MessageViewModel>();
         services.AddTransient<ReplyMessageViewModel>();
+        services.AddTransient<ContactRequestViewModel>();
+        services.AddTransient<GroupConversationRequestViewModel>();
     }
 }

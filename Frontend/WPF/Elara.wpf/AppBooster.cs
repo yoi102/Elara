@@ -48,6 +48,8 @@ public class AppBooster
                     MessageBox.Show("未处理的异常: " + e.Exception.Message);
                     //Debug模式的话就强制中断
                     Debugger.Break();
+                    //不允许存在未处理的异常，应用程序将会终止
+                    App.Current.Shutdown(1);
                 }
             }
         };

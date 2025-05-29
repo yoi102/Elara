@@ -9,12 +9,12 @@ using Infrastructure.EFCore;
 using JWT;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using StackExchange.Redis;
 using System.Reflection;
@@ -25,19 +25,26 @@ public static class WebApplicationBuilderExtensions
 {
     public static void ConfigureCommonServices(this WebApplicationBuilder builder, InitializerOptions initOptions)
     {
-        // 允许 HTTP/1.1
         builder.WebHost.ConfigureKestrel(options =>
         {
             options.ConfigureEndpointDefaults(lo =>
             {
                 lo.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
             });
+
         });
+
 
         ReadAndSetHostBuilderConfiguration(builder);
 
         var services = builder.Services;
         var configuration = builder.Configuration;
+
+        services.AddLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+        });
 
         services.AddProblemDetails(options =>
         {

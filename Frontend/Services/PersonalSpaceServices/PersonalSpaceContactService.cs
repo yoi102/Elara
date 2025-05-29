@@ -1,4 +1,5 @@
 ﻿using ApiClients.Abstractions;
+using ApiClients.Abstractions.Models.Requests;
 using ApiClients.Abstractions.Models.Responses;
 using Services.Abstractions.PersonalSpaceServices;
 
@@ -30,9 +31,9 @@ internal class PersonalSpaceContactService : IPersonalSpaceContactService
         return response.ResponseData;
     }
 
-    public async Task UpdateContactInfoAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task UpdateContactInfoAsync(Guid id, UpdateContactInfoRequest updateContactInfoRequest, CancellationToken cancellationToken = default)
     {
-        var response = await personalSpaceContactApiClient.UpdateContactInfoAsync(id, cancellationToken);
+        var response = await personalSpaceContactApiClient.UpdateContactInfoAsync(id, updateContactInfoRequest, cancellationToken);
 
         if (!response.IsSuccessful)
             throw new HttpRequestException(response.ErrorMessage, null, response.StatusCode);
