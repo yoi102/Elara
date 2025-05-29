@@ -31,9 +31,7 @@ public static class WebApplicationBuilderExtensions
             {
                 lo.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
             });
-
         });
-
 
         ReadAndSetHostBuilderConfiguration(builder);
 

@@ -3,24 +3,9 @@ using IdentityService.Infrastructure;
 using IdentityService.WebAPI;
 using Initializer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.WebHost.ConfigureKestrel(options =>
-//{
-//    options.ListenAnyIP(7135, listenOptions =>
-//    {
-//        listenOptions.UseHttps(); // 不带参数，使用 dev cert
-//        listenOptions.Protocols = HttpProtocols.Http2;
-//    });
-//});
-
-
-
-
-
 
 builder.ConfigureCommonServices(new InitializerOptions
 {

@@ -1,21 +1,9 @@
 ﻿using FileService.Infrastructure.Services;
 using FileService.WebAPI.Services;
 using Initializer;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.WebHost.ConfigureKestrel(options =>
-//{
-//    options.ListenAnyIP(7176, listenOptions =>
-//    {
-//        listenOptions.UseHttps(); // 不带参数，使用 dev cert
-//        listenOptions.Protocols = HttpProtocols.Http2;
-//    });
-//});
-
-
 
 
 builder.ConfigureCommonServices(new InitializerOptions

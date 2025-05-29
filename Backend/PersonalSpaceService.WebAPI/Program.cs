@@ -1,25 +1,9 @@
 ﻿using Identity;
 using Initializer;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Scalar.AspNetCore;
 using UploadedItem;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.WebHost.ConfigureKestrel(options =>
-//{
-//    options.ListenAnyIP(7136, listenOptions =>
-//    {
-//        listenOptions.UseHttps(); // 不带参数，使用 dev cert
-//        listenOptions.Protocols = HttpProtocols.Http2;
-//    });
-//});
-
-
-
-
-
-
 
 builder.ConfigureCommonServices(new InitializerOptions
 {
@@ -36,7 +20,7 @@ builder.Services.AddGrpc();
 builder.Services.AddGrpcClient<Identifier.IdentifierClient>("IdentifierClient", options =>
 {
     options.Address = new Uri("https://localhost:7135");
-    //options.Address = new Uri("https://localhost:8080/Elara/IdentityService");
+    //options.Address = new Uri("https://localhost:8080/Elara/grpc/IdentityService");
 }).ConfigurePrimaryHttpMessageHandler(() =>
 {
     return new HttpClientHandler
@@ -48,7 +32,7 @@ builder.Services.AddGrpcClient<Identifier.IdentifierClient>("IdentifierClient", 
 builder.Services.AddGrpcClient<UploadedItemService.UploadedItemServiceClient>("UploadedItemServiceClient", options =>
 {
     options.Address = new Uri("https://localhost:7136");
-    //options.Address = new Uri("https://localhost:8080/Elara/FileService");
+    //options.Address = new Uri("https://localhost:8080/Elara/grpc/FileService");
 }).ConfigurePrimaryHttpMessageHandler(() =>
 {
     return new HttpClientHandler
