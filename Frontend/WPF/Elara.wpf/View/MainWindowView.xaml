@@ -9,13 +9,13 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                  xmlns:identifiers="clr-namespace:Frontend.Shared.Identifiers;assembly=Frontend.Shared"
-                 xmlns:local="clr-namespace:Elara.wpf"
+                 xmlns:r="clr-namespace:Resources;assembly=Resources"
+                 xmlns:local="clr-namespace:Elara.wpf.View"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
                  xmlns:viewmodel="clr-namespace:Elara.wpf.ViewModel;assembly=Elara.ViewModel"
                  xmlns:yr="https://github.com/yoi102/xaml/controls"
-                 Name="window"
                  Title="Elara"
                  Width="1100"
                  Height="800"
@@ -29,34 +29,56 @@
 
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
-            <md:PopupBox Margin="10,0,0,0"
-                         md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
-                         Style="{StaticResource WindowCommandsPopupBoxStyle}">
-                <StackPanel>
-                    <Button Content="Hello World" />
-                    <Button Content="Nice Popup" />
-                    <Button Content="Goodbye" />
-                </StackPanel>
-            </md:PopupBox>
 
-            <ToggleButton x:Name="MenuToggleButton"
+            <StackPanel Orientation="Horizontal"
+                        Width="80">
+
+                <ToggleButton md:ToggleButtonAssist.OnContent="{md:PackIcon Kind=WeatherNight}"
+                              Background="{DynamicResource MaterialDesign.Brush.Primary.Background}"
+                              Content="{md:PackIcon Kind=WhiteBalanceSunny,
+                                           Size=24}"
+                              Foreground="White"
+                              IsChecked="{Binding IsDarkTheme}"
+                              Style="{StaticResource MaterialDesignActionSecondaryToggleButton}" />
+
+                <Menu VerticalAlignment="Bottom"
+                      md:MenuAssist.TopLevelMenuItemHeight="25">
+                    <MenuItem Header="{Binding CurrentCultureLCID, Converter={x:Static local:LoginWindowView.LCIDToStringConverter}}">
+                        <MenuItem Command="{Binding ChangeCultureCommand}"
+                                  CommandParameter="1033"
+                                  Header="EN" />
+                        <MenuItem Command="{Binding ChangeCultureCommand}"
+                                  CommandParameter="1041"
+                                  Header="JP" />
+                        <MenuItem Command="{Binding ChangeCultureCommand}"
+                                  CommandParameter="2052"
+                                  Header="CN" />
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
+
+            <!--<ToggleButton x:Name="MenuToggleButton"
                           Height="30"
                           Margin="5,0,10,0"
                           AutomationProperties.Name="HamburgerToggleButton"
                           IsChecked="False"
-                          Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+                          Style="{StaticResource MaterialDesignHamburgerToggleButton}" />-->
+            <StackPanel Orientation="Horizontal"
+                        Margin="5 0 0 0">
+                <Image Source="/Assets/NoImage.png"
+                       Width="20"
+                       Visibility="{Binding  UserInfo.Avatar,Converter={x:Static cv:DefaultToVisibilityConverter.CollapsedInstance}}" />
 
-            <Border Margin="10,0,10,0">
-                <StackPanel Orientation="Horizontal">
-                    <Image Width="20"
-                           Height="20"
-                           Source="{Binding UserInfo.Avatar.Url, Converter={x:Static cv:UriToImageSourceConverter.Instance}}" />
+                <Image Width="20"
+                       Height="20"
+                       Visibility="{Binding  UserInfo.Avatar,Converter={x:Static cv:DefaultToVisibilityConverter.NotCollapsedInstance}}"
+                       Source="{Binding UserInfo.Avatar.Url, Converter={x:Static cv:UriToImageSourceConverter.Instance}, TargetNullValue=Assets/NoImage.png}" />
 
-                    <TextBlock Margin="3,0,0,0"
-                               VerticalAlignment="Center"
-                               Text="{Binding UserInfo.AccountInfo.Name}" />
-                </StackPanel>
-            </Border>
+                <TextBlock Margin="3,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="{Binding UserInfo.AccountInfo.Name}" />
+            </StackPanel>
+
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <md:DialogHost Identifier="{x:Static identifiers:DialogHostIdentifiers.MainWindow}">
@@ -77,10 +99,10 @@
                     <ColumnDefinition Width="65" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <!--Background="{DynamicResource MahApps.Brushes.WindowTitle}"-->
                 <md:ColorZone HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               md:ElevationAssist.Elevation="Dp5"
-                              Background="{DynamicResource MahApps.Brushes.WindowTitle}"
                               Mode="Standard">
                     <StackPanel>
                         <RadioButton x:Name="ChatButton"
@@ -93,7 +115,7 @@
                                      GroupName="ChatShellViewModel"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
                                      Tag="{Binding ChatShellViewModel}"
-                                     ToolTip="Chats">
+                                     ToolTip="{I18N {x:Static r:LangKeys.Chats}}">
                             <RadioButton.IsChecked>
                                 <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}"
                                               Mode="OneWay">
@@ -121,7 +143,7 @@
                                      GroupName="ContactShellViewModel"
                                      Style="{StaticResource MaterialDesignTabRadioButtonRight}"
                                      Tag="{Binding ContactShellViewModel}"
-                                     ToolTip="Contacts">
+                                     ToolTip="{I18N {x:Static r:LangKeys.Contacts}}">
                             <RadioButton.IsChecked>
                                 <MultiBinding Converter="{x:Static cv:AllSameReferenceConverter.Instance}"
                                               Mode="OneWay">

@@ -70,11 +70,29 @@ namespace Resources.Strings {
         }
         
         /// <summary>
+        ///   查找类似 Chats 的本地化字符串。
+        /// </summary>
+        public static string Chats {
+            get {
+                return ResourceManager.GetString("Chats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Close 的本地化字符串。
         /// </summary>
         public static string Close {
             get {
                 return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Contacts 的本地化字符串。
+        /// </summary>
+        public static string Contacts {
+            get {
+                return ResourceManager.GetString("Contacts", resourceCulture);
             }
         }
         

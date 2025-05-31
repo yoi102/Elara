@@ -168,4 +168,10 @@
   <data name="ResetSuccessful" xml:space="preserve">
     <value>重置成功。</value>
   </data>
+  <data name="Chats" xml:space="preserve">
+    <value>聊天</value>
+  </data>
+  <data name="Contacts" xml:space="preserve">
+    <value>联系人</value>
+  </data>
 </root>

@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\NoImage.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antelcat.I18N.WPF" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
   </ItemGroup>
@@ -24,6 +28,10 @@
     <ProjectReference Include="..\..\Resources\Resources.csproj" />
     <ProjectReference Include="..\..\Services\Services.csproj" />
     <ProjectReference Include="..\Elara.wpf.Controls\Elara.wpf.Controls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\NoImage.png" />
   </ItemGroup>
 
 </Project>
