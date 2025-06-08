@@ -2,8 +2,6 @@
 using Elara.wpf.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
@@ -21,13 +19,32 @@ public partial class LoginWindowView : Window
 
         WeakReferenceMessenger.Default.Register<LoginWindowViewModel>(this, (r, m) =>
         {
-            PlayHideAnimationThenInvoke(() =>
-            {
-                WeakReferenceMessenger.Default.Unregister<LoginWindowViewModel>(this);
-                DialogResult = true;
-            });
+            DialogResult = true;
         });
         WindowTracker.Register(this);
+        this.Closing += LoginWindowView_Closing;
+    }
+
+    private bool _isClosing = false;
+    private bool? _dialogResult;
+
+    private void LoginWindowView_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (_isClosing)
+            return;
+        // 第一次进来，阻止关闭
+        e.Cancel = true;
+        _isClosing = true;
+        _dialogResult = DialogResult;
+        var story = (Storyboard)FindResource("HideWindow") ?? throw new ApplicationException();
+        if (story.IsFrozen)
+            story = story.Clone();
+
+        story.Completed += (s, a) =>
+        {
+            DialogResult = _dialogResult;
+        };
+        story.Begin(this);
     }
 
     public static FuncValueConverter<int, string> LCIDToStringConverter { get; } = new(lcid =>
@@ -48,34 +65,10 @@ public partial class LoginWindowView : Window
         return result;
     });
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    private void DragBorder_MouseMove(object sender, MouseEventArgs e)
     {
-        if (e.LeftButton == MouseButtonState.Pressed && e.OriginalSource is not TextBoxBase && e.OriginalSource is not PasswordBox)
-        {
-            this.DragMove();
-        }
-        base.OnMouseMove(e);
-    }
-
-    private void CloseButton_Click(object sender, RoutedEventArgs e)
-    {
-        PlayHideAnimationThenInvoke(() =>
-        {
-            DialogResult = false;
-        });
-    }
-
-    private void PlayHideAnimationThenInvoke(Action action)
-    {
-        var story = (Storyboard)FindResource("HideWindow");
-        if (story == null)
-            throw new ApplicationException();
-        if (story.IsFrozen)
-            story = story.Clone();
-        story.Completed += delegate
-        {
-            action.Invoke();
-        };
-        story.Begin(this);
+        if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.OriginalSource == sender)
+                this.DragMove();
     }
 }

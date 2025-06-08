@@ -21,57 +21,51 @@
         Topmost="True"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        mc:Ignorable="d"
-        >
+        mc:Ignorable="d">
     <Window.Resources>
         <Storyboard x:Key="HideWindow">
             <DoubleAnimation FillBehavior="Stop"
                              Storyboard.TargetProperty="Opacity"
                              From="1"
                              To="0"
-                             Duration="0:0:0.5"
-                             />
+                             Duration="0:0:0.5" />
             <DoubleAnimation FillBehavior="Stop"
                              Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleX)"
                              From="1"
                              To="0.8"
-                             Duration="0:0:0.5"
-                             />
+                             Duration="0:0:0.5" />
             <DoubleAnimation FillBehavior="Stop"
                              Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleY)"
                              From="1"
                              To="0.8"
-                             Duration="0:0:0.5"
-                             />
+                             Duration="0:0:0.5" />
         </Storyboard>
         <Storyboard x:Key="ShowWindow">
             <DoubleAnimation FillBehavior="Stop"
                              Storyboard.TargetProperty="Opacity"
                              From="0"
                              To="1"
-                             Duration="0:0:0.5"
-                             />
+                             Duration="0:0:0.5" />
             <DoubleAnimation FillBehavior="Stop"
                              Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleX)"
                              From="0.8"
                              To="1"
-                             Duration="0:0:0.5"
-                             />
+                             Duration="0:0:0.5" />
             <DoubleAnimation FillBehavior="Stop"
                              Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
                              Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleY)"
                              From="0.8"
                              To="1"
-                             Duration="0:0:0.5"
-                             />
+                             Duration="0:0:0.5" />
         </Storyboard>
     </Window.Resources>
     <Window.RenderTransform>
         <TransformGroup>
-            <ScaleTransform ScaleX="1" ScaleY="1" />
+            <ScaleTransform ScaleX="1"
+                            ScaleY="1" />
             <SkewTransform />
             <RotateTransform />
             <TranslateTransform />
@@ -88,18 +82,20 @@
                       GlassFrameThickness="0"
                       NonClientFrameEdges="None"
                       ResizeBorderThickness="5"
-                      UseAeroCaptionButtons="False"
-                      />
+                      UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
     <Grid>
 
-        <Border BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}"
-                BorderThickness="2.5"
-                CornerRadius="8"
-                >
+        <Border  Background="Transparent"
+                 MouseMove="DragBorder_MouseMove"
+                 BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}"
+                 BorderThickness="2.5"
+                 CornerRadius="8">
 
-            <md:DialogHost Margin="10" Identifier="{x:Static identifiers:DialogHostIdentifiers.LoginRootDialog}">
-                <md:DrawerHost IsLeftDrawerOpen="{Binding SignUpOrResetViewModel, Converter={x:Static converter:DefaultToBooleanConverter.DefaultToFalseInstance}}" OpenMode="Standard">
+            <md:DialogHost Margin="10"
+                           Identifier="{x:Static identifiers:DialogHostIdentifiers.LoginRootDialog}">
+                <md:DrawerHost IsLeftDrawerOpen="{Binding SignUpOrResetViewModel, Converter={x:Static converter:DefaultToBooleanConverter.DefaultToFalseInstance}}"
+                               OpenMode="Standard">
                     <md:DrawerHost.LeftDrawerContent>
 
                         <Grid Width="{Binding Path=Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
@@ -116,9 +112,9 @@
                                                           Size=24}"
                                     Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
                                     IsCancel="True"
-                                    Style="{StaticResource MaterialDesignToolButton}"
-                                    />
-                            <ContentControl Grid.Row="1" Content="{Binding SignUpOrResetViewModel}">
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                            <ContentControl Grid.Row="1"
+                                            Content="{Binding SignUpOrResetViewModel}">
                                 <ContentControl.Resources>
                                     <DataTemplate DataType="{x:Type viewmodel:SignUpViewModel}">
                                         <local:CreateAccountView />
@@ -139,45 +135,37 @@
                             </Grid.RowDefinitions>
                             <StackPanel HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Orientation="Horizontal"
-                                        >
+                                        Orientation="Horizontal">
                                 <ToggleButton md:ToggleButtonAssist.OnContent="{md:PackIcon Kind=WeatherNight}"
                                               Background="{DynamicResource MaterialDesign.Brush.Primary.Background}"
                                               Content="{md:PackIcon Kind=WhiteBalanceSunny,
                                                                     Size=24}"
                                               Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
                                               IsChecked="{Binding IsDarkTheme}"
-                                              Style="{StaticResource MaterialDesignActionSecondaryToggleButton}"
-                                              />
+                                              Style="{StaticResource MaterialDesignActionSecondaryToggleButton}" />
 
                                 <Menu Margin="0,0,10,0"
                                       HorizontalAlignment="Right"
-                                      VerticalAlignment="Top"
-                                      >
+                                      VerticalAlignment="Top">
                                     <MenuItem Header="{Binding CurrentCultureLCID, Converter={x:Static local:LoginWindowView.LCIDToStringConverter}}">
                                         <MenuItem Command="{Binding ChangeCultureCommand}"
                                                   CommandParameter="1033"
-                                                  Header="EN"
-                                                  />
+                                                  Header="EN" />
                                         <MenuItem Command="{Binding ChangeCultureCommand}"
                                                   CommandParameter="1041"
-                                                  Header="JP"
-                                                  />
+                                                  Header="JP" />
                                         <MenuItem Command="{Binding ChangeCultureCommand}"
                                                   CommandParameter="2052"
-                                                  Header="CN"
-                                                  />
+                                                  Header="CN" />
                                     </MenuItem>
                                 </Menu>
-
                                 <Button md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
-                                        Click="CloseButton_Click"
+                                        IsCancel="True"
                                         Content="{md:PackIcon Kind=Close,
                                                               Size=24}"
                                         Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
                                         Style="{StaticResource MaterialDesignToolButton}"
-                                        ToolTip="{I18N {x:Static r:LangKeys.Close}}"
-                                        />
+                                        ToolTip="{I18N {x:Static r:LangKeys.Close}}" />
                             </StackPanel>
 
                             <Grid Grid.Row="1">
@@ -186,59 +174,59 @@
                                     <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
 
-                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid HorizontalAlignment="Center"
+                                      VerticalAlignment="Center">
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Style="{StaticResource MaterialDesignTitleLargeTextBlock}" Text="Elara:" />
-                                    <Grid Grid.Row="1" Margin="10">
+                                    <TextBlock Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
+                                               Text="Elara:" />
+                                    <Grid Grid.Row="1"
+                                          Margin="10">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <md:PackIcon Grid.Column="0"
                                                      Margin="5"
-                                                     Kind="Account"
-                                                     />
+                                                     Kind="Account" />
                                         <TextBox Grid.Column="1"
                                                  Width="200"
+                                                 AcceptsReturn="False"
                                                  md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.NameOrEmail}}"
                                                  md:HintAssist.Hint="{I18N {x:Static r:LangKeys.NameOrEmail}}"
                                                  md:TextFieldAssist.HasClearButton="True"
                                                  yr:TextFieldAssist.IsSpaceInputBlocked="True"
                                                  InputMethod.InputScope="AlphanumericHalfWidth"
                                                  InputMethod.IsInputMethodEnabled="False"
-                                                 Text="{Binding NameEmail, UpdateSourceTrigger=PropertyChanged}"
-                                                 />
+                                                 Text="{Binding NameEmail, UpdateSourceTrigger=PropertyChanged}" />
                                     </Grid>
-                                    <Grid Grid.Row="2" Margin="10">
+                                    <Grid Grid.Row="2"
+                                          Margin="10">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <md:PackIcon Grid.Column="0"
                                                      Margin="5"
-                                                     Kind="Key"
-                                                     />
+                                                     Kind="Key" />
                                         <PasswordBox Grid.Column="1"
                                                      Width="200"
                                                      md:HintAssist.HelperText="{I18N {x:Static r:LangKeys.Password}}"
                                                      md:HintAssist.Hint="{I18N {x:Static r:LangKeys.Password}}"
-                                                     md:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay}"
+                                                     md:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                      yr:TextFieldAssist.IsSpaceInputBlocked="True"
                                                      InputMethod.InputScope="AlphanumericHalfWidth"
                                                      InputMethod.IsInputMethodEnabled="False"
-                                                     Style="{StaticResource MaterialDesignRevealPasswordBox}"
-                                                     />
+                                                     Style="{StaticResource MaterialDesignRevealPasswordBox}" />
                                     </Grid>
                                 </Grid>
 
                                 <StackPanel Grid.Row="1"
                                             Margin="0,10,0,0"
-                                            HorizontalAlignment="Center"
-                                            >
+                                            HorizontalAlignment="Center">
 
                                     <Grid Margin="0,3,0,10">
                                         <Grid.ColumnDefinitions>
@@ -247,22 +235,19 @@
                                         </Grid.ColumnDefinitions>
                                         <Button Command="{Binding SignUpCommand}"
                                                 Content="{I18N {x:Static r:LangKeys.SignUp}}"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}"
-                                                />
+                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
                                         <Button Grid.Column="1"
                                                 Margin="20,0,0,0"
                                                 Command="{Binding ResetCommand}"
                                                 Content="{I18N {x:Static r:LangKeys.Reset}}"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}"
-                                                />
+                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
                                     </Grid>
 
                                     <Button Width="130"
                                             HorizontalAlignment="Center"
                                             Command="{Binding LoginCommand}"
                                             Content="{I18N {x:Static r:LangKeys.Login}}"
-                                            IsDefault="True"
-                                            />
+                                            IsDefault="True" />
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -274,7 +259,6 @@
                      HorizontalAlignment="Left"
                      VerticalAlignment="Top"
                      yr:SnackbarIdentifierAssist.SnackbarIdentifier="{x:Static identifiers:SnackBarHostIdentifiers.LoginWindow}"
-                     MessageQueue="{md:MessageQueue}"
-                     />
+                     MessageQueue="{md:MessageQueue}" />
     </Grid>
 </Window>
