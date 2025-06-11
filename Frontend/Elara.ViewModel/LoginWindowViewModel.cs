@@ -136,7 +136,7 @@ public partial class LoginWindowViewModel : ObservableValidator
         }
         if (userData is null)
         {
-            await dialogService.ShowOrReplaceMessageDialogAsync("Incorrect username or password.", DialogHostIdentifiers.LoginRootDialog);
+            await dialogService.ShowOrReplaceMessageDialogAsync("Message:", "Incorrect username or password.", DialogHostIdentifiers.LoginRootDialog);
         }
         else
         {

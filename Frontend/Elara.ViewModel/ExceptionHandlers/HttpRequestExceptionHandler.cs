@@ -23,7 +23,7 @@ internal class HttpRequestExceptionHandler : IExceptionHandler
 
         if (requestException.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            await dialogService.ShowOrReplaceMessageInActiveWindowAsync("登录已过期");
+            await dialogService.ShowOrReplaceMessageInActiveWindowAsync("Message:", "登录已过期");
             throw new ForceLogoutException();
         }
 
@@ -34,7 +34,7 @@ internal class HttpRequestExceptionHandler : IExceptionHandler
 
         snackbarService.EnqueueInAll($"Message:\r\n {requestException.Message}", TimeSpan.FromSeconds(2));
         var message = $"Message: \r\n{requestException.Message}";
-        await dialogService.ShowOrReplaceMessageInActiveWindowAsync(message);
+        await dialogService.ShowOrReplaceMessageInActiveWindowAsync("Message:", message);
         return true;
     }
 }

@@ -71,4 +71,9 @@ public partial class LoginWindowView : Window
             if (e.OriginalSource == sender)
                 this.DragMove();
     }
+
+    private void CloseButtonClicked(object sender, RoutedEventArgs e)
+    {
+       DialogResult = false;
+    }
 }

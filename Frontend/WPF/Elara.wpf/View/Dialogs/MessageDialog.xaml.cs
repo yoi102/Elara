@@ -7,9 +7,10 @@ namespace Elara.wpf.View.Dialogs;
 /// </summary>
 public partial class MessageDialog : UserControl
 {
-    public MessageDialog(string message)
+    public MessageDialog(string header,string message)
     {
         InitializeComponent();
-        textBlock.Text = message;
+        HeaderTextBlock.Text = header;
+        MessageTextBlock.Text = message;
     }
 }

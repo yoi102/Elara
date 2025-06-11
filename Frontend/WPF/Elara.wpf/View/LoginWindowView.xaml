@@ -160,7 +160,7 @@
                                     </MenuItem>
                                 </Menu>
                                 <Button md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={x:Static md:BrushRoundConverter.Instance}}"
-                                        IsCancel="True"
+                                        Click="CloseButtonClicked"
                                         Content="{md:PackIcon Kind=Close,
                                                               Size=24}"
                                         Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"

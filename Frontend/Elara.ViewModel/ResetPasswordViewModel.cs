@@ -77,7 +77,7 @@ public partial class ResetPasswordViewModel : ObservableValidator, IHasCredentia
         var errors = GetErrors(nameof(Email));
         if (errors.Any())
         {
-            await dialogService.ShowOrReplaceMessageDialogAsync(Strings.PleaseEnterAValidEmailAddress, DialogHostIdentifiers.LoginRootDialog);
+            await dialogService.ShowOrReplaceMessageDialogAsync("Message:", Strings.PleaseEnterAValidEmailAddress, DialogHostIdentifiers.LoginRootDialog);
             return;
         }
 

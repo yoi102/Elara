@@ -32,7 +32,7 @@ public class DialogService : IDialogService
         dialogSession?.Close();
     }
 
-    public async Task ShowOrReplaceMessageDialogAsync(string message, object dialogIdentifier)
+    public async Task ShowOrReplaceMessageDialogAsync(string header, string message, object dialogIdentifier)
     {
         var dialogSession = DialogHost.GetDialogSession(dialogIdentifier);
         if (dialogSession is not null)
@@ -41,11 +41,11 @@ public class DialogService : IDialogService
             dialogSession.Close();//无奈之举，只能关闭后重开
         }
 
-        MessageDialog messageDialog = new MessageDialog(message);
+        MessageDialog messageDialog = new MessageDialog(header, message);
         await DialogHost.Show(messageDialog, dialogIdentifier);
     }
 
-    public async Task ShowOrReplaceMessageInActiveWindowAsync(string message)
+    public async Task ShowOrReplaceMessageInActiveWindowAsync(string header, string message)
     {
         var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
         activeWindow ??= WindowTracker.LastActivatedWindow;
@@ -56,14 +56,14 @@ public class DialogService : IDialogService
         var dialogHost = GetFirstDialogHost(activeWindow);
         if (dialogHost is null)
             return;
-        
+
         // 关闭当前打开的对话框，确保新的对话框可以正确显示
         var identifier = dialogHost.Identifier;
 
         var dialogSession = DialogHost.GetDialogSession(identifier);
         dialogSession?.Close();
 
-        MessageDialog messageDialog = new MessageDialog(message);
+        MessageDialog messageDialog = new MessageDialog(header, message);
         await dialogHost.ShowDialog(messageDialog);
     }
 
