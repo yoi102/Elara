@@ -22,21 +22,21 @@ public partial class ResetPasswordViewModel : ObservableValidator, IHasCredentia
         this.snackbarService = snackbarService;
     }
 
-    [Required]
-    [EmailAddress]
+    [Required(ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "FieldRequired")]
+    [EmailAddress(ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "EmailAddressInvalid")]
     [NotifyDataErrorInfo]
     [ObservableProperty]
     private string email = string.Empty;
 
-    [Required]
+    [Required(ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "FieldRequired")]
     [MinLength(1)]
     [NotifyDataErrorInfo]
     [ObservableProperty]
     private string resetCode = string.Empty;
 
-    [Required]
-    [MinLength(6)]
-    [RegularExpression(@"^[\u0021-\u007E]+$")]
+    [Required(ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "FieldRequired")]
+    [MinLength(6, ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "PasswordMinLength")]
+    [RegularExpression(@"^[\u0021-\u007E]+$", ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "InvalidCharactersDetected")]
     [NotifyDataErrorInfo]
     [ObservableProperty]
     private string newPassword = string.Empty;

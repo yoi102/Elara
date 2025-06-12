@@ -193,4 +193,20 @@
     <value>Contacts</value>
     <comment>Contacts</comment>
   </data>
+  <data name="InvalidCharactersDetected" xml:space="preserve">
+    <value>Invalid characters detected.</value>
+    <comment>Invalid characters detected.</comment>
+  </data>
+  <data name="PasswordMinLength" xml:space="preserve">
+    <value>Password must be at least 6 characters long.</value>
+    <comment>Password must be at least 6 characters long.</comment>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>This field is required.</value>
+    <comment>This field is required.</comment>
+  </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+    <comment>Please enter a valid email address.</comment>
+  </data>
 </root>

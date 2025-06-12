@@ -174,4 +174,16 @@
   <data name="Contacts" xml:space="preserve">
     <value>联系人</value>
   </data>
+  <data name="InvalidCharactersDetected" xml:space="preserve">
+    <value>存在非法字符。</value>
+  </data>
+  <data name="PasswordMinLength" xml:space="preserve">
+    <value>密码长度不能小于6位。</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>该字段不能为空。</value>
+  </data>
+  <data name="EmailAddressInvalid" xml:space="preserve">
+    <value>请输入有效的邮箱地址。</value>
+  </data>
 </root>

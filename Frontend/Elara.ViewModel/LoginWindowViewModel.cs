@@ -5,6 +5,7 @@ using Elara.ViewModel.Interfaces;
 using Frontend.Shared.Identifiers;
 using InteractionServices.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+using Resources.Strings;
 using Services.Abstractions;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
@@ -25,14 +26,15 @@ public partial class LoginWindowViewModel : ObservableValidator
 
     private bool isDarkTheme;
 
-    [Required]
+    [Required(ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "FieldRequired")]
+    [MinLength(1)]
     [NotifyDataErrorInfo]
     [ObservableProperty]
     private string nameEmail = string.Empty;
 
-    [Required]
-    [MinLength(6)]
-    [RegularExpression(@"^[\u0021-\u007E]+$")]
+    [Required(ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "FieldRequired")]
+    [MinLength(6, ErrorMessageResourceType = typeof(Strings), ErrorMessageResourceName = "PasswordMinLength")]
+    [RegularExpression(@"^[\u0021-\u007E]+$", ErrorMessageResourceType =typeof(Strings), ErrorMessageResourceName = "InvalidCharactersDetected")]
     [NotifyDataErrorInfo]
     [ObservableProperty]
     private string password = string.Empty;

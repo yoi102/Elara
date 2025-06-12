@@ -115,6 +115,33 @@ namespace Resources.Strings {
         }
         
         /// <summary>
+        ///   查找类似 Please enter a valid email address. 的本地化字符串。
+        /// </summary>
+        public static string EmailAddressInvalid {
+            get {
+                return ResourceManager.GetString("EmailAddressInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 This field is required. 的本地化字符串。
+        /// </summary>
+        public static string FieldRequired {
+            get {
+                return ResourceManager.GetString("FieldRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Invalid characters detected. 的本地化字符串。
+        /// </summary>
+        public static string InvalidCharactersDetected {
+            get {
+                return ResourceManager.GetString("InvalidCharactersDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Login 的本地化字符串。
         /// </summary>
         public static string Login {
@@ -156,6 +183,15 @@ namespace Resources.Strings {
         public static string Password {
             get {
                 return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Password must be at least 6 characters long. 的本地化字符串。
+        /// </summary>
+        public static string PasswordMinLength {
+            get {
+                return ResourceManager.GetString("PasswordMinLength", resourceCulture);
             }
         }
         
