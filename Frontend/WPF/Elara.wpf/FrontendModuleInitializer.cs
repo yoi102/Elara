@@ -1,6 +1,5 @@
 ﻿using Commons.Interfaces;
 using Elara.wpf.Services;
-using Elara.wpf.ViewModel;
 using InteractionServices.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,10 +9,6 @@ public class FrontendModuleInitializer : IFrontendModuleInitializer
 {
     public void Initialize(IServiceCollection services)
     {
-        services.AddTransient<LoginWindowViewModel>();
-        services.AddTransient<ResetPasswordViewModel>();
-        services.AddTransient<SignUpViewModel>();
-        services.AddTransient<MainWindowViewModel>();
         services.AddTransient<IDialogService, DialogService>();
         services.AddTransient<ISnackbarService, SnackbarService>();
         services.AddTransient<ICultureSettingService, CultureSettingService>();
